@@ -11,7 +11,7 @@ const token = (name: string) =>
 
 function Shape() {
   const ref = useRef<Mesh>(null);
-  const color = useMemo(() => token('color-action-primary'), []);
+  const color = useMemo(() => token('background-accent-2'), []);
   useFrame((_, dt) => {
     if (ref.current) ref.current.rotation.y += dt * 0.4;
   });
@@ -28,7 +28,7 @@ function App() {
     <main className="layout">
       <div className="stage">
         <Canvas camera={{ position: [0, 0, 4] }} dpr={[1, 2]}>
-          <color attach="background" args={[token('color-bg-subtle')]} />
+          <color attach="background" args={[token('background-base-alt')]} />
           <ambientLight intensity={0.6} />
           <directionalLight position={[3, 4, 5]} intensity={2} />
           <Shape />

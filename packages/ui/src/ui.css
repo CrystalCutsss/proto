@@ -1,25 +1,28 @@
 /* Base components of the design system. Every design value comes from --ds-* tokens. */
+
+/* TUI fonts (Neue Haas Unica, T-Sans) are commercial and not in the DS export: Inter is the bundled fallback. */
 @import '@fontsource-variable/inter/wght.css';
 @import '@proto/tokens/tokens.css';
 
 .ds-root {
   margin: 0;
-  font-family: var(--ds-font-family-sans);
-  font-size: var(--ds-font-size-md);
-  line-height: var(--ds-font-line-height-normal);
-  color: var(--ds-color-fg-default);
-  background: var(--ds-color-bg-subtle);
+  font-family: var(--ds-typography-body-m-font-family);
+  font-size: var(--ds-typography-body-m-font-size);
+  line-height: var(--ds-typography-body-m-line-height);
+  color: var(--ds-text-primary);
+  background: var(--ds-background-base-alt);
 }
 
 .ds-heading {
   margin: 0;
-  font-size: var(--ds-font-size-xl);
-  font-weight: var(--ds-font-weight-bold);
-  line-height: var(--ds-font-line-height-tight);
+  font-size: var(--ds-typography-heading-desktop-h2-font-size);
+  font-family: var(--ds-typography-heading-desktop-h2-font-family);
+  font-weight: var(--ds-font-font-weight-bold);
+  line-height: var(--ds-typography-heading-desktop-h2-line-height);
 }
 
 .ds-muted {
-  color: var(--ds-color-fg-muted);
+  color: var(--ds-text-secondary);
 }
 
 .ds-stack {
@@ -41,34 +44,34 @@
   align-items: center;
   padding: var(--ds-space-2) var(--ds-space-4);
   border: 1px solid transparent;
-  border-radius: var(--ds-radius-md);
+  border-radius: var(--ds-radius-m);
   font: inherit;
-  font-weight: var(--ds-font-weight-medium);
-  color: var(--ds-color-fg-inverse);
+  font-weight: var(--ds-font-font-weight-medium);
+  color: var(--ds-text-primary-on-accent-1);
   text-decoration: none;
-  background: var(--ds-color-action-primary);
+  background: var(--ds-background-accent-1);
   cursor: pointer;
-  transition: background-color var(--ds-motion-duration-fast) var(--ds-motion-easing-standard);
+  transition: background-color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
 }
 
 .ds-button:hover {
-  background: var(--ds-color-action-primary-hover);
+  background: var(--ds-state-background-accent-1-hover);
 }
 
 .ds-button[data-variant='ghost'] {
-  border-color: var(--ds-color-border-default);
-  color: var(--ds-color-fg-default);
+  border-color: var(--ds-border-normal);
+  color: var(--ds-text-primary);
   background: transparent;
 }
 
 .ds-input {
   width: 100%;
   padding: var(--ds-space-2) var(--ds-space-3);
-  border: 1px solid var(--ds-color-border-default);
-  border-radius: var(--ds-radius-md);
+  border: 1px solid var(--ds-border-normal);
+  border-radius: var(--ds-radius-m);
   font: inherit;
   color: inherit;
-  background: var(--ds-color-bg-default);
+  background: var(--ds-background-base);
 }
 
 .ds-card {
@@ -76,32 +79,33 @@
   flex-direction: column;
   gap: var(--ds-space-3);
   padding: var(--ds-space-4);
-  border: 1px solid var(--ds-color-border-default);
-  border-radius: var(--ds-radius-lg);
-  background: var(--ds-color-bg-default);
-  box-shadow: var(--ds-shadow-card);
+  border: 1px solid var(--ds-border-normal);
+  border-radius: var(--ds-radius-l);
+  background: var(--ds-background-base);
+  box-shadow: 0 var(--ds-shadow-popup-y-axis-day-value) var(--ds-shadow-popup-blur-day-value)
+    var(--ds-shadow-popup-color-day-value);
 }
 
 .ds-tag {
   padding: var(--ds-space-1) var(--ds-space-3);
-  border: 1px solid var(--ds-color-border-default);
+  border: 1px solid var(--ds-border-normal);
   border-radius: var(--ds-radius-full);
   font: inherit;
-  font-size: var(--ds-font-size-sm);
-  color: var(--ds-color-fg-default);
-  background: var(--ds-color-bg-default);
+  font-size: var(--ds-typography-body-s-font-size);
+  color: var(--ds-text-primary);
+  background: var(--ds-background-base);
   cursor: pointer;
 }
 
 .ds-tag[aria-pressed='true'] {
-  border-color: var(--ds-color-action-primary);
-  color: var(--ds-color-fg-inverse);
-  background: var(--ds-color-action-primary);
+  border-color: var(--ds-background-accent-1);
+  color: var(--ds-text-primary-on-accent-1);
+  background: var(--ds-background-accent-1);
 }
 
 .ds-button:focus-visible,
 .ds-input:focus-visible,
 .ds-tag:focus-visible {
-  outline: var(--ds-border-width-focus) solid var(--ds-color-border-focus);
+  outline: var(--ds-border-width-focus) solid var(--ds-border-focus);
   outline-offset: 2px;
 }

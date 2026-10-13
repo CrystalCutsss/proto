@@ -37,9 +37,9 @@ export async function takePreviews(out, registry) {
           timeout: 20000,
         });
         await page.waitForTimeout(500);
-        mkdirSync(join(out, 'p', p.slug), { recursive: true });
-        await page.screenshot({ path: join(out, 'p', p.slug, 'preview.jpg'), type: 'jpeg', quality: 70 });
-        p.preview = `/p/${p.slug}/preview.jpg`;
+        mkdirSync(join(out, '_previews'), { recursive: true });
+        await page.screenshot({ path: join(out, '_previews', `${p.slug}.jpg`), type: 'jpeg', quality: 70 });
+        p.preview = `/_previews/${p.slug}.jpg`;
         taken += 1;
       } catch (err) {
         console.warn(`preview: ${p.slug} failed: ${/** @type {Error} */ (err).message.split('\n')[0]}`);

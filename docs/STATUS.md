@@ -3,7 +3,7 @@
 Вся документация ведётся в Google Drive, в папке **Proto/Docs** (ADR-0004). Этот файл — только указатель для новой сессии.
 
 - **Полный STATUS:** Google Doc «STATUS» — https://docs.google.com/document/d/1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E/edit (fileId `1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E`).
-- **Текущая фаза:** 2b — токены DS (ADR-0013). Шаг 1 из 2: PR с правкой ds-sync (`.fig` не копируются) ждёт мержа, затем владелец запускает ds-sync. Шаг 2: нормализация токенов и подключение в packages/tokens.
+- **Текущая фаза:** 2b — токены DS (ADR-0013). Шаг 2: токены TUI подключены в packages/tokens, каталог, панель версий, UI и шаблоны переведены на них. PR ждёт мержа. Следующая — Фаза 4.
 - **Обновлено:** 2026-10-13.
 
 ## Как продолжить (для новой сессии)

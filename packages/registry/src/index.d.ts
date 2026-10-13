@@ -39,7 +39,7 @@ export interface RegistryPrototype {
   updated: string;
   /** Site path, always /p/<slug>/ */
   path: string;
-  /** Preview image path, set by site:build when a screenshot exists. */
+  /** Preview image path (/_previews/<slug>.jpg), set by site:build when a screenshot exists. */
   preview?: string;
   versions: RegistryVersion[];
 }

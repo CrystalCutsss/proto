@@ -3,9 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Design tokens: DTCG source → CSS custom properties (--ds-*), JS and TS.",
+  "description": "Design tokens: TUI Figma Variables export \u2192 DTCG 2025.10 \u2192 CSS custom properties (--ds-*), JS and TS.",
   "exports": {
     "./tokens.css": "./dist/tokens.css",
+    "./pick": {
+      "types": "./src/pick.d.ts",
+      "default": "./src/pick.js"
+    },
+    "./dtcg/*": "./dist/dtcg/*",
     ".": {
       "types": "./dist/tokens.d.ts",
       "default": "./dist/tokens.js"

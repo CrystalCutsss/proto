@@ -8,8 +8,8 @@ describe('defineElements', () => {
     const el = document.createElement('ds-badge');
     el.setAttribute('status', 'frozen');
     document.body.append(el);
-    expect(el.style.getPropertyValue('--ds-badge-color')).toBe('var(--ds-color-status-frozen)');
+    expect(el.style.getPropertyValue('--ds-badge-color')).toBe('var(--ds-status-positive)');
     el.setAttribute('status', 'unknown');
-    expect(el.style.getPropertyValue('--ds-badge-color')).toBe('var(--ds-color-status-draft)');
+    expect(el.style.getPropertyValue('--ds-badge-color')).toBe('var(--ds-status-neutral)');
   });
 });

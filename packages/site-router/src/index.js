@@ -7,6 +7,7 @@
 //   /p/<slug>/compare/         side-by-side comparison page (?a=v1&b=v2)
 //   /p/<slug>/<vN>/<rest>      version files; history routing falls back to the version's index.html
 //   /registry.json, /_shell/*  always revalidated
+//   /_previews/<slug>.jpg      hub card screenshots
 
 const SLUG = '[a-z0-9]+(?:-[a-z0-9]+)*';
 const VERSION_PATH = new RegExp(`^/p/(${SLUG})(?:/(.*))?$`);

@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "dsFolderId": "1c3nATguttXvKvECGx8fexFUnMetjoEnj"
+  },
+  "files": [
+    {
+      "path": "TUI Assets.fig",
+      "id": "1qR3jy3Cz1XYUaqdkAPPJDUxLzULa4UsE",
+      "size": 63941527,
+      "mimeType": "application/x-xfig",
+      "modTime": "2026-10-13T06:55:37.756Z",
+      "md5": "3b71f5ce7c0d9169de7dd7f9f1029394",
+      "copied": false,
+      "reason": "excluded"
+    },
+    {
+      "path": "TUI Desktop.fig",
+      "id": "1JTIqjswVFVExnFWnN9vRIQKBdIYm8whh",
+      "size": 20525377,
+      "mimeType": "application/x-xfig",
+      "modTime": "2026-10-13T06:52:43.965Z",
+      "md5": "498423f797be66a72ab4187583f63664",
+      "copied": false,
+      "reason": "excluded"
+    },
+    {
+      "path": "TUI Foundations.fig",
+      "id": "1NtG-oAEAvoupJg8nyS_krfNaqmJ-kQur",
+      "size": 50481055,
+      "mimeType": "application/x-xfig",
+      "modTime": "2026-10-13T06:56:41.442Z",
+      "md5": "f607b2e590395a77e41d50c5ba79afbe",
+      "copied": false,
+      "reason": "excluded"
+    },
+    {
+      "path": "TUI Labs 🧪.fig",
+      "id": "1QJdCrYTyU-s5GO7u_rxaPk_mrxrLd2Lk",
+      "size": 812587341,
+      "mimeType": "application/x-xfig",
+      "modTime": "2026-10-13T06:59:35.678Z",
+      "md5": "cecac255e10a3c213781d5c5f47df4cf",
+      "copied": false,
+      "reason": "excluded"
+    },
+    {
+      "path": "TUI Mobile.fig",
+      "id": "13lMlagFkVTqBANNjGZxON-tCoSVkhwYT",
+      "size": 31194802,
+      "mimeType": "application/x-xfig",
+      "modTime": "2026-10-13T06:54:56.280Z",
+      "md5": "6b4e88faa3617d0542fd6a7599aee63e",
+      "copied": false,
+      "reason": "excluded"
+    },
+    {
+      "path": "TUI Templates.fig",
+      "id": "1xve1IQKGw4MyUnlm9ewjD_ttOfyNIFBe",
+      "size": 20868714,
+      "mimeType": "application/x-xfig",
+      "modTime": "2026-10-13T06:57:12.236Z",
+      "md5": "72b29f815e7b4361f3394b6f1aca8b9a",
+      "copied": false,
+      "reason": "excluded"
+    },
+    {
+      "path": "tokens/figma-variables-2026-10-13.tokens.json",
+      "id": "1JONRsOlru2pC-MpL2IgHosBfTqQjLWNq",
+      "size": 747834,
+      "mimeType": "application/json",
+      "modTime": "2026-10-13T18:34:00.736Z",
+      "md5": "5729394a05bbcada54ce3ba39e51ac47",
+      "copied": true
+    }
+  ]
+}

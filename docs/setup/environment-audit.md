@@ -233,6 +233,11 @@ api.npmjs.org
 - rclone и любых учётных данных Google — Drive только через Actions;
 - `pnpm install` — это делает SessionStart-хук (Фаза 4), он быстрый за счёт прогретого store и работает и локально.
 
+**Замер в VM (2026-10-13):**
+- первый прогон — **1,7 с**, exit 0, установлен gitleaks 8.30.1;
+- повторный прогон — **0,4 с**, exit 0 (идемпотентен);
+- `bash -n` и `shellcheck -S style` — без замечаний.
+
 **Порядок старта облачной сессии:**
 1. клон репозитория;
 2. setup-скрипт, если кэша нет;
@@ -247,6 +252,11 @@ api.npmjs.org
 - push в `main` (включая `HEAD:main` и `refs/heads/main`);
 - force push (`--force`, `--force-with-lease`, `-f`, `+refspec`);
 - удаление веток через `git push --delete` и `-d`. Удаление веток и push тегов дополнительно отклоняет прокси.
+
+Проверено в сессии:
+- `git push origin main` → «Permission … has been denied»;
+- `git push --force-with-lease origin <ветка>` → отказ;
+- обычный `git push -u origin <ветка>` проходит.
 
 По документации Bash-правила сопоставляются с текстом команды и не являются полной границей безопасности. Например, `git -C . push origin main` или `git push` без аргументов на ветке `main` они не ловят. Полный PreToolUse-хук появится в Фазе 4, детектирующий workflow `main-guard` — в Фазе 5 ([ADR-0002](../adr/0002-main-protection-without-rulesets.md)).
 

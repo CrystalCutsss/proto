@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // pnpm site:preview [--port 4173] — serve dist/site with the production URL scheme.
-// Set PROTO_PREVIEW_PASSWORD to require HTTP Basic auth (any user name).
+// Set PROTO_PREVIEW_PASSWORD to turn on the production login (same Worker code, ADR-0015).
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -21,5 +21,5 @@ const url = await listen(
   '0.0.0.0',
 );
 console.log(
-  `site:preview → ${url.replace('0.0.0.0', 'localhost')}${process.env.PROTO_PREVIEW_PASSWORD ? ' (Basic auth on)' : ''}`,
+  `site:preview → ${url.replace('0.0.0.0', 'localhost')}${process.env.PROTO_PREVIEW_PASSWORD ? ' (login on)' : ''}`,
 );

@@ -20,9 +20,18 @@ export async function takePreviews(out, registry) {
   if (!existsSync(chromium.executablePath()))
     return { taken: 0, skipped: `no browser at ${chromium.executablePath()}` };
 
+  let browser;
+  try {
+    browser = await chromium.launch();
+  } catch (err) {
+    // e.g. Workers Builds image without the browser's system libraries
+    return {
+      taken: 0,
+      skipped: `browser failed to start: ${/** @type {Error} */ (err).message.split('\n')[0]}`,
+    };
+  }
   const server = createSiteServer(out);
   const base = await listen(server);
-  const browser = await chromium.launch();
   let taken = 0;
   try {
     const context = await browser.newContext({

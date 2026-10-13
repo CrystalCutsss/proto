@@ -50,6 +50,8 @@ pnpm registry:validate
   `site-router`, `build-kit`, `proto-shell`, `figma-bridge`.
 - `apps/hub` — catalogue and version comparison. `templates/` — prototype templates.
 - `tools/` — `proto-cli`, `site`, `drive`, `stylelint`. `config/` — Drive IDs, env placeholders.
+- `infra/worker` + `wrangler.jsonc` — hosting Worker (password login, ADR-0015); `site:preview` runs the same
+  handler, so test auth locally with `PROTO_PREVIEW_PASSWORD=… pnpm site:preview`.
 
 ## How to work
 

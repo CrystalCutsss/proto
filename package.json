@@ -34,6 +34,7 @@
     "@proto/figma-bridge": "workspace:*",
     "@proto/registry": "workspace:*",
     "@proto/site-router": "workspace:*",
+    "@proto/worker": "workspace:*",
     "@types/node": "22.20.5",
     "eslint": "10.12.0",
     "eslint-config-prettier": "10.1.8",
@@ -43,6 +44,7 @@
     "stylelint-config-standard": "40.0.0",
     "turbo": "2.11.7",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.71.2"
+    "typescript-eslint": "8.71.2",
+    "wrangler": "4.147.0"
   }
 }

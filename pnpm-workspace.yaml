@@ -2,6 +2,7 @@
 packages:
   - apps/*
   - packages/*
+  - infra/*
   - prototypes/*/versions/*
   - prototypes/*/shared
 

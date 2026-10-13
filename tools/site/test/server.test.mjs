@@ -7,8 +7,9 @@ import { createSiteServer, listen } from '../lib/server.mjs';
 
 let root = '';
 let base = '';
-/** @type {import('node:http').Server} */
-let server;
+let open = '';
+/** @type {import('node:http').Server[]} */
+const servers = [];
 
 before(async () => {
   root = mkdtempSync(join(tmpdir(), 'site-'));
@@ -35,24 +36,43 @@ before(async () => {
       ],
     }),
   );
-  server = createSiteServer(root, { password: 'pw' });
-  base = await listen(server);
+  const locked = createSiteServer(root, { password: 'pw' });
+  const unlocked = createSiteServer(root);
+  servers.push(locked, unlocked);
+  base = await listen(locked);
+  open = await listen(unlocked);
 });
 after(() => {
-  server.close();
+  servers.forEach((s) => s.close());
   rmSync(root, { recursive: true, force: true });
 });
 
-const auth = { Authorization: `Basic ${Buffer.from('any:pw').toString('base64')}` };
+/** Log in through the form, like a browser. */
+async function session() {
+  const res = await fetch(`${base}/_auth/login`, {
+    method: 'POST',
+    body: new URLSearchParams({ password: 'pw', next: '/' }),
+    redirect: 'manual',
+  });
+  assert.equal(res.status, 303);
+  return { Cookie: (res.headers.get('set-cookie') ?? '').split(';')[0] ?? '' };
+}
 
-test('requires the password when configured', async () => {
+test('the Worker login guards the local server when a password is set', async () => {
   assert.equal((await fetch(`${base}/`)).status, 401);
-  const wrong = { Authorization: `Basic ${Buffer.from('any:nope').toString('base64')}` };
-  assert.equal((await fetch(`${base}/`, { headers: wrong })).status, 401);
-  assert.equal(await (await fetch(`${base}/`, { headers: auth })).text(), 'hub');
+  const wrong = await fetch(`${base}/_auth/login`, {
+    method: 'POST',
+    body: new URLSearchParams({ password: 'nope' }),
+    redirect: 'manual',
+  });
+  assert.equal(wrong.status, 401);
+  const cookie = await session();
+  assert.match(cookie.Cookie, /^proto_session=v1\.site\./);
+  assert.equal(await (await fetch(`${base}/`, { headers: cookie })).text(), 'hub');
 });
 
 test('redirects, serves versions and falls back for history routing', async () => {
+  const auth = await session();
   const r = await fetch(`${base}/p/a/?x=1`, { headers: auth, redirect: 'manual' });
   assert.equal(r.status, 302);
   assert.equal(r.headers.get('location'), '/p/a/v1/?x=1');
@@ -61,6 +81,12 @@ test('redirects, serves versions and falls back for history routing', async () =
 });
 
 test('blocks traversal and non-GET methods', async () => {
+  const auth = await session();
   assert.equal((await fetch(`${base}/p/a/v1/%2e%2e/%2e%2e/secret.txt`, { headers: auth })).status, 404);
-  assert.equal((await fetch(`${base}/`, { method: 'POST', headers: auth })).status, 405);
+  assert.equal((await fetch(`${base}/p/a/v1/..%2f..%2fsecret.txt`, { headers: auth })).status, 404);
+  assert.equal((await fetch(`${base}/`, { method: 'PUT', headers: auth })).status, 405);
+});
+
+test('without a password the local preview is open (never used for hosting)', async () => {
+  assert.equal(await (await fetch(`${open}/`)).text(), 'hub');
 });

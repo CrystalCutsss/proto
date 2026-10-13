@@ -3,6 +3,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const port = 4321;
+export const authPort = 4322;
+export const AUTH_PASSWORD = 'e2e-password';
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -16,10 +18,20 @@ export default defineConfig({
     trace: 'retain-on-failure',
     ...devices['Desktop Chrome'],
   },
-  webServer: {
-    command: `node tools/site/preview.mjs --port ${port}`,
-    url: `http://127.0.0.1:${port}/registry.json`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 20_000,
-  },
+  webServer: [
+    {
+      command: `node tools/site/preview.mjs --port ${port}`,
+      url: `http://127.0.0.1:${port}/registry.json`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 20_000,
+    },
+    {
+      // Same Worker code with the login on (ADR-0015): tests/e2e/auth.spec.ts.
+      command: `node tools/site/preview.mjs --port ${authPort}`,
+      env: { PROTO_PREVIEW_PASSWORD: AUTH_PASSWORD },
+      url: `http://127.0.0.1:${authPort}/robots.txt`,
+      reuseExistingServer: !process.env.CI,
+      timeout: 20_000,
+    },
+  ],
 });

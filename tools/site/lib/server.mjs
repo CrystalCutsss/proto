@@ -1,11 +1,14 @@
-// Static server for dist/site using the shared URL scheme (@proto/site-router), for site:preview,
-// hub screenshots and Playwright smoke tests. Auth hook: HTTP Basic when PROTO_PREVIEW_PASSWORD is set;
-// the real login (HMAC cookie) arrives with the Worker in Phase 5 and will plug in here.
-import { timingSafeEqual } from 'node:crypto';
+// Node adapter for the hosting Worker (infra/worker, ADR-0015): serves dist/site through exactly the same
+// request handler as Cloudflare — login, session cookies, URL scheme (@proto/site-router) and headers.
+// Used by site:preview, hub screenshots, Playwright smoke tests and the visual-qa agent.
+//   - with { password }: auth on, like production (a random COOKIE_SECRET per process unless given);
+//   - without: open local preview (auth off) — never used for hosting.
+import { randomBytes } from 'node:crypto';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { extname, join, normalize, sep } from 'node:path';
-import { route, securityHeaders } from '@proto/site-router';
+import { Readable } from 'node:stream';
+import { handle } from '@proto/worker';
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -32,79 +35,61 @@ const TYPES = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
-/** @param {string} a @param {string} b */
-const safeEqual = (a, b) => {
-  const x = Buffer.from(a);
-  const y = Buffer.from(b);
-  return x.length === y.length && timingSafeEqual(x, y);
-};
-
 /**
- * @param {import('node:http').IncomingMessage} req
- * @param {string | undefined} password
+ * Static assets binding over a directory, like Workers Static Assets with html_handling "none" and
+ * not_found_handling "none": exact paths only, 404 otherwise.
+ * @param {string} root
  */
-export function authorized(req, password) {
-  if (!password) return true;
-  const header = req.headers.authorization ?? '';
-  if (!header.startsWith('Basic ')) return false;
-  const decoded = Buffer.from(header.slice(6), 'base64').toString('utf8');
-  return safeEqual(decoded.slice(decoded.indexOf(':') + 1), password);
+export function directoryAssets(root) {
+  const base = normalize(root + sep);
+  return {
+    /** @param {Request} request */
+    async fetch(request) {
+      const file = normalize(join(root, decodeURIComponent(new URL(request.url).pathname)));
+      if (!file.startsWith(base) || !existsSync(file) || !statSync(file).isFile()) {
+        return new Response('Not found', { status: 404 });
+      }
+      const type = /** @type {Record<string, string>} */ (TYPES)[extname(file).toLowerCase()];
+      return new Response(readFileSync(file), {
+        headers: { 'Content-Type': type ?? 'application/octet-stream' },
+      });
+    },
+  };
 }
 
 /**
  * @param {string} root dist/site
- * @param {{ password?: string }} [opts]
+ * @param {{ password?: string, cookieSecret?: string, prototypePasswords?: Record<string, string> }} [opts]
  */
 export function createSiteServer(root, opts = {}) {
-  const base = normalize(root + sep);
-  /** @param {string} urlPath */
-  const fileFor = (urlPath) => {
-    const file = normalize(join(root, urlPath));
-    if (!file.startsWith(base)) return null;
-    return existsSync(file) && statSync(file).isFile() ? file : null;
+  const auth = Boolean(opts.password);
+  const env = {
+    ASSETS: directoryAssets(root),
+    SITE_PASSWORD: opts.password,
+    COOKIE_SECRET: opts.cookieSecret ?? randomBytes(32).toString('hex'),
+    PROTOTYPE_PASSWORDS: JSON.stringify(opts.prototypePasswords ?? {}),
   };
-  const registry = () => JSON.parse(readFileSync(join(root, 'registry.json'), 'utf8'));
-  let cached = registry();
-
-  return createServer((req, res) => {
-    if (!authorized(req, opts.password)) {
-      res.writeHead(401, {
-        'WWW-Authenticate': 'Basic realm="proto", charset="UTF-8"',
-        'Cache-Control': 'no-store',
+  return createServer(async (req, res) => {
+    try {
+      const headers = new Headers();
+      for (const [name, value] of Object.entries(req.headers)) {
+        if (typeof value === 'string') headers.set(name, value);
+        else if (Array.isArray(value)) headers.set(name, value.join(', '));
+      }
+      const hasBody = req.method !== 'GET' && req.method !== 'HEAD';
+      const request = new Request(`http://${req.headers.host ?? 'localhost'}${req.url ?? '/'}`, {
+        method: req.method,
+        headers,
+        ...(hasBody ? { body: /** @type {any} */ (Readable.toWeb(req)), duplex: 'half' } : {}),
       });
-      res.end('Authentication required');
-      return;
+      // Registry is re-read on every request: the local site may be rebuilt while the server runs.
+      const response = await handle(request, env, { auth, cacheRegistry: false });
+      res.writeHead(response.status, Object.fromEntries(response.headers));
+      res.end(response.body ? Buffer.from(await response.arrayBuffer()) : undefined);
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end(`site server error: ${/** @type {Error} */ (err).message}`);
     }
-    if (req.method !== 'GET' && req.method !== 'HEAD') {
-      res.writeHead(405, { Allow: 'GET, HEAD' });
-      res.end();
-      return;
-    }
-    const url = new URL(req.url ?? '/', 'http://localhost');
-    if (url.pathname === '/registry.json') cached = registry();
-    const decision = route(url.pathname, url.search, cached);
-    if (decision.type === 'redirect') {
-      res.writeHead(decision.status, { Location: decision.location, 'Cache-Control': 'private, no-cache' });
-      res.end();
-      return;
-    }
-    const file =
-      decision.type === 'asset'
-        ? (fileFor(decision.path) ?? (decision.fallback ? fileFor(decision.fallback) : null))
-        : null;
-    if (!file) {
-      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8', ...securityHeaders('no-cache') });
-      res.end('Not found');
-      return;
-    }
-    const cache = decision.type === 'asset' ? decision.cache : 'no-cache';
-    res.writeHead(200, {
-      'Content-Type':
-        /** @type {Record<string, string>} */ (TYPES)[extname(file).toLowerCase()] ??
-        'application/octet-stream',
-      ...securityHeaders(cache),
-    });
-    res.end(req.method === 'HEAD' ? undefined : readFileSync(file));
   });
 }
 

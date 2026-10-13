@@ -1,4 +1,5 @@
-# Copy the DS folder from Google Drive into design-system/source and update source.lock.json. ADR-0008.
+# Copy the DS folder from Google Drive into design-system/source and update source.lock.json. ADR-0008, ADR-0013.
+# Figma sources (*.fig, sync.copyExclude) are not copied: tokens come from the JSON the owner exports into DS/tokens.
 # Drive is the source and is only read (drive.readonly scope); `rclone sync` changes the runner's temp dir only.
 name: ds-sync
 
@@ -63,7 +64,10 @@ jobs:
             --filter-from "$(jq -r .sync.filterFile "$cfg")"
           )
           "$RCLONE" lsjson :drive: -R --files-only --hash --hash-type md5 --original "${common[@]}" > "$RUNNER_TEMP/lsjson.json"
-          "$RCLONE" sync :drive: "$target" "${common[@]}" --max-size "$(jq -r .sync.maxFileSizeBytes "$cfg")B" --checksum --stats-one-line -v
+          # Files listed in sync.copyExclude (Figma sources) stay in Drive; the lock still lists them.
+          exclude=()
+          while IFS= read -r glob; do exclude+=(--exclude "$glob"); done < <(jq -r '.sync.copyExclude // [] | .[]' "$cfg")
+          "$RCLONE" sync :drive: "$target" "${common[@]}" "${exclude[@]}" --max-size "$(jq -r .sync.maxFileSizeBytes "$cfg")B" --checksum --stats-one-line -v
           node tools/drive/cli.mjs lock \
             --lsjson "$RUNNER_TEMP/lsjson.json" \
             --out "$out/$(jq -r .sync.lockFile "$cfg")" \

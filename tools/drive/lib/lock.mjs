@@ -1,17 +1,30 @@
-// source.lock.json: what ds-sync copied from DS, built from `rclone lsjson` output.
+// source.lock.json: every file of DS (copied or not), built from `rclone lsjson` output.
 // ds-check compares a fresh listing with the lock to detect drift.
 
-export function normalizeLsjson(entries, { maxFileSizeBytes }) {
+/** rclone-style basename glob (`*.fig`, `~$*`) → RegExp. */
+export function globToRegExp(glob) {
+  const re = glob.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[^/]*').replace(/\?/g, '[^/]');
+  return new RegExp(`(^|/)${re}$`);
+}
+
+// Every DS file goes into the lock, so ds-check notices any change in Drive. Files that ds-sync does not copy
+// into the repository carry `copied: false` and a reason: matched sync.copyExclude (e.g. Figma sources *.fig,
+// which stay in Drive) or larger than sync.maxFileSizeBytes.
+export function normalizeLsjson(entries, { maxFileSizeBytes, copyExclude = [] }) {
+  const excluded = copyExclude.map(globToRegExp);
   const files = [];
-  const skipped = [];
   for (const e of entries) {
     if (e.IsDir) continue;
     const f = { path: e.Path, id: e.ID ?? null, size: e.Size, mimeType: e.MimeType ?? null, modTime: e.ModTime };
     if (e.Hashes?.md5) f.md5 = e.Hashes.md5;
-    (e.Size > maxFileSizeBytes ? skipped : files).push(f);
+    if (excluded.some((re) => re.test(e.Path))) Object.assign(f, { copied: false, reason: 'excluded' });
+    else if (e.Size > maxFileSizeBytes) Object.assign(f, { copied: false, reason: 'too-large' });
+    else f.copied = true;
+    files.push(f);
   }
   const byPath = (a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
-  return { files: files.sort(byPath), skipped: skipped.sort(byPath) };
+  files.sort(byPath);
+  return { files, skipped: files.filter((f) => !f.copied) };
 }
 
 export function buildLock(dsFolderId, files) {

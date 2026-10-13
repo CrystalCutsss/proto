@@ -38,5 +38,11 @@ export default tseslint.config(
     ],
     languageOptions: { globals: { ...globals.node } },
   },
+  {
+    // Vendored CommonJS hooks (ADR-0007): kept as upstream wrote them, so only the environment is declared.
+    files: ['.claude/hooks/vendor/*.cjs'],
+    languageOptions: { sourceType: 'commonjs', globals: { ...globals.node } },
+    rules: { '@typescript-eslint/no-unused-vars': 'off', '@typescript-eslint/no-require-imports': 'off' },
+  },
   prettier,
 );

@@ -76,15 +76,16 @@ runs:
       if: inputs.install-rclone == 'true'
       shell: bash
       env:
-        RCLONE_VERSION: '1.75.2'
-        RCLONE_SHA256: 349ac8fba6ff65d6247043f1750cdcb518ec5d500ef91463a10d37c0ccdf3702
+        # Not RCLONE_*: rclone reads every RCLONE_<FLAG> variable as a flag (RCLONE_VERSION would set --version).
+        RELEASE_VERSION: '1.75.2'
+        RELEASE_SHA256: 349ac8fba6ff65d6247043f1750cdcb518ec5d500ef91463a10d37c0ccdf3702
       run: |
         set -euo pipefail
         dir="$RUNNER_TEMP/rclone"
         mkdir -p "$dir/bin"
         curl -fsSL -o "$dir/rclone.zip" \
-          "https://github.com/rclone/rclone/releases/download/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-amd64.zip"
-        echo "${RCLONE_SHA256}  $dir/rclone.zip" | sha256sum -c -
+          "https://github.com/rclone/rclone/releases/download/v${RELEASE_VERSION}/rclone-v${RELEASE_VERSION}-linux-amd64.zip"
+        echo "${RELEASE_SHA256}  $dir/rclone.zip" | sha256sum -c -
         unzip -q -j "$dir/rclone.zip" "*/rclone" -d "$dir/bin"
         "$dir/bin/rclone" version | head -1
         echo "path=$dir/bin/rclone" >> "$GITHUB_OUTPUT"

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createDriveClient, assertDriveId, FOLDER, SHORTCUT } from '../lib/drive-api.mjs';
@@ -151,4 +151,23 @@ test('inbox: validates slug and version, refuses frozen versions', () => {
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'version.json'), JSON.stringify({ status: 'frozen' }));
   assert.throws(() => inboxTarget(root, 'a', 'v1'), /frozen/);
+});
+
+test('workflows never set RCLONE_* variables (rclone reads them as flags)', () => {
+  const root = join(import.meta.dirname, '..', '..', '..', '.github');
+  const files = [];
+  const walk = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (e.isDirectory()) walk(join(dir, e.name));
+      else if (/\.ya?ml$/.test(e.name)) files.push(join(dir, e.name));
+    }
+  };
+  walk(root);
+  const offenders = files.flatMap((f) =>
+    readFileSync(f, 'utf8')
+      .split('\n')
+      .filter((l) => /^\s+RCLONE_[A-Z0-9_]+\s*:/.test(l))
+      .map((l) => `${f}: ${l.trim()}`),
+  );
+  assert.deepEqual(offenders, []);
 });

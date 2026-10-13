@@ -1,0 +1,92 @@
+# Read the DS folder in Google Drive and open a PR with design-system/inventory.json. ADR-0008.
+# The job that talks to Google has no write access to the repository; the PR job has no Google access.
+name: drive-inventory
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: drive-inventory
+  cancel-in-progress: false
+
+jobs:
+  read:
+    name: Read Drive
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - id: drive
+        uses: ./.github/actions/drive-setup
+        with:
+          wif-provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service-account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          sa-key-json: ${{ secrets.GCP_SA_KEY_JSON }}
+
+      - name: Preflight
+        env:
+          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.drive.outputs.access-token }}
+        run: node tools/drive/cli.mjs preflight
+
+      - name: Inventory
+        env:
+          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.drive.outputs.access-token }}
+        run: |
+          out="$RUNNER_TEMP/out"
+          node tools/drive/cli.mjs inventory --out "$out/$(jq -r .sync.inventoryFile config/drive.json)"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: inventory
+          path: ${{ runner.temp }}/out/
+          if-no-files-found: error
+          retention-days: 3
+
+  pr:
+    name: Open PR
+    needs: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: inventory
+          path: .
+
+      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          branch: drive/inventory
+          delete-branch: true
+          add-paths: design-system/inventory.json
+          commit-message: 'chore(ds): update DS inventory from Drive'
+          title: 'chore(ds): DS inventory from Drive'
+          body: |
+            Automated by the `drive-inventory` workflow (read-only access to Google Drive, ADR-0008).
+
+            The readable summary is in the workflow run summary: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            CI does not run on PRs created with GITHUB_TOKEN; this workflow validated the data itself.
+          labels: drive

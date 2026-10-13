@@ -1,0 +1,113 @@
+# Copy the DS folder from Google Drive into design-system/source and update source.lock.json. ADR-0008.
+# Drive is the source and is only read (drive.readonly scope); `rclone sync` changes the runner's temp dir only.
+name: ds-sync
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ds-sync
+  cancel-in-progress: false
+
+jobs:
+  read:
+    name: Copy DS from Drive
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - id: drive
+        uses: ./.github/actions/drive-setup
+        with:
+          wif-provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service-account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          sa-key-json: ${{ secrets.GCP_SA_KEY_JSON }}
+          install-rclone: 'true'
+
+      - name: Preflight
+        env:
+          GOOGLE_OAUTH_ACCESS_TOKEN: ${{ steps.drive.outputs.access-token }}
+        run: node tools/drive/cli.mjs preflight
+
+      - name: Copy DS and build the lock
+        env:
+          RCLONE: ${{ steps.drive.outputs.rclone }}
+        run: |
+          set -euo pipefail
+          cfg=config/drive.json
+          out="$RUNNER_TEMP/out"
+          target="$out/$(jq -r .sync.targetDir "$cfg")"
+          mkdir -p "$target"
+          common=(
+            --drive-env-auth
+            --drive-scope drive.readonly
+            --drive-root-folder-id "$(jq -r .dsFolderId "$cfg")"
+            --drive-export-formats "$(jq -r .sync.exportFormats "$cfg")"
+            --drive-skip-shortcuts
+            --filter-from "$(jq -r .sync.filterFile "$cfg")"
+          )
+          "$RCLONE" lsjson :drive: -R --files-only --hash --hash-type md5 --original "${common[@]}" > "$RUNNER_TEMP/lsjson.json"
+          "$RCLONE" sync :drive: "$target" "${common[@]}" --max-size "$(jq -r .sync.maxFileSizeBytes "$cfg")B" --checksum --stats-one-line -v
+          node tools/drive/cli.mjs lock \
+            --lsjson "$RUNNER_TEMP/lsjson.json" \
+            --out "$out/$(jq -r .sync.lockFile "$cfg")" \
+            --previous "$(jq -r .sync.lockFile "$cfg")" \
+            --report "$RUNNER_TEMP/report.md"
+          mkdir -p "$out/.report" && cp "$RUNNER_TEMP/report.md" "$out/.report/report.md"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ds-source
+          path: ${{ runner.temp }}/out/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 3
+
+  pr:
+    name: Open PR
+    needs: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Remove the previous copy so deletions in Drive reach the PR
+        run: rm -rf "$(jq -r .sync.targetDir config/drive.json)"
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ds-source
+          path: .
+
+      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          branch: drive/ds-sync
+          delete-branch: true
+          add-paths: |
+            design-system/source
+            design-system/source.lock.json
+          commit-message: 'chore(ds): sync from Drive'
+          title: 'chore(ds): sync from Drive'
+          body-path: .report/report.md
+          labels: drive

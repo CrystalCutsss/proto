@@ -1,0 +1,10 @@
+# Filter for copying DS from Google Drive (rclone filter syntax: https://rclone.org/filtering/).
+# Used by ds-sync and ds-check, so the lock and the drift check see the same set of files.
+# Rules apply top to bottom; the first match wins.
+- .DS_Store
+- Thumbs.db
+- desktop.ini
+- ~$*
+- *.tmp
+- *.bak
++ **

@@ -25,3 +25,6 @@
 | ID папок и документов Drive | [`config/drive.json`](config/drive.json) |
 | Параметры, которые станут известны позже (секретов нет) | [`config/env.example.json`](config/env.example.json) |
 | Setup-скрипт облачного окружения | [`tools/cloud/setup-script.sh`](tools/cloud/setup-script.sh) |
+| Workflows Drive → репозиторий (ADR-0008): drive-inventory, ds-sync, ds-check, drive-inbox | [`.github/workflows/`](.github/workflows/) |
+| Инструменты для них: read-only клиент Drive API, lock, проверки | [`tools/drive/`](tools/drive/) |
+| Правила копирования DS | [`config/drive.json`](config/drive.json) → `sync`, [`config/ds-filter.txt`](config/ds-filter.txt) |

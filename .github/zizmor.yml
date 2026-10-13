@@ -1,0 +1,7 @@
+# zizmor configuration (https://docs.zizmor.sh/configuration/).
+rules:
+  # The `uses: $/...` self-repository syntax (GitHub, 2026-07) is not yet understood by actionlint 1.7.12,
+  # which CI also runs. Local actions are loaded right after actions/checkout of the same commit, and no
+  # step before them writes into the workspace. Revisit when actionlint supports the syntax.
+  self-repository:
+    disable: true

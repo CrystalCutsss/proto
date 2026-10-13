@@ -1,0 +1,107 @@
+/* Base components of the design system. Every design value comes from --ds-* tokens. */
+@import '@fontsource-variable/inter/wght.css';
+@import '@proto/tokens/tokens.css';
+
+.ds-root {
+  margin: 0;
+  font-family: var(--ds-font-family-sans);
+  font-size: var(--ds-font-size-md);
+  line-height: var(--ds-font-line-height-normal);
+  color: var(--ds-color-fg-default);
+  background: var(--ds-color-bg-subtle);
+}
+
+.ds-heading {
+  margin: 0;
+  font-size: var(--ds-font-size-xl);
+  font-weight: var(--ds-font-weight-bold);
+  line-height: var(--ds-font-line-height-tight);
+}
+
+.ds-muted {
+  color: var(--ds-color-fg-muted);
+}
+
+.ds-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-4);
+}
+
+.ds-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2);
+  align-items: center;
+}
+
+.ds-button {
+  display: inline-flex;
+  gap: var(--ds-space-2);
+  align-items: center;
+  padding: var(--ds-space-2) var(--ds-space-4);
+  border: 1px solid transparent;
+  border-radius: var(--ds-radius-md);
+  font: inherit;
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--ds-color-fg-inverse);
+  text-decoration: none;
+  background: var(--ds-color-action-primary);
+  cursor: pointer;
+  transition: background-color var(--ds-motion-duration-fast) var(--ds-motion-easing-standard);
+}
+
+.ds-button:hover {
+  background: var(--ds-color-action-primary-hover);
+}
+
+.ds-button[data-variant='ghost'] {
+  border-color: var(--ds-color-border-default);
+  color: var(--ds-color-fg-default);
+  background: transparent;
+}
+
+.ds-input {
+  width: 100%;
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border: 1px solid var(--ds-color-border-default);
+  border-radius: var(--ds-radius-md);
+  font: inherit;
+  color: inherit;
+  background: var(--ds-color-bg-default);
+}
+
+.ds-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-4);
+  border: 1px solid var(--ds-color-border-default);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-color-bg-default);
+  box-shadow: var(--ds-shadow-card);
+}
+
+.ds-tag {
+  padding: var(--ds-space-1) var(--ds-space-3);
+  border: 1px solid var(--ds-color-border-default);
+  border-radius: var(--ds-radius-full);
+  font: inherit;
+  font-size: var(--ds-font-size-sm);
+  color: var(--ds-color-fg-default);
+  background: var(--ds-color-bg-default);
+  cursor: pointer;
+}
+
+.ds-tag[aria-pressed='true'] {
+  border-color: var(--ds-color-action-primary);
+  color: var(--ds-color-fg-inverse);
+  background: var(--ds-color-action-primary);
+}
+
+.ds-button:focus-visible,
+.ds-input:focus-visible,
+.ds-tag:focus-visible {
+  outline: var(--ds-border-width-focus) solid var(--ds-color-border-focus);
+  outline-offset: 2px;
+}

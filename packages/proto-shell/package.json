@@ -1,0 +1,24 @@
+{
+  "name": "@proto/proto-shell",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Service panel injected into every prototype version at runtime: version switcher, changelog, design source (ADR-0011).",
+  "exports": {
+    "./package.json": "./package.json",
+    "./switch": "./src/switch.ts"
+  },
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@proto/registry": "workspace:*",
+    "@proto/tokens": "workspace:*",
+    "happy-dom": "21.0.1",
+    "typescript": "6.0.3",
+    "vite": "8.3.4",
+    "vitest": "5.0.4"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "proto",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "node tools/proto-cli/cli.mjs dev",
+    "proto:new": "node tools/proto-cli/cli.mjs new",
+    "proto:version": "node tools/proto-cli/cli.mjs version",
+    "proto:freeze": "node tools/proto-cli/cli.mjs freeze",
+    "proto:list": "node tools/proto-cli/cli.mjs list",
+    "proto:spec": "node tools/proto-cli/cli.mjs spec",
+    "registry:validate": "node tools/proto-cli/cli.mjs registry --check",
+    "registry:build": "node tools/proto-cli/cli.mjs registry --out dist/registry.json",
+    "site:build": "node tools/site/build.mjs",
+    "site:preview": "node tools/site/preview.mjs",
+    "build": "turbo run build",
+    "lint": "pnpm run lint:js && pnpm run lint:css && pnpm run format:check",
+    "lint:js": "eslint .",
+    "lint:css": "stylelint \"**/*.css\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "turbo run typecheck && tsc -p tsconfig.tools.json",
+    "test": "turbo run test && node --test \"tools/**/*.test.mjs\" .claude/hooks/drive-guard.test.mjs",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.56.1",
+    "@proto/build-kit": "workspace:*",
+    "@proto/figma-bridge": "workspace:*",
+    "@proto/registry": "workspace:*",
+    "@proto/site-router": "workspace:*",
+    "@types/node": "22.20.5",
+    "eslint": "10.12.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.13.0",
+    "prettier": "3.9.10",
+    "stylelint": "17.16.0",
+    "stylelint-config-standard": "40.0.0",
+    "turbo": "2.11.7",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2"
+  }
+}

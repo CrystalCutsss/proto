@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proto.local/schemas/version.schema.json",
+  "title": "version.json",
+  "description": "Version metadata: prototypes/<slug>/versions/<vN>/version.json (ADR-0009, ADR-0010).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "date", "author", "status", "changelog"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "type": "string", "pattern": "^v[1-9][0-9]{0,3}$" },
+    "title": { "type": "string", "maxLength": 120, "description": "Optional human-readable name." },
+    "date": { "type": "string", "format": "date" },
+    "author": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "changelog": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "maxLength": 500 },
+      "maxItems": 100
+    },
+    "status": { "enum": ["draft", "review", "frozen"] },
+    "baseVersion": {
+      "description": "Version this one was copied from.",
+      "type": ["string", "null"],
+      "pattern": "^v[1-9][0-9]{0,3}$"
+    },
+    "designSource": { "anyOf": [{ "$ref": "#/$defs/designSource" }, { "type": "null" }] },
+    "routing": {
+      "description": "hash (default): screens are #/path; history: real paths with SPA fallback on the host.",
+      "enum": ["hash", "history"],
+      "default": "hash"
+    },
+    "routes": {
+      "description": "Known screens (hash or path, e.g. \"#/checkout\"). The shell keeps the current screen when switching versions only if the target version lists it.",
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(#?/)[^\\s]*$", "maxLength": 200 },
+      "uniqueItems": true,
+      "maxItems": 500
+    }
+  },
+  "$defs": {
+    "designSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "description": "inbox: Proto/Inbox in Drive (design-input/); figma: Figma file (TODO(connect-figma)); other: any link.",
+          "enum": ["inbox", "figma", "other"]
+        },
+        "url": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "note": { "type": "string", "maxLength": 500 }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@proto/figma-bridge",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Design source interface → platform-neutral version spec. Adapters: fixture (design-input/, works now) and mcp (TODO(connect-figma)).",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "typescript": "6.0.3",
+    "vitest": "5.0.4"
+  }
+}

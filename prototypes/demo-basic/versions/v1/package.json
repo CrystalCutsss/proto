@@ -1,0 +1,22 @@
+{
+  "name": "@proto/demo-basic--v1",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "proto-frozen-build",
+    "typecheck": "proto-frozen-build --check",
+    "build:source": "vite build",
+    "typecheck:source": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@proto/tokens": "workspace:*",
+    "@proto/ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@proto/build-kit": "workspace:*",
+    "typescript": "6.0.3",
+    "vite": "8.3.4"
+  }
+}

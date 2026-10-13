@@ -1,0 +1,10 @@
+{
+  "$schema": "../../packages/registry/schemas/prototype.schema.json",
+  "title": "Демо: three.js + GSAP",
+  "description": "Пример на шаблоне three-gsap.",
+  "owner": "Claude",
+  "tags": ["example", "three"],
+  "status": "active",
+  "defaultVersion": "latest",
+  "separatePassword": false
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@proto/{{slug}}--{{version}}",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@proto/tokens": "workspace:*",
+    "@proto/ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@proto/build-kit": "workspace:*",
+    "typescript": "6.0.3",
+    "vite": "8.3.4"
+  }
+}

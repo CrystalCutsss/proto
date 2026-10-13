@@ -1,0 +1,10 @@
+{
+  "$schema": "../../packages/registry/schemas/prototype.schema.json",
+  "title": "Демо: базовый",
+  "description": "Пример прототипа на шаблоне vanilla-ts: hash-роутинг, компоненты @proto/ui.",
+  "owner": "Claude",
+  "tags": ["example", "basic"],
+  "status": "active",
+  "defaultVersion": "latest",
+  "separatePassword": false
+}

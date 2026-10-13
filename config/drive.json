@@ -1,0 +1,25 @@
+{
+  "$comment": "Google Drive layout used by workflows and by the drive-guard hook. Folder and file IDs are identifiers, not secrets. DS is read-only forever; Claude may write only inside Proto/Docs (ADR-0004).",
+  "protoFolderId": "1jHuvR1pGrlAIBWu1CMIFACy-ropvYr5C",
+  "dsFolderId": "1c3nATguttXvKvECGx8fexFUnMetjoEnj",
+  "inboxFolderName": "Inbox",
+  "docs": {
+    "$comment": "Proto/Docs: the single home of project documentation. folderId and subfolder IDs are filled when the folders are created; files maps a stable key to a Google Doc ID.",
+    "folderName": "Docs",
+    "folderId": "1zfQ2nnjGQ3SxL9K0iDkOIooy-JXEsLr5",
+    "folders": {
+      "adr": "1z4wBc7y620dA1qfYLg3QCnd165ngSuud",
+      "setup": "16hrCIGJPFY9xtIVcs83YbsTNoxY1bGj9"
+    },
+    "files": {
+      "status": "1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E",
+      "adr-0001": "1T_yRL2YZuRtHZFnfuoFe_QOvI9ExYXAk9OGizMFeoDU",
+      "adr-0002": "1tjgVJjib25tBJxjG9vx4CiosAV8VLu0OMK1MfNCibPs",
+      "adr-0003": "1H2N-T6pqbGZUDgt1v9gGkBu0b7obZIH1Z7IEwa4Z3hI",
+      "adr-0004": "1_6PTd11c-if4Jx3Ro_XCmP33hjRGII7BDZCyMIhTwr0",
+      "adr-index": "1yJ8KfZR3pa1igvAUaJiTIulGIwtfM9PVQOC42EB0pqY",
+      "setup-cloud-environment": "15r_LcMr9Hvimfm7y-BzfPRtFvAP6Q2Lc3vR8HKyg4Fg",
+      "setup-audit-phase0": "1omSC9UEg4ISiO49BqLRSrYpH8mN-8sKrw-ll1ajrTwI"
+    }
+  }
+}

@@ -30,7 +30,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.mjs', '**/*.config.{js,ts}', 'tools/**', 'packages/{registry,site-router,build-kit}/**'],
+    files: ['**/*.mjs', '**/*.config.{js,ts}', 'tools/**', 'packages/{registry,site-router,build-kit,fonts,tokens}/**'],
     languageOptions: { globals: { ...globals.node } },
   },
   prettier,

@@ -18,6 +18,11 @@ const dist = join(here, 'dist');
  * internal family name differs are mapped here.
  */
 const FAMILY_ALIASES = { 'Neue Haas Unica W1G Medium': 'Neue Haas Unica W1G' };
+/**
+ * Token font families that are deliberately not shipped as web fonts: their system fallbacks are used.
+ * The owner decided JetBrains Mono and Open Runde are not needed for prototypes.
+ */
+const NOT_SHIPPED = [/^SF Pro/, /^JetBrains Mono$/, /^Open Runde$/];
 /** Apple's SF Pro license forbids web embedding; Apple devices already render it as -apple-system. */
 const EXCLUDE = [/^SF[- ]Pro/i, /^\./];
 
@@ -112,7 +117,9 @@ if (existsSync(tokensDir)) {
   for (const f of readdirSync(tokensDir).filter((n) => n.endsWith('.tokens.json')))
     collect(JSON.parse(readFileSync(join(tokensDir, f), 'utf8')));
 }
-const missing = [...wanted].filter((f) => !families.includes(f) && !/^SF Pro/.test(f)).sort();
+const missing = [...wanted]
+  .filter((f) => !families.includes(f) && !NOT_SHIPPED.some((re) => re.test(f)))
+  .sort();
 if (files.length && missing.length) {
   console.warn(`fonts: no web font for token families: ${missing.join(', ')} (system fallbacks are used)`);
 }

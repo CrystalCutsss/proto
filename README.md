@@ -15,16 +15,39 @@
 4. Напишите: **«Прочитай docs/STATUS.md и продолжи»**.
 5. Каждая фаза заканчивается PR. После ревью смержите его на GitHub и напишите в сессии «go».
 
+## Команды
+
+Нужны Node 22 и pnpm 10.28 (в облачной сессии уже есть). Сначала `pnpm install`.
+
+| Команда | Что делает |
+|---|---|
+| `pnpm proto:new <slug> [--template vanilla-ts\|three-gsap\|react-r3f] [--title "…"]` | Новый прототип с версией v1 из шаблона |
+| `pnpm proto:version <slug> [--from vN]` | Новая версия — копия последней (или указанной), статус draft |
+| `pnpm proto:freeze <slug> <vN>` | Заморозить версию: снимок собранного сайта в `.frozen/` (ADR-0010) |
+| `pnpm proto:list` | Список прототипов и версий |
+| `pnpm proto:spec <slug> <vN>` | `spec/spec.json` из `design-input/` |
+| `pnpm dev <slug> [vN]` | Запустить одну версию (Vite dev server, с панелью версий) |
+| `pnpm site:build` | Собрать весь сайт в `dist/site`: каталог, все версии, `registry.json`, превью |
+| `pnpm site:preview` | Отдать `dist/site` локально по схеме адресов хостинга (ADR-0012) |
+| `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e` | Проверки; `test:e2e` — Playwright по собранному сайту |
+| `pnpm registry:validate` | Проверить `prototype.json` и `version.json` всех прототипов |
+
 ## Где что лежит
 
 | Что | Где |
 |---|---|
 | Документация: STATUS, ADR, инструкции, исследования, плейбуки | Google Drive, Proto/Docs ([ADR-0004](https://docs.google.com/document/d/1_6PTd11c-if4Jx3Ro_XCmP33hjRGII7BDZCyMIhTwr0/edit)) |
 | Указатель на облачный STATUS | [`docs/STATUS.md`](docs/STATUS.md) |
+| Прототипы: `prototypes/<slug>/prototype.json`, версии в `versions/<vN>/` (ADR-0009) | [`prototypes/`](prototypes/) |
+| Каталог прототипов (корень сайта) и страница сравнения версий | [`apps/hub/`](apps/hub/) |
+| Общие пакеты: токены, UI, анимация, 3D, реестр, схема адресов, Vite-пресет, панель версий, источник дизайна | [`packages/`](packages/) |
+| Шаблоны прототипов | [`templates/`](templates/) |
+| CLI прототипов и сборка сайта | [`tools/proto-cli/`](tools/proto-cli/), [`tools/site/`](tools/site/) |
 | Настройки Claude Code: права и хуки | [`.claude/`](.claude/) |
 | ID папок и документов Drive | [`config/drive.json`](config/drive.json) |
 | Параметры, которые станут известны позже (секретов нет) | [`config/env.example.json`](config/env.example.json) |
 | Setup-скрипт облачного окружения | [`tools/cloud/setup-script.sh`](tools/cloud/setup-script.sh) |
+| CI: lint, typecheck, тесты, сборка сайта, Playwright smoke | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
 | Workflows Drive → репозиторий (ADR-0008): drive-inventory, ds-sync, ds-check, drive-inbox | [`.github/workflows/`](.github/workflows/) |
 | Инструменты для них: read-only клиент Drive API, lock, проверки | [`tools/drive/`](tools/drive/) |
 | Правила копирования DS | [`config/drive.json`](config/drive.json) → `sync`, [`config/ds-filter.txt`](config/ds-filter.txt) |

@@ -1,0 +1,22 @@
+{
+  "name": "@proto/site-router",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "URL scheme of the site (ADR-0012): redirects, version fallback and cache headers. Shared by site:preview and the hosting Worker.",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@proto/registry": "workspace:*",
+    "typescript": "6.0.3",
+    "vitest": "5.0.4"
+  }
+}

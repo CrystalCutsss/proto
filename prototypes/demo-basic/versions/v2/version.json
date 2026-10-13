@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../../packages/registry/schemas/version.schema.json",
+  "version": "v2",
+  "title": "Экран настроек",
+  "date": "2026-10-13",
+  "author": "Claude",
+  "status": "review",
+  "changelog": ["Новый экран «Настройки» (#/settings)", "Кнопка «Подробнее» переименована в «Детали»"],
+  "baseVersion": "v1",
+  "designSource": null,
+  "routing": "hash",
+  "routes": ["#/", "#/details", "#/settings"]
+}

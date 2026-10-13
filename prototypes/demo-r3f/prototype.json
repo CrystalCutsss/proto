@@ -1,0 +1,10 @@
+{
+  "$schema": "../../packages/registry/schemas/prototype.schema.json",
+  "title": "Демо: React Three Fiber",
+  "description": "Пример на шаблоне react-r3f.",
+  "owner": "Claude",
+  "tags": ["example", "r3f"],
+  "status": "active",
+  "defaultVersion": "latest",
+  "separatePassword": false
+}

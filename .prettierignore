@@ -1,0 +1,15 @@
+pnpm-lock.yaml
+dist/
+.turbo/
+coverage/
+design-system/source/
+design-system/inventory.json
+design-system/source.lock.json
+prototypes/*/versions/*/design-input/
+prototypes/*/versions/*/.frozen/
+.github/
+.claude/
+tools/drive/
+config/
+docs/
+README.md

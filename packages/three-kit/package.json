@@ -1,0 +1,25 @@
+{
+  "name": "@proto/three-kit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "three.js scene boilerplate: renderer, resize, GLTF/Draco/KTX2/Meshopt loaders with self-hosted decoders, dispose, perf monitor.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./vite": "./src/vite.js"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "stats-gl": "4.2.3",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "0.186.0",
+    "typescript": "6.0.3",
+    "vite": "8.3.4",
+    "vitest": "5.0.4"
+  }
+}

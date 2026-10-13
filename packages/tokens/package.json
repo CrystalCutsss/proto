@@ -1,0 +1,22 @@
+{
+  "name": "@proto/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Design tokens: DTCG source → CSS custom properties (--ds-*), JS and TS.",
+  "exports": {
+    "./tokens.css": "./dist/tokens.css",
+    ".": {
+      "types": "./dist/tokens.d.ts",
+      "default": "./dist/tokens.js"
+    }
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "style-dictionary": "5.6.1",
+    "vitest": "5.0.4"
+  }
+}

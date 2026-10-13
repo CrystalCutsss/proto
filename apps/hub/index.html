@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Прототипы</title>
+  </head>
+  <body class="ds-root">
+    <header class="hub-header">
+      <div class="hub-container ds-stack">
+        <h1 class="ds-heading">Прототипы</h1>
+        <div class="hub-controls">
+          <input
+            id="search"
+            class="ds-input"
+            type="search"
+            placeholder="Поиск по названию, описанию, владельцу"
+            aria-label="Поиск"
+          />
+          <select id="status" class="ds-input" aria-label="Статус">
+            <option value="current">Активные и на паузе</option>
+            <option value="active">Только активные</option>
+            <option value="paused">На паузе</option>
+            <option value="archived">Архив</option>
+            <option value="all">Все</option>
+          </select>
+        </div>
+        <div id="tags" class="ds-cluster" aria-label="Теги"></div>
+      </div>
+    </header>
+    <main class="hub-container">
+      <p id="summary" class="ds-muted"></p>
+      <div id="grid" class="hub-grid" aria-live="polite"></div>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "name": "@proto/build-kit",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vite preset for prototype versions: base path, shell loader injection, dev registry, CDN guard, SVG optimization.",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./frozen": {
+      "types": "./src/frozen.d.ts",
+      "default": "./src/frozen.js"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@proto/registry": "workspace:*",
+    "svgo": "4.1.0"
+  },
+  "peerDependencies": {
+    "vite": "8.3.4"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "typescript": "6.0.3",
+    "vite": "8.3.4",
+    "vitest": "5.0.4"
+  },
+  "bin": {
+    "proto-frozen-build": "./bin/frozen-build.js"
+  }
+}

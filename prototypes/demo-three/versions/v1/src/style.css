@@ -1,0 +1,13 @@
+.layout {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 100vh;
+}
+
+.stage {
+  min-height: 60vh;
+}
+
+.copy {
+  padding: var(--ds-space-8) var(--ds-space-6);
+}

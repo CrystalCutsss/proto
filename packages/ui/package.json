@@ -1,0 +1,24 @@
+{
+  "name": "@proto/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Framework-agnostic base components of the design system: CSS classes and Web Components on --ds-* tokens.",
+  "exports": {
+    "./ui.css": "./src/ui.css",
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.3.0",
+    "@proto/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "happy-dom": "21.0.1",
+    "typescript": "6.0.3",
+    "vitest": "5.0.4"
+  }
+}

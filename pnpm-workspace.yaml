@@ -1,0 +1,9 @@
+# Workspace layout (ADR-0009): every prototype version is its own package.
+packages:
+  - apps/*
+  - packages/*
+  - prototypes/*/versions/*
+  - prototypes/*/shared
+
+# Exact versions by default (ADR-0005): `pnpm add` writes "1.2.3", not "^1.2.3".
+savePrefix: ''

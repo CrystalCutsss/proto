@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://proto.local/schemas/prototype.schema.json",
+  "title": "prototype.json",
+  "description": "Prototype metadata: prototypes/<slug>/prototype.json (ADR-0009).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "owner", "status", "defaultVersion"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "description": { "type": "string", "maxLength": 2000, "default": "" },
+    "owner": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 40 },
+      "uniqueItems": true,
+      "default": []
+    },
+    "status": {
+      "description": "active: in work; paused: on hold; archived: kept for reference, hidden by default in the hub.",
+      "enum": ["active", "paused", "archived"]
+    },
+    "designSource": { "$ref": "version.schema.json#/$defs/designSource" },
+    "defaultVersion": {
+      "description": "Version opened by /p/<slug>/. \"latest\" = highest version that is not a draft (or the highest at all).",
+      "type": "string",
+      "pattern": "^(latest|v[1-9][0-9]{0,3})$"
+    },
+    "separatePassword": {
+      "description": "Protect this prototype with its own password (Phase 5, ADR-0006).",
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

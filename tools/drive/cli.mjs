@@ -27,6 +27,9 @@ export function loadDriveConfig(root = repoRoot) {
     if (!cfg[key]) throw new Error(`config/drive.json: ${key} is empty.`);
   }
   if (!Number.isInteger(cfg.sync?.maxFileSizeBytes)) throw new Error('config/drive.json: sync.maxFileSizeBytes must be an integer.');
+  if (cfg.sync.copyExclude !== undefined && !(Array.isArray(cfg.sync.copyExclude) && cfg.sync.copyExclude.every((g) => typeof g === 'string' && /^[^\s'"]+$/.test(g)))) {
+    throw new Error('config/drive.json: sync.copyExclude must be an array of glob strings without spaces or quotes.');
+  }
   return cfg;
 }
 
@@ -82,8 +85,9 @@ const commands = {
     const prev = previous && existsSync(previous) ? JSON.parse(readFileSync(previous, 'utf8')).files : [];
     let md = renderDiffMarkdown(diffLock(prev, files), { title: 'Changes since the previous sync' });
     if (skipped.length) {
-      md += `\n### Skipped: larger than ${cfg.sync.maxFileSizeBytes} bytes (${skipped.length})\n\n`;
-      md += skipped.map((f) => `- \`${f.path}\` (${f.size} bytes)`).join('\n') + '\n';
+      const why = { excluded: 'stays in Drive (sync.copyExclude)', 'too-large': `larger than ${cfg.sync.maxFileSizeBytes} bytes` };
+      md += `\n### Not copied into the repository (${skipped.length})\n\nTracked in the lock, so ds-check still reports their changes.\n\n`;
+      md += skipped.map((f) => `- \`${f.path}\` (${f.size} bytes): ${why[f.reason]}`).join('\n') + '\n';
     }
     if (report) writeFileSync(report, md);
     summary(md);

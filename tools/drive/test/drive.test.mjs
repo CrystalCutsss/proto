@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { createDriveClient, assertDriveId, FOLDER, SHORTCUT } from '../lib/drive-api.mjs';
 import { preflight } from '../lib/preflight.mjs';
 import { buildInventory, walkTree } from '../lib/inventory.mjs';
-import { diffLock, normalizeLsjson } from '../lib/lock.mjs';
+import { diffLock, globToRegExp, normalizeLsjson } from '../lib/lock.mjs';
 import { inboxTarget } from '../lib/inbox.mjs';
 
 const PROTO = 'protoFolder000001';
@@ -105,16 +105,24 @@ test('inventory walks the tree, does not follow shortcuts and flags problems', a
   assert.equal(inv.items.find((i) => i.path === 'link').shortcutTarget, PROTO);
 });
 
-test('lock: normalize lsjson, split oversized files, detect drift', () => {
+test('lock: normalize lsjson, keep excluded and oversized files in the lock, detect drift', () => {
   const ls = [
     { Path: 'icons', IsDir: true },
     { Path: 'a.json', ID: 'a', Size: 5, ModTime: 't1', Hashes: { md5: 'x' } },
     { Path: 'Guide.md', ID: 'g', Size: -1, ModTime: 't1' },
-    { Path: 'big.fig', ID: 'b', Size: 1000, ModTime: 't1' },
+    { Path: 'big.bin', ID: 'b', Size: 1000, ModTime: 't1' },
+    { Path: 'TUI Foundations.fig', ID: 'f', Size: 10, ModTime: 't1', Hashes: { md5: 'z' } },
   ];
-  const { files, skipped } = normalizeLsjson(ls, { maxFileSizeBytes: 100 });
-  assert.deepEqual(files.map((f) => f.path), ['Guide.md', 'a.json']);
-  assert.deepEqual(skipped.map((f) => f.path), ['big.fig']);
+  const all = normalizeLsjson(ls, { maxFileSizeBytes: 100, copyExclude: ['*.fig'] });
+  assert.deepEqual(all.files.map((f) => [f.path, f.copied, f.reason]), [
+    ['Guide.md', true, undefined],
+    ['TUI Foundations.fig', false, 'excluded'],
+    ['a.json', true, undefined],
+    ['big.bin', false, 'too-large'],
+  ]);
+  assert.deepEqual(all.skipped.map((f) => f.path), ['TUI Foundations.fig', 'big.bin']);
+  assert.ok(globToRegExp('*.fig').test('sub/x.fig') && !globToRegExp('*.fig').test('x.fig.json'));
+  const files = all.files.filter((f) => f.copied);
 
   assert.ok(diffLock(files, files).clean);
   const now = [

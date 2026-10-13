@@ -3,6 +3,10 @@ import { expect, test } from '@playwright/test';
 test('hub lists prototypes and filters them', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.hub-card')).toHaveCount(3);
+  // Card previews load when site:build took screenshots (CI builds with --no-previews: no <img> then).
+  for (const img of await page.locator('img.hub-preview').all()) {
+    await expect.poll(() => img.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  }
   await page.getByLabel('Поиск').fill('three.js');
   await expect(page.locator('.hub-card')).toHaveCount(1);
   await expect(page).toHaveURL(/\?q=three\.js/);

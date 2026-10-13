@@ -1,7 +1,7 @@
 // <proto-shell>: version switcher panel. Isolated in Shadow DOM, carries its own copy of the tokens
 // (the prototype may override or lack them), runs no animation loops, and only reacts to user input.
 import type { Registry, RegistryPrototype, RegistryVersion } from '@proto/registry';
-import tokensCss from '@proto/tokens/tokens.css?inline';
+import tokensCss from 'virtual:shell-tokens';
 import shellCss from './shell.css?inline';
 import { currentContext, targetUrl } from './switch.ts';
 

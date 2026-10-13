@@ -25,7 +25,7 @@ const stage = createStage({
   },
 });
 stage.camera.position.set(0, 0, 4);
-stage.scene.background = new Color(token('color-bg-subtle'));
+stage.scene.background = new Color(token('background-base-alt'));
 stage.scene.add(new AmbientLight(0xffffff, 0.6));
 const sun = new DirectionalLight(0xffffff, 2);
 sun.position.set(3, 4, 5);
@@ -33,11 +33,11 @@ stage.scene.add(sun);
 
 const mesh = new Mesh(
   new IcosahedronGeometry(1, 2),
-  new MeshStandardMaterial({ color: new Color(token('color-action-primary')), flatShading: true }),
+  new MeshStandardMaterial({ color: new Color(token('background-accent-2')), flatShading: true }),
 );
 stage.scene.add(mesh);
 stage.start();
 
-gsap.from(mesh.scale, { x: 0, y: 0, z: 0, duration: 1.2, ease: 'ds-emphasized' });
+gsap.from(mesh.scale, { x: 0, y: 0, z: 0, duration: 1.2, ease: 'ds-expressive-entrance' });
 reveal('.copy > *');
 void perfMonitor(stage.renderer).then((fn) => (update = fn));

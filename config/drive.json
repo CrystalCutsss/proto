@@ -4,11 +4,12 @@
   "dsFolderId": "1c3nATguttXvKvECGx8fexFUnMetjoEnj",
   "inboxFolderName": "Inbox",
   "sync": {
-    "$comment": "Drive → repository copy rules for the ds-sync, ds-check and drive-inbox workflows (ADR-0008). exportFormats: first matching format per Google type (Docs → md, Sheets → xlsx, Slides → pptx, Drawings → svg). Files larger than maxFileSizeBytes are skipped and listed in the PR. copyExclude: files kept only in Drive (Figma sources, ADR-0013); they are still listed in the lock so ds-check reports their changes.",
+    "$comment": "Drive → repository copy rules for the ds-sync, ds-check and drive-inbox workflows (ADR-0008). exportFormats: first matching format per Google type (Docs → md, Sheets → xlsx, Slides → pptx, Drawings → svg). Files larger than maxFileSizeBytes are skipped and listed in the PR. copyExclude: files kept only in Drive (Figma sources; SF Pro, whose Apple license forbids web embedding — ADR-0013); they are still listed in the lock so ds-check reports their changes.",
     "exportFormats": "md,xlsx,pptx,svg",
     "maxFileSizeBytes": 52428800,
     "copyExclude": [
-      "*.fig"
+      "*.fig",
+      "SF-Pro*"
     ],
     "filterFile": "config/ds-filter.txt",
     "targetDir": "design-system/source",

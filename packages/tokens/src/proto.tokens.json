@@ -1,0 +1,28 @@
+{
+  "$description": "Tokens the TUI design system does not define yet (its Spacing and Rounding collections are placeholders, 'Soon'). Owned by this repository, not by DS; replace with DS tokens when they appear.",
+  "space": {
+    "$type": "dimension",
+    "1": { "$value": { "value": 4, "unit": "px" } },
+    "2": { "$value": { "value": 8, "unit": "px" } },
+    "3": { "$value": { "value": 12, "unit": "px" } },
+    "4": { "$value": { "value": 16, "unit": "px" } },
+    "5": { "$value": { "value": 20, "unit": "px" } },
+    "6": { "$value": { "value": 24, "unit": "px" } },
+    "8": { "$value": { "value": 32, "unit": "px" } },
+    "10": { "$value": { "value": 40, "unit": "px" } },
+    "12": { "$value": { "value": 48, "unit": "px" } }
+  },
+  "radius": {
+    "$type": "dimension",
+    "s": { "$value": { "value": 8, "unit": "px" } },
+    "m": { "$value": { "value": 12, "unit": "px" } },
+    "l": { "$value": { "value": 16, "unit": "px" } },
+    "xl": { "$value": { "value": 24, "unit": "px" } },
+    "full": { "$value": { "value": 9999, "unit": "px" } }
+  },
+  "border-width": {
+    "$type": "dimension",
+    "thin": { "$value": { "value": 1, "unit": "px" } },
+    "focus": { "$value": { "value": 2, "unit": "px" } }
+  }
+}

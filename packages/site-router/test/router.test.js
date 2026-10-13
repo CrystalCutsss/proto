@@ -23,6 +23,11 @@ describe('route', () => {
     expect(r('/registry.json')).toMatchObject({ type: 'asset', cache: 'no-cache' });
     expect(r('/_shell/loader.js')).toMatchObject({ type: 'asset', cache: 'no-cache' });
     expect(r('/assets/index-AbCd1234_x.js')).toMatchObject({ cache: 'immutable' });
+    expect(r('/_previews/demo.jpg')).toEqual({
+      type: 'asset',
+      path: '/_previews/demo.jpg',
+      cache: 'revalidate',
+    });
   });
 
   it('redirects a prototype to its default version and keeps the query', () => {

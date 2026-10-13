@@ -6,7 +6,8 @@ describe('motion tokens', () => {
     expect(toSeconds('240ms')).toBe(0.24);
     expect(toSeconds('1.5s')).toBe(1.5);
     expect(() => toSeconds('fast')).toThrow();
-    expect(duration.base).toBe(0.24);
+    expect(duration.moderate).toBe(0.3);
+    expect(duration.fastest).toBe(0.075);
   });
 
   it('builds CustomEase paths from cubic-bezier tokens', () => {

@@ -3,11 +3,33 @@
 // versions reference /_shell/loader.js forever, so shell updates reach every version without a rebuild
 // (ADR-0011).
 import { readFileSync } from 'node:fs';
-import { defineConfig } from 'vite';
+import { createRequire } from 'node:module';
+import { pickVariables, usedVariables } from '@proto/tokens/pick';
+import { defineConfig, type Plugin } from 'vite';
+
+const require = createRequire(import.meta.url);
+
+/** virtual:shell-tokens — only the tokens shell.css uses (and what they reference), not all ~1600. */
+const shellTokens = (): Plugin => ({
+  name: 'proto:shell-tokens',
+  resolveId: (id) => (id === 'virtual:shell-tokens' ? '\0virtual:shell-tokens' : null),
+  load(id) {
+    if (id !== '\0virtual:shell-tokens') return null;
+    const tokensFile = require.resolve('@proto/tokens/tokens.css');
+    const shellCss = new URL('./src/shell.css', import.meta.url);
+    this.addWatchFile(tokensFile);
+    const css = pickVariables(
+      readFileSync(tokensFile, 'utf8'),
+      usedVariables(readFileSync(shellCss, 'utf8')),
+    );
+    return `export default ${JSON.stringify(css)};`;
+  },
+});
 
 export default defineConfig({
   base: '/_shell/',
   plugins: [
+    shellTokens(),
     {
       name: 'proto:shell-loader',
       generateBundle() {

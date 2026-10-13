@@ -1,0 +1,21 @@
+{
+  "name": "@proto/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Worker for the prototype site: password login, HMAC session cookies, routing through @proto/site-router (ADR-0006, ADR-0015).",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@proto/site-router": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3",
+    "vitest": "5.0.4"
+  }
+}

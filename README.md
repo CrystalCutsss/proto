@@ -28,7 +28,7 @@
 | `pnpm proto:spec <slug> <vN>` | `spec/spec.json` из `design-input/` |
 | `pnpm dev <slug> [vN]` | Запустить одну версию (Vite dev server, с панелью версий) |
 | `pnpm site:build` | Собрать весь сайт в `dist/site`: каталог, все версии, `registry.json`, превью |
-| `pnpm site:preview` | Отдать `dist/site` локально по схеме адресов хостинга (ADR-0012) |
+| `pnpm site:preview` | Отдать `dist/site` локально тем же кодом, что и хостинг (ADR-0012, ADR-0015); с `PROTO_PREVIEW_PASSWORD=…` — со страницей входа |
 | `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:e2e` | Проверки; `test:e2e` — Playwright по собранному сайту |
 | `pnpm registry:validate` | Проверить `prototype.json` и `version.json` всех прототипов |
 
@@ -47,6 +47,7 @@
 | ID папок и документов Drive | [`config/drive.json`](config/drive.json) |
 | Параметры, которые станут известны позже (секретов нет) | [`config/env.example.json`](config/env.example.json) |
 | Setup-скрипт облачного окружения | [`tools/cloud/setup-script.sh`](tools/cloud/setup-script.sh) |
+| Хостинг: Worker Cloudflare с паролем, конфигурация Wrangler (ADR-0006, ADR-0015) | [`infra/`](infra/), [`wrangler.jsonc`](wrangler.jsonc) |
 | CI: lint, typecheck, тесты, сборка сайта, Playwright smoke | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) |
 | Workflows Drive → репозиторий (ADR-0008): drive-inventory, ds-sync, ds-check, drive-inbox | [`.github/workflows/`](.github/workflows/) |
 | Инструменты для них: read-only клиент Drive API, lock, проверки | [`tools/drive/`](tools/drive/) |

@@ -3,7 +3,7 @@
 Вся документация ведётся в Google Drive, в папке **Proto/Docs** (ADR-0004). Этот файл — только указатель для новой сессии.
 
 - **Полный STATUS:** Google Doc «STATUS» — https://docs.google.com/document/d/1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E/edit (fileId `1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E`).
-- **Текущая фаза:** 4 — слой Claude Code (ADR-0014): CLAUDE.md, правила по путям, хуки, права, агенты, skills, вендоринг GSAP/R3F/pmndrs, проверки слоя в CI. PR ждёт мержа. Следующая — Фаза 5 (хостинг).
+- **Текущая фаза:** 5 — хостинг (ADR-0015): Worker Cloudflare со страницей входа, общий код с site:preview, Workers Builds и превью веток. PR ждёт мержа; затем владелец подключает репозиторий к Cloudflare по инструкции «Хостинг: Cloudflare» в Proto/Docs/Setup. Следующая — Фаза 6 (пилот).
 - **Обновлено:** 2026-10-13.
 
 ## Как продолжить (для новой сессии)

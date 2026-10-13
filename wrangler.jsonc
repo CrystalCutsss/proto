@@ -1,0 +1,28 @@
+// Cloudflare Worker for the prototype site (ADR-0006, ADR-0015). Deployed by Workers Builds:
+//   build command  pnpm exec playwright install chromium && pnpm site:build
+//                  (see Proto/Docs/Setup → «Хостинг: Cloudflare»)
+//   deploy         npx wrangler deploy        (main)
+//   preview        npx wrangler preview       (other branches)
+// Secrets are set in the dashboard, never here: SITE_PASSWORD, COOKIE_SECRET (≥ 32 characters) and
+// optionally PROTOTYPE_PASSWORDS (JSON {"slug": "password"}) for prototypes with separatePassword.
+// Without them the Worker answers 503 and serves nothing (fail closed), so the first deploy — before the
+// secrets exist — is safe. ("secrets.required" is not used: it would block that first deploy.)
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "proto",
+  "main": "infra/worker/src/index.js",
+  "compatibility_date": "2026-10-13",
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "directory": "./dist/site",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    // The Worker decides everything: exact paths only, its own 404 and version fallback (ADR-0012).
+    "html_handling": "none",
+    "not_found_handling": "none",
+  },
+  // Previews do not inherit production settings or secrets; their secrets go into "Previews Base".
+  "previews": {},
+  "observability": { "enabled": true },
+}

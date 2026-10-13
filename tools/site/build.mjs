@@ -7,7 +7,13 @@ import { join } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { parseArgs } from 'node:util';
 import { buildRegistry, RegistryError } from '@proto/registry';
-import { assembleSite, FILE_WARN_LIMIT, writeRegistry } from './lib/assemble.mjs';
+import {
+  assembleSite,
+  assertHostingLimits,
+  FILE_LIMIT,
+  FILE_WARN_LIMIT,
+  writeRegistry,
+} from './lib/assemble.mjs';
 import { takePreviews } from './lib/previews.mjs';
 
 const repoRoot = join(import.meta.dirname, '../..');
@@ -38,7 +44,9 @@ if (!values['skip-build']) {
 }
 
 try {
-  const { files, bytes } = assembleSite(repoRoot, out, registry);
+  const count = assembleSite(repoRoot, out, registry);
+  assertHostingLimits(count);
+  const { files, bytes } = count;
   if (!values['no-previews']) {
     const { taken, skipped } = await takePreviews(out, registry);
     if (skipped) console.warn(`previews skipped: ${skipped}`);
@@ -52,7 +60,7 @@ try {
   );
   if (files > FILE_WARN_LIMIT) {
     console.warn(
-      `::warning::${files} files: close to the Workers Free limit of 20 000 files (ADR-0006). Plan the move to Workers Paid.`,
+      `::warning::${files} files: over 90 % of the hosting limit of ${FILE_LIMIT} files (ADR-0006). Plan the move to Workers Paid.`,
     );
   }
 } catch (err) {

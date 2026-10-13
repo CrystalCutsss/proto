@@ -18,6 +18,11 @@ const dist = join(here, 'dist');
  * internal family name differs are mapped here.
  */
 const FAMILY_ALIASES = { 'Neue Haas Unica W1G Medium': 'Neue Haas Unica W1G' };
+/**
+ * Token font families that are deliberately not shipped as web fonts: their system fallbacks are used.
+ * The owner decided JetBrains Mono and Open Runde are not needed for prototypes.
+ */
+const NOT_SHIPPED = [/^SF Pro/, /^JetBrains Mono$/, /^Open Runde$/];
 /** Apple's SF Pro license forbids web embedding; Apple devices already render it as -apple-system. */
 const EXCLUDE = [/^SF[- ]Pro/i, /^\./];
 
@@ -33,10 +38,21 @@ mkdirSync(join(dist, 'fonts'), { recursive: true });
 const files = existsSync(sourceDir)
   ? walk(sourceDir).filter((f) => /\.(otf|ttf)$/i.test(f) && !EXCLUDE.some((re) => re.test(basename(f))))
   : [];
-// A variable font replaces static files of the same family (e.g. Roboto/static/*).
+// A variable font replaces static files of its family (Roboto/static/*). With a width axis it also
+// replaces the static width families that Google Fonts ships next to it ("Roboto Condensed", "Roboto
+// SemiCondensed").
 const infos = files.map((file) => ({ file, ...readFontInfo(readFileSync(file)) }));
-const variableFamilies = new Set(infos.filter((i) => i.variable).map((i) => i.family));
-const selected = infos.filter((i) => i.variable || !variableFamilies.has(i.family));
+const variables = infos.filter((i) => i.variable);
+const coveredBy = (/** @type {(typeof infos)[number]} */ i) =>
+  variables.some((v) => v.family === i.family || ('wdth' in v.axes && i.family.startsWith(`${v.family} `)));
+const selected = infos.filter((i) => i.variable || !coveredBy(i));
+
+/** @param {(typeof infos)[number]} info */
+const range = (info) => {
+  const axis = (/** @type {string} */ tag, /** @type {string} */ unit, /** @type {number} */ fixed) =>
+    info.axes[tag] ? `${info.axes[tag].min}${unit} ${info.axes[tag].max}${unit}` : `${fixed}${unit}`;
+  return { weight: axis('wght', '', info.weight), stretch: axis('wdth', '%', info.width) };
+};
 
 const faces = [];
 const report = [];
@@ -44,7 +60,8 @@ const seen = new Set();
 for (const info of selected) {
   const family = FAMILY_ALIASES[info.family] ?? info.family;
   const style = info.italic ? 'italic' : 'normal';
-  const key = `${family}|${info.variable ? 'var' : info.weight}|${style}`;
+  const { weight, stretch } = range(info);
+  const key = `${family}|${weight}|${stretch}|${style}`;
   if (!family || seen.has(key)) continue;
   seen.add(key);
   const out = `${basename(info.file, extname(info.file)).replace(/[^A-Za-z0-9-]+/g, '-')}.woff2`;
@@ -55,7 +72,8 @@ for (const info of selected) {
       '@font-face {',
       `  font-family: ${JSON.stringify(family)};`,
       `  src: url('./fonts/${out}') format('woff2');`,
-      `  font-weight: ${info.variable ? '100 900' : info.weight};`,
+      `  font-weight: ${weight};`,
+      ...(stretch === '100%' ? [] : [`  font-stretch: ${stretch};`]),
       `  font-style: ${style};`,
       '  font-display: swap;',
       '}',
@@ -63,7 +81,8 @@ for (const info of selected) {
   );
   report.push({
     family,
-    weight: info.variable ? '100 900' : info.weight,
+    weight,
+    stretch,
     style,
     file: relative(sourceDir, info.file),
     woff2: out,
@@ -98,7 +117,9 @@ if (existsSync(tokensDir)) {
   for (const f of readdirSync(tokensDir).filter((n) => n.endsWith('.tokens.json')))
     collect(JSON.parse(readFileSync(join(tokensDir, f), 'utf8')));
 }
-const missing = [...wanted].filter((f) => !families.includes(f) && !/^SF Pro/.test(f)).sort();
+const missing = [...wanted]
+  .filter((f) => !families.includes(f) && !NOT_SHIPPED.some((re) => re.test(f)))
+  .sort();
 if (files.length && missing.length) {
   console.warn(`fonts: no web font for token families: ${missing.join(', ')} (system fallbacks are used)`);
 }

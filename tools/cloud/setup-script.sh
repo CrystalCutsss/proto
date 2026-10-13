@@ -5,7 +5,7 @@
 # Runs as root before Claude Code starts. If it finishes within ~5 minutes the resulting
 # filesystem is cached (~7 days), so later sessions skip it.
 # Must always exit 0: a non-zero exit prevents the session from starting.
-# See docs/setup/environment-audit.md for the rationale behind every step.
+# Rationale for every step: the cloud-session audit in Google Drive (Proto/Docs/Setup, linked from docs/STATUS.md).
 set -u
 
 log() { echo "[proto-setup] $*"; }

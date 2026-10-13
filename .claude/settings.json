@@ -22,11 +22,27 @@
       "Bash(git push * --delete *)",
       "Bash(git push -d *)",
       "Bash(git push * -d *)",
-      "mcp__Google_Drive__create_file",
       "mcp__Google_Drive__copy_file",
-      "mcp__Google_Drive__update_file",
       "mcp__Google_Drive__share_file",
       "mcp__Google_Drive__trash_file"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^mcp__Google_.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PROJECT_DIR}/.claude/hooks/drive-guard.mjs"
+            ],
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
+      }
     ]
   }
 }

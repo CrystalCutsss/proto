@@ -3,7 +3,7 @@
 Вся документация ведётся в Google Drive, в папке **Proto/Docs** (ADR-0004). Этот файл — только указатель для новой сессии.
 
 - **Полный STATUS:** Google Doc «STATUS» — https://docs.google.com/document/d/1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E/edit (fileId `1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E`).
-- **Текущая фаза:** 0 — аудит облачной сессии. PR открыт и ждёт мержа.
+- **Текущая фаза:** 1 — анализ экосистемы. Работа выполнена, PR открыт и ждёт мержа. Следующая — Фаза 2a.
 - **Обновлено:** 2026-10-13.
 
 ## Как продолжить (для новой сессии)

@@ -24,25 +24,99 @@
       "Bash(git push * -d *)",
       "mcp__Google_Drive__copy_file",
       "mcp__Google_Drive__share_file",
-      "mcp__Google_Drive__trash_file"
+      "mcp__Google_Drive__trash_file",
+      "mcp__Cloudflare_Developer_Platform__d1_database_delete",
+      "mcp__Cloudflare_Developer_Platform__kv_namespace_delete",
+      "mcp__Cloudflare_Developer_Platform__r2_bucket_delete",
+      "mcp__Cloudflare_Developer_Platform__hyperdrive_config_delete",
+      "mcp__Figma",
+      "Bash(rclone *)"
+    ],
+    "allow": [
+      "Bash(pnpm install*)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm format*)",
+      "Bash(pnpm site:*)",
+      "Bash(pnpm proto:list*)",
+      "Bash(pnpm registry:*)",
+      "Bash(pnpm turbo run *)",
+      "Bash(node --test *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)"
     ]
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.mjs"],
+            "timeout": 300
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/bash-guard.mjs"],
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Grep|Edit|Write|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/file-guard.mjs"],
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
+      },
       {
         "matcher": "^mcp__Google_.*",
         "hooks": [
           {
             "type": "command",
             "command": "node",
-            "args": [
-              "${CLAUDE_PROJECT_DIR}/.claude/hooks/drive-guard.mjs"
-            ],
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/drive-guard.mjs"],
             "timeout": 10,
             "onFailure": "block"
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/post-edit.mjs"],
+            "timeout": 60
+          }
+        ]
+      }
     ]
+  },
+  "worktree": {
+    "baseRef": "head"
   }
 }

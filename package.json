@@ -24,7 +24,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "turbo run typecheck && tsc -p tsconfig.tools.json",
-    "test": "turbo run test && node --test \"tools/**/*.test.mjs\" .claude/hooks/drive-guard.test.mjs",
+    "test": "turbo run test && node --test \"tools/**/*.test.mjs\" \".claude/hooks/*.test.mjs\"",
     "test:e2e": "playwright test"
   },
   "devDependencies": {

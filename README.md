@@ -43,7 +43,7 @@
 | Общие пакеты: токены, UI, анимация, 3D, реестр, схема адресов, Vite-пресет, панель версий, источник дизайна | [`packages/`](packages/) |
 | Шаблоны прототипов | [`templates/`](templates/) |
 | CLI прототипов и сборка сайта | [`tools/proto-cli/`](tools/proto-cli/), [`tools/site/`](tools/site/) |
-| Настройки Claude Code: права и хуки | [`.claude/`](.claude/) |
+| Слой Claude Code (ADR-0014): правила проекта, права, хуки, агенты, skills, правила по путям | [`CLAUDE.md`](CLAUDE.md), [`.claude/`](.claude/), реестр сторонних файлов — [`.claude/skills/VENDORED.md`](.claude/skills/VENDORED.md) |
 | ID папок и документов Drive | [`config/drive.json`](config/drive.json) |
 | Параметры, которые станут известны позже (секретов нет) | [`config/env.example.json`](config/env.example.json) |
 | Setup-скрипт облачного окружения | [`tools/cloud/setup-script.sh`](tools/cloud/setup-script.sh) |

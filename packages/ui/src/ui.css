@@ -1,6 +1,7 @@
 /* Base components of the design system. Every design value comes from --ds-* tokens. */
 
-/* TUI fonts (Neue Haas Unica, T-Sans) are commercial and not in the DS export: Inter is the bundled fallback. */
+/* TUI web fonts from Proto/DS/fonts (Neue Haas Unica, T-Sans, Roboto…); Inter is the bundled fallback. */
+@import '@proto/fonts/fonts.css';
 @import '@fontsource-variable/inter/wght.css';
 @import '@proto/tokens/tokens.css';
 

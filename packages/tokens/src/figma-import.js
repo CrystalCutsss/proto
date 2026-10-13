@@ -23,6 +23,8 @@ export const COLLECTIONS = {
 const FALLBACK = {
   mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
   sans: ['Inter Variable', 'system-ui', 'sans-serif'],
+  // SF Pro is never embedded (Apple license); on Apple devices the system font is SF Pro.
+  apple: ['-apple-system', 'BlinkMacSystemFont', 'Inter Variable', 'system-ui', 'sans-serif'],
 };
 
 /** @typedef {{ path: string[], collection: string, type: string, scopes: string[], description?: string, valuesByMode: Record<string, unknown> }} FigmaVariable */
@@ -145,7 +147,12 @@ export function convertValue(raw, type, v) {
       return v.scopes.includes('OPACITY') ? round(Number(raw) / 100) : Number(raw);
     case 'fontFamily': {
       const name = String(raw);
-      return [name, ...(/mono|code/i.test(v.path.join('/') + name) ? FALLBACK.mono : FALLBACK.sans)];
+      const fallback = /^SF Pro/.test(name)
+        ? FALLBACK.apple
+        : /mono|code/i.test(v.path.join('/') + name)
+          ? FALLBACK.mono
+          : FALLBACK.sans;
+      return [name, ...fallback];
     }
     case 'cubicBezier': {
       const b = /** @type {any} */ (raw)?.easingFunctionCubicBezier;

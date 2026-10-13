@@ -114,6 +114,7 @@ describe('figma-import', () => {
     expect(convertValue(0.15, 'duration', opacity)).toEqual({ value: 150, unit: 'ms' });
     const family = v('Primitive', ['Font Family', 'Code', 'Desktop Value'], 'string', ['FONT_FAMILY'], {});
     expect(convertValue('JetBrains Mono', 'fontFamily', family)[1]).toBe('JetBrains Mono');
+    expect(convertValue('SF Pro', 'fontFamily', family)[1]).toBe('-apple-system');
     expect(hexToColor('#0000001f').alpha).toBe(0.1216);
     expect(modeSlug('Hover (Desktop)')).toBe('hover');
   });

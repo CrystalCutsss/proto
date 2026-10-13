@@ -18,4 +18,4 @@ Design tokens of the TUI design system (ADR-0013).
   - `[data-ds-platform="ios"|"android"]` switches platform-specific values (typography, some colors);
   - interaction states are separate tokens: `--ds-appearance-primary-background-hover`, `…-pressed`, `…-disabled`.
 - **Use:** in CSS only through `var(--ds-…)`; Stylelint rejects hard-coded design values. Prefer semantic tokens (`--ds-background-*`, `--ds-text-*`, `--ds-border-*`, `--ds-status-*`, `--ds-typography-*`) over primitives (`--ds-color-*`).
-- **Fonts:** TUI fonts (Neue Haas Unica W1G, T-Sans, SF Pro) are commercial and not part of the export. Font-family tokens fall back to Inter (bundled by `@proto/ui`) and system fonts.
+- **Fonts:** web fonts come from Proto/DS/fonts through `@proto/fonts` (WOFF2 + `@font-face`), imported by `@proto/ui`. SF Pro is never embedded (Apple license): its tokens fall back to `-apple-system`. Other families fall back to Inter and system fonts.

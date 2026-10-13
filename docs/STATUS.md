@@ -3,7 +3,7 @@
 Вся документация ведётся в Google Drive, в папке **Proto/Docs** (ADR-0004). Этот файл — только указатель для новой сессии.
 
 - **Полный STATUS:** Google Doc «STATUS» — https://docs.google.com/document/d/1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E/edit (fileId `1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E`).
-- **Текущая фаза:** 1 — анализ экосистемы. Работа выполнена, PR открыт и ждёт мержа. Следующая — Фаза 2a.
+- **Текущая фаза:** 2a — workflows Drive → репозиторий. Работа выполнена, PR открыт и ждёт мержа. Параллельно владелец настраивает GCP по инструкции из Proto/Docs/Setup. Следующая — Фаза 3.
 - **Обновлено:** 2026-10-13.
 
 ## Как продолжить (для новой сессии)

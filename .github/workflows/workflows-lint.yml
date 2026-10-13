@@ -1,0 +1,63 @@
+# Checks for workflows and Drive tools: actionlint, zizmor and the tools/drive unit tests.
+name: workflows-lint
+
+on:
+  pull_request:
+    paths:
+      - '.github/**'
+      - 'tools/drive/**'
+      - 'config/**'
+  push:
+    branches: [main]
+    paths:
+      - '.github/**'
+      - 'tools/drive/**'
+      - 'config/**'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: workflows-lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - name: Unit tests (tools/drive, drive-guard hook)
+        run: node --test 'tools/drive/**/*.test.mjs' .claude/hooks/drive-guard.test.mjs
+
+      - name: Validate JSON configs
+        run: for f in config/*.json; do jq empty "$f"; done
+
+      - name: actionlint (checksum verified)
+        env:
+          ACTIONLINT_VERSION: '1.7.12'
+          ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+        run: |
+          set -euo pipefail
+          curl -fsSL -o "$RUNNER_TEMP/actionlint.tgz" \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256}  $RUNNER_TEMP/actionlint.tgz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/actionlint.tgz" -C "$RUNNER_TEMP" actionlint
+          "$RUNNER_TEMP/actionlint" -color
+
+      - uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        with:
+          version: '1.30.1'
+          advanced-security: false
+          annotations: true
+          online-audits: false
+          config: .github/zizmor.yml

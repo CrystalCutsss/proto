@@ -1,0 +1,90 @@
+name: drive-setup
+description: >-
+  Authenticate to Google as the read-only Drive service account (WIF first, JSON key as fallback),
+  expose a drive.readonly access token and optionally install a checksum-verified rclone. ADR-0008.
+
+inputs:
+  wif-provider:
+    description: Workload Identity provider resource name (repository variable GCP_WIF_PROVIDER).
+    required: false
+    default: ''
+  service-account:
+    description: Service account email (repository variable GCP_SERVICE_ACCOUNT).
+    required: false
+    default: ''
+  sa-key-json:
+    description: Fallback only. Service account JSON key (secret GCP_SA_KEY_JSON).
+    required: false
+    default: ''
+  install-rclone:
+    description: Install rclone; its path is returned in the rclone output.
+    required: false
+    default: 'false'
+
+outputs:
+  access-token:
+    description: OAuth access token with the drive.readonly scope.
+    value: ${{ steps.wif.outputs.access_token || steps.key.outputs.access_token }}
+  rclone:
+    description: Absolute path to the rclone binary (empty unless install-rclone is true).
+    value: ${{ steps.rclone.outputs.path }}
+
+runs:
+  using: composite
+  steps:
+    - name: Check that Google credentials are configured
+      id: mode
+      shell: bash
+      env:
+        WIF_PROVIDER: ${{ inputs.wif-provider }}
+        SERVICE_ACCOUNT: ${{ inputs.service-account }}
+        HAS_KEY: ${{ inputs.sa-key-json != '' }}
+      run: |
+        if [ -n "$WIF_PROVIDER" ] && [ -n "$SERVICE_ACCOUNT" ]; then
+          echo "mode=wif" >> "$GITHUB_OUTPUT"
+        elif [ "$HAS_KEY" = "true" ]; then
+          echo "::warning title=Drive auth::Using the JSON key fallback. Prefer Workload Identity Federation (ADR-0008)."
+          echo "mode=key" >> "$GITHUB_OUTPUT"
+        else
+          echo "::error title=Drive auth::Google credentials are not configured. Set repository variables GCP_WIF_PROVIDER and GCP_SERVICE_ACCOUNT (Settings → Secrets and variables → Actions → Variables), see the guide "Google Drive: доступ из GitHub Actions": https://docs.google.com/document/d/17RkDrkPgJmSA3AfeBfvyD7yTkakhSTpxoAEDk_py2Ew/edit"
+          exit 1
+        fi
+
+    - name: Authenticate with Workload Identity Federation
+      id: wif
+      if: steps.mode.outputs.mode == 'wif'
+      uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+      with:
+        workload_identity_provider: ${{ inputs.wif-provider }}
+        service_account: ${{ inputs.service-account }}
+        token_format: access_token
+        access_token_scopes: https://www.googleapis.com/auth/drive.readonly
+        access_token_lifetime: 1800s
+
+    - name: Authenticate with the JSON key (fallback)
+      id: key
+      if: steps.mode.outputs.mode == 'key'
+      uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+      with:
+        credentials_json: ${{ inputs.sa-key-json }}
+        token_format: access_token
+        access_token_scopes: https://www.googleapis.com/auth/drive.readonly
+        access_token_lifetime: 1800s
+
+    - name: Install rclone (checksum verified)
+      id: rclone
+      if: inputs.install-rclone == 'true'
+      shell: bash
+      env:
+        RCLONE_VERSION: '1.75.2'
+        RCLONE_SHA256: 349ac8fba6ff65d6247043f1750cdcb518ec5d500ef91463a10d37c0ccdf3702
+      run: |
+        set -euo pipefail
+        dir="$RUNNER_TEMP/rclone"
+        mkdir -p "$dir/bin"
+        curl -fsSL -o "$dir/rclone.zip" \
+          "https://github.com/rclone/rclone/releases/download/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-amd64.zip"
+        echo "${RCLONE_SHA256}  $dir/rclone.zip" | sha256sum -c -
+        unzip -q -j "$dir/rclone.zip" "*/rclone" -d "$dir/bin"
+        "$dir/bin/rclone" version | head -1
+        echo "path=$dir/bin/rclone" >> "$GITHUB_OUTPUT"

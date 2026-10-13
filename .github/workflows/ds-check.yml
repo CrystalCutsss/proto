@@ -1,0 +1,105 @@
+# Daily: compare DS in Google Drive with design-system/source.lock.json and keep one `ds-drift` issue up to date. ADR-0008.
+name: ds-check
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ds-check
+  cancel-in-progress: true
+
+jobs:
+  read:
+    name: Compare Drive with the lock
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      drift: ${{ steps.diff.outputs.drift }}
+    steps:
+      - uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      - id: drive
+        uses: ./.github/actions/drive-setup
+        with:
+          wif-provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service-account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          sa-key-json: ${{ secrets.GCP_SA_KEY_JSON }}
+          install-rclone: 'true'
+
+      - name: List DS and compare
+        id: diff
+        env:
+          RCLONE: ${{ steps.drive.outputs.rclone }}
+        run: |
+          set -euo pipefail
+          cfg=config/drive.json
+          "$RCLONE" lsjson :drive: -R --files-only --hash --hash-type md5 --original \
+            --drive-env-auth \
+            --drive-scope drive.readonly \
+            --drive-root-folder-id "$(jq -r .dsFolderId "$cfg")" \
+            --drive-export-formats "$(jq -r .sync.exportFormats "$cfg")" \
+            --drive-skip-shortcuts \
+            --filter-from "$(jq -r .sync.filterFile "$cfg")" > "$RUNNER_TEMP/lsjson.json"
+          mkdir -p "$RUNNER_TEMP/report"
+          node tools/drive/cli.mjs diff-lock \
+            --lsjson "$RUNNER_TEMP/lsjson.json" \
+            --lock "$(jq -r .sync.lockFile "$cfg")" \
+            --report "$RUNNER_TEMP/report/report.md"
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ds-drift-report
+          path: ${{ runner.temp }}/report/
+          if-no-files-found: error
+          retention-days: 7
+
+  issue:
+    name: Update the ds-drift issue
+    needs: read
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: ds-drift-report
+          path: report
+
+      - name: Create, update or close the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          DRIFT: ${{ needs.read.outputs.drift }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          printf '\n---\nRun: %s\nTo update the repository, run the ds-sync workflow.\n' "$RUN_URL" >> report/report.md
+          open=$(gh issue list --label ds-drift --state open --json number --jq '.[0].number // empty')
+          if [ "$DRIFT" = "true" ]; then
+            gh label create ds-drift --color D93F0B --description "DS in Drive differs from the repository" --force
+            if [ -n "$open" ]; then
+              gh issue edit "$open" --body-file report/report.md
+            else
+              gh issue create --title "DS in Drive changed: run ds-sync" --label ds-drift --body-file report/report.md
+            fi
+          elif [ -n "$open" ]; then
+            gh issue close "$open" --comment "DS in Drive matches the lock again. $RUN_URL"
+          fi

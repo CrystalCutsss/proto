@@ -1,0 +1,26 @@
+# Credentials written by google-github-actions/auth into the workspace: never commit.
+gha-creds-*.json
+
+# Dependencies and build output
+node_modules/
+dist/
+.turbo/
+
+# Test and QA output
+test-results/
+playwright-report/
+coverage/
+
+# Local caches and Claude Code runtime files
+.cache/
+.claude/worktrees/
+.claude/agent-memory-local/
+.claude/settings.local.json
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+.env
+.env.*
+!.env.example

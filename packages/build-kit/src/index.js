@@ -1,4 +1,4 @@
-// Vite preset for one prototype version (ADR-0009, ADR-0011, ADR-0012).
+// Vite preset for one prototype version (ADR-0009, ADR-0011, ADR-0012, ADR-0019).
 //
 //   // prototypes/<slug>/versions/<vN>/vite.config.ts
 //   import { defineVersionConfig } from '@proto/build-kit';
@@ -8,6 +8,9 @@ import { createRequire } from 'node:module';
 import { basename, dirname, join, resolve } from 'node:path';
 import { buildRegistry, serializeRegistry, SLUG_RE, VERSION_RE } from '@proto/registry';
 import { optimize } from 'svgo';
+import { pwa } from './pwa.js';
+
+export * from './pwa.js';
 
 /** Hosts that prototypes must not load from: the site is password-protected and must work in isolation. */
 export const FORBIDDEN_CDN =
@@ -144,7 +147,7 @@ export function defineVersionConfig(versionDir, overrides = {}) {
     root: resolve(versionDir),
     base: ctx.base,
     publicDir: 'assets',
-    plugins: [protoShell(ctx), cdnGuard(), svgOptimize(), ...plugins],
+    plugins: [protoShell(ctx), pwa(ctx, resolve(versionDir)), cdnGuard(), svgOptimize(), ...plugins],
     build: {
       outDir: 'dist',
       emptyOutDir: true,

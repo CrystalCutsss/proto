@@ -118,6 +118,12 @@ importers:
       '@proto/registry':
         specifier: workspace:*
         version: link:../registry
+      '@proto/tokens':
+        specifier: workspace:*
+        version: link:../tokens
+      sharp:
+        specifier: 0.35.4
+        version: 0.35.4(@types/node@22.20.5)
       svgo:
         specifier: 4.1.0
         version: 4.1.0

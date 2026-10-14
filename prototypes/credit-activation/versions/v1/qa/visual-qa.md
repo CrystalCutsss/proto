@@ -11,13 +11,13 @@
 
 ## Diff ratios (pointer only: text renders in the fallback font)
 
-| Route | Diff (top-aligned) | Extra diff | Diff image |
-|---|---|---|---|
-| `#/` | 12.99 % | bottom-aligned 8.01 %; scrolled-to-end vs bottom-aligned ref 8.78 % | `qa/diff/01-offer*.png` |
-| `#/conditions` | 14.06 % | bottom-aligned 9.82 % | `qa/diff/02-conditions*.png` |
-| `#/review` | 10.86 % | scrolled-to-end vs ref bottom (offset 180) 3.36 % | `qa/diff/03-review*.png` |
-| `#/documents` | 6.65 % | — | `qa/diff/04-documents.png` |
-| `#/success` | 3.59 % | — | `qa/diff/05-success.png` |
+| Route          | Diff (top-aligned) | Extra diff                                                          | Diff image                   |
+| -------------- | ------------------ | ------------------------------------------------------------------- | ---------------------------- |
+| `#/`           | 12.99 %            | bottom-aligned 8.01 %; scrolled-to-end vs bottom-aligned ref 8.78 % | `qa/diff/01-offer*.png`      |
+| `#/conditions` | 14.06 %            | bottom-aligned 9.82 %                                               | `qa/diff/02-conditions*.png` |
+| `#/review`     | 10.86 %            | scrolled-to-end vs ref bottom (offset 180) 3.36 %                   | `qa/diff/03-review*.png`     |
+| `#/documents`  | 6.65 %             | —                                                                   | `qa/diff/04-documents.png`   |
+| `#/success`    | 3.59 %             | —                                                                   | `qa/diff/05-success.png`     |
 
 The worst bands of the top-aligned 01/02/03 diffs (y 704–812) come from the reference frames being taller than
 812 px (the bottom block sits lower in Figma); bottom-aligned diffs remove them.
@@ -57,7 +57,7 @@ The worst bands of the top-aligned 01/02/03 diffs (y 704–812) come from the re
    on hover, or use the day accent hover value from the base theme (`--ds-color-yellow-yellow-darker-60` via a
    semantic token), or drop the primary hover rule on iOS.
 2. **`#/success` — 24 px gap image→title and 8 px gap title→text are missing.** `.content h1, .content p
-   { margin: 0 }` (specificity 0,1,1) overrides `.status__title { margin-top }` / `.status__text { margin-top }`
+{ margin: 0 }` (specificity 0,1,1) overrides `.status__title { margin-top }` / `.status__text { margin-top }`
    (0,1,0). Computed: image 305–433, title top 433, text top 453. Figma: illustration→title ≈ 46 px, ours 21 px
    (glyph rows); title→text 27 vs 21 px.
    Evidence: `qa/visual/05-success.png`, `qa/diff/05-success.png` (doubled title/text lines).

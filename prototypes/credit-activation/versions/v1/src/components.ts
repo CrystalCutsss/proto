@@ -37,10 +37,14 @@ export function topBars(left: AppBarSlot, right: AppBarSlot): string {
   return `
     <header class="top-bars">
       ${statusBar()}
-      <nav class="app-bar">
-        <div class="app-bar__slot">${appBarButton(left, 'left')}</div>
-        <div class="app-bar__slot">${appBarButton(right, 'right')}</div>
-      </nav>
+      ${
+        left || right
+          ? `<nav class="app-bar">
+              <div class="app-bar__slot">${appBarButton(left, 'left')}</div>
+              <div class="app-bar__slot">${appBarButton(right, 'right')}</div>
+            </nav>`
+          : '<div class="app-bar" aria-hidden="true"></div>'
+      }
     </header>`;
 }
 

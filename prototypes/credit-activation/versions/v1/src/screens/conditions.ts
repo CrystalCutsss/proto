@@ -43,8 +43,8 @@ function planCard(plan: Plan, index: number): string {
   const selected = state.plan === index;
   const rows = plan.rows
     .map(
-      ([ok, text]) => `
-        <li class="plan__row">
+      ([ok, text], row) => `
+        <li class="plan__row" id="plan-${index}-row-${row}">
           <span class="plan__icon">
             <img src="${icon(ok ? 'check-medium.svg' : 'cross-medium.svg')}" alt="${ok ? 'Есть' : 'Нет'}" width="14" height="14" />
           </span>
@@ -52,9 +52,10 @@ function planCard(plan: Plan, index: number): string {
         </li>`,
     )
     .join('');
+  const describedBy = [`plan-name-${index}`, ...plan.rows.map((_, row) => `plan-${index}-row-${row}`)];
   return `
     <div class="plan" role="radio" aria-checked="${selected}" tabindex="${selected ? 0 : -1}" data-plan="${index}"
-      aria-labelledby="plan-title-${index}" aria-describedby="plan-name-${index}">
+      aria-labelledby="plan-title-${index}" aria-describedby="${describedBy.join(' ')}">
       <div class="plan__head">
         <div class="plan__titles">
           <span class="t-heading-m" id="plan-title-${index}">${plan.price}</span>

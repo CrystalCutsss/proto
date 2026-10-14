@@ -172,7 +172,10 @@ Owner's brief (verbatim intent):
   `touch-action: pan-y` on screens.
 - «Закрыть» (any screen): close the flow → animate the current screen down/fade and reset to `#/` with an empty
   stack (state reset to initial). On `#/` it only resets state.
-- «К счету»: same reset as «Закрыть».
+- «К счету»: same reset as «Закрыть». Browser back on `#/success` also resets (the application is submitted).
+- **No forward navigation** (as in iOS): browser forward onto an entry of the flow is undone
+  (`history.go` back to the current entry), so forward entries left after a pop or a reset never re-enter the
+  flow with reset state. A hash typed by hand (no history state) still pushes the stack up to that screen.
 - `prefers-reduced-motion`: replace slides with a short cross-fade; the swipe still works without parallax.
 - Scroll positions of screens below the top one are preserved when popping back.
 
@@ -182,3 +185,9 @@ Owner's brief (verbatim intent):
 - Real behaviour behind «Срок», «Платеж в месяц», tooltip, «График платежей», «Как это работает»,
   «Изменить», «Образцы обеих сторон СТС».
 - Mock status bar on real phones (it duplicates the real one in a browser tab); kept for fidelity.
+
+## Visual only in v1 (no action on tap)
+
+Rendered with their visual states but without behaviour: the chevron cards «Срок» and «Платеж в месяц», the
+tooltip button «?», the secondary buttons «График платежей» and «Как это работает», the link «Изменить», the
+disclosure cell «Образцы обеих сторон СТС» and the underlined «с условиями» in the legal text.

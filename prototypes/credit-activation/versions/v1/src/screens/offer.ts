@@ -57,7 +57,7 @@ export const offer: Screen = {
     ${topBars('close', null)}
     <div class="content">
       <h1 class="offer__title t-heading-s">Одобрили кредит<br />ИП Константинопольский К.&nbsp;К.</h1>
-      <p class="offer__amount t-number-2xl" data-amount aria-live="polite">${formatRub(state.amount)}</p>
+      <p class="offer__amount t-number-2xl" data-amount>${formatRub(state.amount)}</p>
       <div class="slider">
         <div class="slider__track" aria-hidden="true"></div>
         <div class="slider__ticks" aria-hidden="true">${ticks}</div>

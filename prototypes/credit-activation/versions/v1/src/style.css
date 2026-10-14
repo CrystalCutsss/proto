@@ -19,12 +19,16 @@ body {
 }
 
 .device {
-  /* Medium drop shadow from the design: 0 6 34 black 12 %. */
+  /* provisional: no TUI shadow token. Medium drop shadow from the design: 0 6 34 black 12 %. */
   --shadow-medium: 0 calc(var(--ds-space-1) * 1.5) calc(var(--ds-space-8) + var(--ds-space-1) / 2)
     var(--ds-color-black-black-alpha-12);
+
+  /* provisional: no TUI shadow token (iOS switch / slider knob). */
   --shadow-knob:
     0 calc(var(--ds-space-1) * 0.75) var(--ds-space-2) var(--ds-color-black-black-alpha-12),
     0 calc(var(--ds-space-1) * 0.75) 1px var(--ds-color-black-black-alpha-6);
+
+  /* provisional: no TUI shadow token (left edge of a pushed screen). */
   --shadow-edge: calc(var(--ds-space-2) * -1) 0 var(--ds-space-6) var(--ds-color-black-black-alpha-10);
   --side: var(--ds-space-4);
   --bar-height: 44px;
@@ -41,13 +45,28 @@ body {
 
 /* Wider than a phone: a centred 375 × 812 "device". */
 @media (width > 500px) {
+  #app {
+    display: block;
+    position: relative;
+  }
+
+  /* Positioned on whole pixels: centring 375 px in an even viewport would land on x.5 and blur the text. */
   .device {
+    position: absolute;
+    top: round(down, (100dvh - min(var(--ds-size-screen-height), 100dvh)) / 2, 1px);
+    left: round(down, 50% - var(--ds-size-screen-width) / 2, 1px);
     width: var(--ds-size-screen-width);
     height: min(var(--ds-size-screen-height), 100dvh);
     border-radius: var(--ds-radius-xl);
     box-shadow: 0 var(--ds-shadow-popup-y-axis-day-value) var(--ds-shadow-popup-blur-day-value)
       var(--ds-shadow-popup-color-day-value);
   }
+}
+
+.device *,
+.device *::before,
+.device *::after {
+  box-sizing: border-box;
 }
 
 .viewport {
@@ -141,13 +160,14 @@ body {
   letter-spacing: var(--ds-typography-heading-mobile-s-letter-spacing);
 }
 
+/* Figma uses SF Pro "normal" line heights: body-l 17/20 and body-m 15/18, i.e. the iOS ui-l / ui-m values. */
 .t-body-l,
 .button--l .button__label,
 .text-button {
   font-family: var(--ds-typography-body-l-font-family);
   font-size: var(--ds-typography-body-l-font-size);
   font-weight: var(--ds-typography-body-l-font-weight);
-  line-height: var(--ds-typography-body-l-line-height);
+  line-height: var(--ds-typography-ui-l-line-height);
   letter-spacing: var(--ds-typography-body-l-letter-spacing);
 }
 
@@ -156,7 +176,7 @@ body {
   font-family: var(--ds-typography-body-m-font-family);
   font-size: var(--ds-typography-body-m-font-size);
   font-weight: var(--ds-typography-body-m-font-weight);
-  line-height: var(--ds-typography-body-m-line-height);
+  line-height: var(--ds-typography-ui-m-line-height);
   letter-spacing: var(--ds-typography-body-m-letter-spacing);
 }
 
@@ -311,6 +331,11 @@ body {
   border-radius: var(--ds-radius-l);
 }
 
+/* 56 px tall like the design: the label keeps a 24 px line. */
+.button--l .button__label {
+  line-height: var(--ds-font-line-height-x6);
+}
+
 .button--m {
   padding: calc(var(--ds-space-5) / 2);
   border-radius: var(--ds-radius-m);
@@ -345,8 +370,9 @@ body {
 }
 
 @media (hover: hover) {
+  /* iOS has no hover state (the hover token is null there); the web hover value equals the iOS pressed one. */
   .button--primary:hover {
-    background: var(--ds-appearance-primary-background-hover);
+    background: var(--ds-state-background-accent-1-pressed);
   }
 
   .button--secondary:hover {
@@ -623,7 +649,7 @@ body {
   display: flex;
   gap: var(--ds-space-1);
   align-items: center;
-  padding: var(--ds-space-3) var(--ds-space-4) var(--ds-space-3) var(--ds-space-3);
+  padding: var(--ds-space-4) var(--ds-space-4) var(--ds-space-4) var(--ds-space-3);
   border-radius: var(--ds-radius-l);
   background: var(--ds-background-neutral-1-on-light);
 }
@@ -645,9 +671,14 @@ body {
   height: 16px;
   padding: var(--ds-space-1);
   color: var(--ds-text-secondary);
+  mask-origin: content-box;
+  mask-clip: content-box;
 }
 
 .options-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
   margin: var(--ds-space-6) var(--side) 0;
   padding-bottom: var(--ds-space-1);
   border-radius: var(--ds-radius-xl);
@@ -669,7 +700,7 @@ body {
 .option__text {
   flex: 1;
   min-width: 0;
-  padding: var(--ds-space-2) 0;
+  padding: calc(var(--ds-space-5) / 2) 0;
 }
 
 .option__title {
@@ -733,7 +764,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: calc(var(--ds-space-1) * 1.5);
-  padding-bottom: var(--ds-space-3);
+  padding-bottom: calc(var(--ds-space-4) + var(--ds-space-3));
 }
 
 .large-title--documents {
@@ -750,7 +781,7 @@ body {
 }
 
 .plan {
-  padding-bottom: var(--ds-space-3);
+  padding-bottom: var(--ds-space-4);
   border-radius: var(--ds-radius-xl);
   background: var(--ds-background-neutral-1-on-base);
   cursor: pointer;
@@ -769,6 +800,7 @@ body {
   display: flex;
   flex: 1;
   flex-direction: column;
+  gap: var(--ds-space-1);
 }
 
 .plan__head .radio {
@@ -791,7 +823,7 @@ body {
   flex: none;
   place-items: center;
   width: 24px;
-  height: 24px;
+  height: 20px; /* one text line */
 }
 
 /* ---------- #/review ---------- */
@@ -844,6 +876,10 @@ body {
 
 .card--account {
   padding: var(--ds-space-4) var(--ds-space-5);
+}
+
+.card--account .card__subtitle {
+  padding: var(--ds-space-2) 0 calc(var(--ds-space-1) / 2);
 }
 
 .card__header {
@@ -959,11 +995,11 @@ body {
   display: block;
 }
 
-.status__title {
+.status .status__title {
   margin-top: var(--ds-space-6);
 }
 
-.status__text {
+.status .status__text {
   max-width: 290px;
   margin-top: var(--ds-space-2);
 }
@@ -982,4 +1018,22 @@ body {
 .file-field__button:has(:focus-visible) {
   outline: var(--ds-border-width-focus) solid var(--ds-border-focus);
   outline-offset: var(--ds-border-width-focus);
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .device .button,
+  .device .text-button,
+  .device .app-bar__back,
+  .device .tooltip-button,
+  .device .switch,
+  .device .switch::before,
+  .device .file-field__button {
+    transition: none;
+  }
+
+  .device .button:active {
+    transform: none;
+  }
 }

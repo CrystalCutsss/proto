@@ -168,7 +168,7 @@ export function startNavigation(viewport: HTMLElement): void {
     else history.replaceState({ i: 0 }, '', route(0));
 
     if (!leaving) {
-      activate(fresh, false);
+      activate(fresh);
       return;
     }
     viewport.append(leaving.el); // keep the leaving screen above the fresh one
@@ -216,9 +216,17 @@ export function startNavigation(viewport: HTMLElement): void {
   });
 
   window.addEventListener('popstate', () => {
+    const entry = historyIndex();
     const target = routeIndex(location.hash);
-    if (historyIndex() !== target) history.replaceState({ i: target }, '', route(target));
     cancelDrag();
+    // No forward navigation, as in iOS: browser forward onto one of our entries is undone. This also keeps
+    // forward entries left by «Закрыть» from re-entering the flow with reset state. A hash typed by hand
+    // (no history state) still pushes.
+    if (entry >= 0 && target > depth()) {
+      history.go(depth() - entry);
+      return;
+    }
+    if (entry !== target) history.replaceState({ i: target }, '', route(target));
     if (target === depth()) return;
     if (target > depth()) push(target);
     else if (top().screen.canGoBack) pop(target);
@@ -244,6 +252,10 @@ export function startNavigation(viewport: HTMLElement): void {
 
   viewport.addEventListener('pointermove', (event) => {
     if (!drag || event.pointerId !== drag.id) return;
+    if (event.pointerType === 'mouse' && event.buttons === 0) {
+      cancelDrag(); // the button was released outside the window
+      return;
+    }
     const dx = event.clientX - drag.x0;
     const dy = event.clientY - drag.y0;
     if (!drag.engaged) {
@@ -309,6 +321,9 @@ export function startNavigation(viewport: HTMLElement): void {
 
   viewport.addEventListener('pointerup', release);
   viewport.addEventListener('pointercancel', release);
+  viewport.addEventListener('lostpointercapture', () => {
+    if (drag?.engaged) cancelDrag();
+  });
 
   // ---------- start: a deep link builds the stack (and history) from the flow order ----------
 

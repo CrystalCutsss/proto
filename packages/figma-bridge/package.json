@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Design source interface → platform-neutral version spec. Adapters: fixture (design-input/, works now) and mcp (TODO(connect-figma)).",
+  "description": "Design source interface → platform-neutral version spec. Adapters: fixture (design-input/, works now) and mcp stub (Figma is read in the session via skill figma-intake; REST adapter: TODO(connect-figma-rest)).",
   "exports": {
     ".": "./src/index.ts"
   },

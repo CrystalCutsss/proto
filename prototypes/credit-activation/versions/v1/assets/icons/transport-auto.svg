@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="tui-ic-medium / transport-auto">
+<mask id="mask0_0_7996" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="1" y="3" width="22" height="17">
+<g id="Mask">
+<path id="Mask_2" fill-rule="evenodd" clip-rule="evenodd" d="M4.73077 4.84615L3 9C1.89543 9 1 9.89543 1 11V16C1 17.1046 1.89543 18 3 18H21C22.1046 18 23 17.1046 23 16V11C23 9.89543 22.1046 9 21 9L19.2692 4.84615C18.8034 3.72821 17.7111 3 16.5 3H7.5C6.2889 3 5.19658 3.72821 4.73077 4.84615ZM18.5 9L17.2433 5.64888C17.097 5.25857 16.7238 5 16.307 5H7.693C7.27616 5 6.90304 5.25857 6.75667 5.64888L5.5 9H18.5ZM3 12C3 13.1046 3.89543 14 5 14H9C7.89543 14 7 13.1046 7 12H3ZM21 12C21 13.1046 20.1046 14 19 14H15C16.1046 14 17 13.1046 17 12H21Z" fill="black"/>
+<path id="Mask_3" opacity="0.5" fill-rule="evenodd" clip-rule="evenodd" d="M19 18H21C22.1046 18 23 17.1046 23 16V20H19V18ZM1 16V20H5V18H3C1.89543 18 1 17.1046 1 16Z" fill="black"/>
+</g>
+</mask>
+<g mask="url(#mask0_0_7996)">
+<path id="Color" d="M0 0H24V24H0V0Z" fill="#428BF9"/>
+</g>
+</g>
+</svg>

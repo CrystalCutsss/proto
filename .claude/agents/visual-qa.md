@@ -14,11 +14,14 @@ Method:
 2. Drive Chromium with Playwright 1.56.1 (preinstalled browser; never run `playwright install`). Start the
    preview server inside your Node script with `createSiteServer` / `listen` from `tools/site/lib/server.mjs`;
    foreground `sleep` is blocked in this environment. Keep scripts in the scratchpad, not in the repo.
-3. For every route: viewport 1440×900 and 390×844, wait for `document.fonts.ready`, disable animations
+3. For every route: the viewports the caller names (default 1440×900 and 390×844), wait for `document.fonts.ready`, disable animations
    (`reducedMotion: 'reduce'`), take full-page screenshots into `prototypes/<slug>/versions/<vN>/qa/`.
 4. Compare: against design images, check layout, spacing, typography (TUI fonts loaded: verify with
    `document.fonts`), colours, states; against another version, compare the screenshots side by side and say
-   what changed. (A pixel-diff tool is not installed yet; it arrives with Phase 6. Do not add dependencies.)
+   what changed. Back every comparison with a pixel diff: `pnpm qa:diff <reference.png> <actual.png> --out
+   qa/diff/<route>.png` (`--crop-ref 4` for Figma renders with a device frame; see `tools/visual-diff/README.md`).
+   Read the diff image and the worst bands; against Figma the ratio is a pointer (fallback fonts), between
+   versions it is a regression signal. Do not add dependencies.
 5. Check the console for errors and the network for requests outside the site (CDNs are forbidden).
 
 Default stance: the version does not match until you have looked at every screenshot yourself (read the PNGs).

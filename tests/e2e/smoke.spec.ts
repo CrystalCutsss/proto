@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 test('hub lists prototypes and filters them', async ({ page }) => {
+  const registry = await (await page.request.get('/registry.json')).json();
   await page.goto('/');
-  await expect(page.locator('.hub-card')).toHaveCount(3);
+  await expect(page.locator('.hub-card')).toHaveCount(registry.prototypes.length);
   // Card previews load when site:build took screenshots (CI builds with --no-previews: no <img> then).
   for (const img of await page.locator('img.hub-preview').all()) {
     await expect.poll(() => img.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
@@ -75,4 +76,20 @@ test('unknown paths are 404 and every response is private and noindex', async ({
   const res = await request.get('/p/demo-basic/v1/');
   expect(res.headers()['x-robots-tag']).toContain('noindex');
   expect(res.headers()['cache-control']).toMatch(/^private/);
+});
+
+test('pilot flow pushes screens with the yellow button and pops them back', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/p/credit-activation/v1/?shell=0#/');
+  const top = page.locator('section:not([inert])');
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/conditions$/);
+  await expect(top.getByRole('heading', { name: 'Выберите условия' })).toBeVisible();
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/review$/);
+  await top.getByRole('button', { name: 'Назад' }).click();
+  await expect(page).toHaveURL(/#\/conditions$/);
+  await page.goBack();
+  await expect(page).toHaveURL(/#\/$/);
+  await expect(top.getByRole('heading', { name: /Одобрили кредит/ })).toBeVisible();
 });

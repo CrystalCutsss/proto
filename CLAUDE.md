@@ -15,7 +15,9 @@ work; it holds the current phase and the next step. ADRs live in Proto/Docs/ADR 
   document ID in `config/drive.json` (`drive-guard` enforces it). The repo keeps only pointers (`docs/STATUS.md`).
 - **Secrets** exist only in GitHub Secrets and the hosting dashboard: never in the repo, env files or cloud
   environment variables.
-- **Figma is not connected until Phase 8** and only on the owner's command.
+- **Figma is read-only.** The owner enabled the Figma connector in Phase 6 (instead of Phase 8). The `figma-guard`
+  hook lets only reviewed read tools through (allowlist; new tools are blocked until listed with the owner's
+  approval); write and paid tools are also denied in `.claude/settings.json`. Save quota (~200 calls/day).
 - **Frozen versions are immutable** (ADR-0010). Make a new version with `pnpm proto:version <slug>`.
 - `design-system/source/**`, its lock and inventory are written only by Actions. `pnpm-lock.yaml` changes only
   through pnpm.

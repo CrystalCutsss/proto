@@ -21,8 +21,9 @@ test('a deep link asks for the password and returns to the same page', async ({ 
   expect(session?.httpOnly).toBe(true);
   expect(session?.sameSite).toBe('Lax');
 
+  const registry = await (await page.request.get('/registry.json')).json();
   await page.goto('/');
-  await expect(page.locator('.hub-card')).toHaveCount(3);
+  await expect(page.locator('.hub-card')).toHaveCount(registry.prototypes.length);
 });
 
 test('without a session nothing but the login page and robots.txt is served', async ({ request }) => {

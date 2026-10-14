@@ -29,7 +29,23 @@
       "mcp__Cloudflare_Developer_Platform__kv_namespace_delete",
       "mcp__Cloudflare_Developer_Platform__r2_bucket_delete",
       "mcp__Cloudflare_Developer_Platform__hyperdrive_config_delete",
-      "mcp__Figma",
+      "mcp__Figma__use_figma",
+      "mcp__Figma__generate_figma_design",
+      "mcp__Figma__create_new_file",
+      "mcp__Figma__upload_assets",
+      "mcp__Figma__add_code_connect_map",
+      "mcp__Figma__generate_diagram",
+      "mcp__Figma__create_generative_plugin",
+      "mcp__Figma__update_generative_plugin",
+      "mcp__Figma__create_shader",
+      "mcp__Figma__update_shader",
+      "mcp__Figma__html_to_figma",
+      "mcp__Figma__send_code_connect_mappings",
+      "mcp__Figma__generate_image",
+      "mcp__Figma__weave_run_model",
+      "mcp__Figma__weave_run_tool",
+      "mcp__Figma__weave_upload_asset",
+      "mcp__Figma__weave_cancel_tool_run",
       "Bash(rclone *)"
     ],
     "allow": [
@@ -96,6 +112,18 @@
             "type": "command",
             "command": "node",
             "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/drive-guard.mjs"],
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
+      },
+      {
+        "matcher": "^mcp__.*[Ff]igma.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/figma-guard.mjs"],
             "timeout": 10,
             "onFailure": "block"
           }

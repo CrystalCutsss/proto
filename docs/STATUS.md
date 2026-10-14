@@ -3,8 +3,8 @@
 Вся документация ведётся в Google Drive, в папке **Proto/Docs** (ADR-0004). Этот файл — только указатель для новой сессии.
 
 - **Полный STATUS:** Google Doc «STATUS» — https://docs.google.com/document/d/1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E/edit (fileId `1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E`).
-- **Текущая фаза:** 5 — хостинг (ADR-0015): Worker Cloudflare со страницей входа, общий код с site:preview, Workers Builds и превью веток. PR ждёт мержа; затем владелец подключает репозиторий к Cloudflare по инструкции «Хостинг: Cloudflare» в Proto/Docs/Setup. Следующая — Фаза 6 (пилот).
-- **Обновлено:** 2026-10-13.
+- **Текущая фаза:** 6 — пилот end-to-end (ADR-0016): прототип `credit-activation` v1 собран из макета Figma (коннектор только на чтение), проверен ревью, визуальной проверкой с pixel-diff (`pnpm qa:diff`) и e2e. PR ждёт мержа. Следующая — Фаза 7 (документация и плейбуки).
+- **Обновлено:** 2026-10-14.
 
 ## Как продолжить (для новой сессии)
 

@@ -1,0 +1,11 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="tui-ic-medium / doc">
+<mask id="mask-doc" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="1" width="16" height="22">
+<path transform="translate(4 1)" fill-rule="evenodd" clip-rule="evenodd" d="M10 0H0V19C0 20.6569 1.34315 22 3 22H16V6H10V0ZM3.5 10.5H12V11C12 12.1046 11.1046 13 10 13H3.5V10.5ZM9 15.5H3.5V18H7C8.10457 18 9 17.1046 9 16V15.5Z" fill="black"/>
+<path transform="translate(4 1)" opacity="0.4" d="M10 0V6H16L10 0Z" fill="black"/>
+</mask>
+<g mask="url(#mask-doc)">
+<path d="M0 0H24V24H0V0Z" fill="#428BF9"/>
+</g>
+</g>
+</svg>

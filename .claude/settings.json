@@ -116,6 +116,18 @@
             "onFailure": "block"
           }
         ]
+      },
+      {
+        "matcher": "^mcp__.*[Ff]igma.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/figma-guard.mjs"],
+            "timeout": 10,
+            "onFailure": "block"
+          }
+        ]
       }
     ],
     "PostToolUse": [

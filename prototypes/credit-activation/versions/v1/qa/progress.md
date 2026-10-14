@@ -89,16 +89,10 @@ native-like push/pop transitions and an interactive back swipe. Spec: `spec/spec
   03 10.86 → 9.82 %, 04 6.65 → 6.57 %, 05 3.59 → 0.79 %. Top-aligned 01–03 are dominated by the taller Figma
   frames (bottom block sits lower) and fallback-font text.
 
-## Open questions for the owner
+## Owner answers (2026-10-14)
 
-- Missing TUI shadow tokens: medium card shadow (`0 6 34`, black 12 %), switch/slider knob shadow and the push
-  edge shadow are composed from `--ds-space-*` with primitive colours `--ds-color-black-black-alpha-{6,10,12}`
-  (marked `provisional` in CSS); the dim overlay also uses the primitive alpha 10. Add semantic tokens?
-
-- Mock status bar / home indicator on a real phone: keep (fidelity) or hide in standalone/mobile?
-- Large-title collapse on scroll: add in v2?
-- What the secondary actions should open (tooltip, «График платежей», «Изменить», …).
-- iOS Safari has its own edge-swipe back (browser history): it pops our stack through popstate without the
-  interactive animation. Acceptable for a browser tab; in standalone PWA mode only our swipe is active.
-- Browser back on the success screen resets the flow (like «К счету»): OK?
-- Reduced motion: keep the short cross-fade (spec) or follow the package policy (instant)?
+- Missing TUI shadow tokens and the 40 px radius: OK to keep the provisional composites.
+- Mock status bar / home indicator on real phones: keep.
+- Large-title collapse, actions of the secondary controls, browser back on `#/success`: not needed — this is a
+  test prototype for the pilot and will not be developed further in this form.
+- Figma allowlist hook: added (`.claude/hooks/figma-guard.mjs`).

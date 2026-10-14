@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Vite preset for prototype versions: base path, shell loader injection, dev registry, CDN guard, SVG optimization.",
+  "description": "Vite preset for prototype versions: base path, shell loader injection, dev registry, CDN guard, SVG optimization, web app manifest and home-screen icons.",
   "exports": {
     ".": {
       "types": "./src/index.d.ts",
@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@proto/registry": "workspace:*",
+    "@proto/tokens": "workspace:*",
+    "sharp": "0.35.4",
     "svgo": "4.1.0"
   },
   "peerDependencies": {

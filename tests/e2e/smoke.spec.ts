@@ -93,3 +93,21 @@ test('pilot flow pushes screens with the yellow button and pops them back', asyn
   await expect(page).toHaveURL(/#\/$/);
   await expect(top.getByRole('heading', { name: /Одобрили кредит/ })).toBeVisible();
 });
+
+test('versions ship a web app manifest and home-screen icons (ADR-0019)', async ({ page }) => {
+  await page.goto('/p/credit-activation/v1/?shell=0#/');
+  const href = await page.locator('link[rel="manifest"]').getAttribute('href');
+  expect(href).toBe('/p/credit-activation/v1/manifest.webmanifest');
+  const res = await page.request.get(href ?? '');
+  expect(res.headers()['content-type']).toContain('application/manifest+json');
+  const manifest = await res.json();
+  expect(manifest).toMatchObject({
+    start_url: '/p/credit-activation/v1/',
+    scope: '/',
+    display: 'standalone',
+  });
+  const icon = await page.request.get(
+    (await page.locator('link[rel="apple-touch-icon"]').getAttribute('href')) ?? '',
+  );
+  expect(icon.headers()['content-type']).toBe('image/png');
+});

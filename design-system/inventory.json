@@ -1,0 +1,1312 @@
+{
+  "schemaVersion": 1,
+  "root": {
+    "id": "1c3nATguttXvKvECGx8fexFUnMetjoEnj",
+    "name": "DS"
+  },
+  "summary": {
+    "folders": 8,
+    "files": 122,
+    "googleNative": 0,
+    "shortcuts": 0,
+    "totalBytes": 1333128254,
+    "byMimeType": {
+      "application/json": 1,
+      "application/x-font-otf": 55,
+      "application/x-font-ttf": 58,
+      "application/x-xfig": 6,
+      "text/plain": 2
+    },
+    "downloadRestricted": 0,
+    "overSizeLimit": 2,
+    "maxFileSizeBytes": 52428800
+  },
+  "items": [
+    {
+      "path": "TUI Assets.fig",
+      "kind": "file",
+      "id": "1qR3jy3Cz1XYUaqdkAPPJDUxLzULa4UsE",
+      "mimeType": "application/x-xfig",
+      "size": 63941527,
+      "md5": "3b71f5ce7c0d9169de7dd7f9f1029394",
+      "modifiedTime": "2026-10-13T06:55:37.756Z",
+      "version": "5",
+      "overSizeLimit": true
+    },
+    {
+      "path": "TUI Desktop.fig",
+      "kind": "file",
+      "id": "1JTIqjswVFVExnFWnN9vRIQKBdIYm8whh",
+      "mimeType": "application/x-xfig",
+      "size": 20525377,
+      "md5": "498423f797be66a72ab4187583f63664",
+      "modifiedTime": "2026-10-13T06:52:43.965Z",
+      "version": "6"
+    },
+    {
+      "path": "TUI Foundations.fig",
+      "kind": "file",
+      "id": "1NtG-oAEAvoupJg8nyS_krfNaqmJ-kQur",
+      "mimeType": "application/x-xfig",
+      "size": 50481055,
+      "md5": "f607b2e590395a77e41d50c5ba79afbe",
+      "modifiedTime": "2026-10-13T06:56:41.442Z",
+      "version": "6"
+    },
+    {
+      "path": "TUI Labs 🧪.fig",
+      "kind": "file",
+      "id": "1QJdCrYTyU-s5GO7u_rxaPk_mrxrLd2Lk",
+      "mimeType": "application/x-xfig",
+      "size": 812587341,
+      "md5": "cecac255e10a3c213781d5c5f47df4cf",
+      "modifiedTime": "2026-10-13T06:59:35.678Z",
+      "version": "5",
+      "overSizeLimit": true
+    },
+    {
+      "path": "TUI Mobile.fig",
+      "kind": "file",
+      "id": "13lMlagFkVTqBANNjGZxON-tCoSVkhwYT",
+      "mimeType": "application/x-xfig",
+      "size": 31194802,
+      "md5": "6b4e88faa3617d0542fd6a7599aee63e",
+      "modifiedTime": "2026-10-13T06:54:56.280Z",
+      "version": "6"
+    },
+    {
+      "path": "TUI Templates.fig",
+      "kind": "file",
+      "id": "1xve1IQKGw4MyUnlm9ewjD_ttOfyNIFBe",
+      "mimeType": "application/x-xfig",
+      "size": 20868714,
+      "md5": "72b29f815e7b4361f3394b6f1aca8b9a",
+      "modifiedTime": "2026-10-13T06:57:12.236Z",
+      "version": "6"
+    },
+    {
+      "path": "fonts",
+      "kind": "folder",
+      "id": "1pAEq7NwQRosrgHAQ1K6CxDKgF7DlqqmS",
+      "mimeType": "application/vnd.google-apps.folder",
+      "modifiedTime": "2026-10-13T19:15:54.857Z",
+      "version": "13"
+    },
+    {
+      "path": "fonts/Neue Haas",
+      "kind": "folder",
+      "id": "1lCBtlBOyuWqk_eZ-xuiqvVJz4AsYZOuU",
+      "mimeType": "application/vnd.google-apps.folder",
+      "modifiedTime": "2026-10-13T19:10:51.418Z",
+      "version": "2"
+    },
+    {
+      "path": "fonts/Neue Haas/Linotype - Neue Haas Unica W1G Bold.otf",
+      "kind": "file",
+      "id": "1E2Kam4vweajv_717uggF7S9R3loGAMKL",
+      "mimeType": "application/x-font-otf",
+      "size": 145900,
+      "md5": "e077bb59999af91578cc2cd9e5a1909e",
+      "modifiedTime": "2026-09-01T08:23:30.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Neue Haas/Linotype - Neue Haas Unica W1G Medium.otf",
+      "kind": "file",
+      "id": "1yz4YOoeNuVnLQT6m7RwLLIVyhlfYxdC8",
+      "mimeType": "application/x-font-otf",
+      "size": 145112,
+      "md5": "7f076f78fcc3ecd571f863a9eec194b8",
+      "modifiedTime": "2026-09-01T08:23:30.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Neue Haas/Linotype - Neue Haas Unica W1G.otf",
+      "kind": "file",
+      "id": "1BFRZH97Q0QaDSPZAZy-iFw2cblJavbSZ",
+      "mimeType": "application/x-font-otf",
+      "size": 143564,
+      "md5": "4a792c95b0d40c605bc6f6999bcc8799",
+      "modifiedTime": "2026-09-01T08:23:30.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto",
+      "kind": "folder",
+      "id": "1JT3QuYaEz3QvqyR8EJ2N05jvLqi6sdei",
+      "mimeType": "application/vnd.google-apps.folder",
+      "modifiedTime": "2026-10-13T19:15:38.027Z",
+      "version": "1"
+    },
+    {
+      "path": "fonts/Roboto/OFL.txt",
+      "kind": "file",
+      "id": "12ZmhYDt4uD1EFyDoOs0SUMbS3crOetEq",
+      "mimeType": "text/plain",
+      "size": 4487,
+      "md5": "3e5df346fd8c0867bac65e8a215771dd",
+      "modifiedTime": "2026-10-13T19:15:20.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/README.txt",
+      "kind": "file",
+      "id": "1JfGLLHfHYzbtM4105jnciVH3nK5laAaT",
+      "mimeType": "text/plain",
+      "size": 4117,
+      "md5": "3ffa129a97ef4e6614e51eae219207d5",
+      "modifiedTime": "2026-10-13T19:15:20.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/Roboto-Italic-VariableFont_wdth,wght.ttf",
+      "kind": "file",
+      "id": "1aKiWKiRjnq2Yt6r3Fi_o37dXL2yzLJys",
+      "mimeType": "application/x-font-ttf",
+      "size": 530052,
+      "md5": "43fb825d0d4ccba74fab0cb44d86c2db",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf",
+      "kind": "file",
+      "id": "1nIogFOJ1gzICYfj1qlNLgjclt-EZKwnp",
+      "mimeType": "application/x-font-ttf",
+      "size": 487768,
+      "md5": "d02795fd319584c202657937630846c6",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static",
+      "kind": "folder",
+      "id": "1S68dXMfho1lHfMvPO53jVwlxOH497Lsb",
+      "mimeType": "application/vnd.google-apps.folder",
+      "modifiedTime": "2026-10-13T19:15:38.025Z",
+      "version": "1"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-Black.ttf",
+      "kind": "file",
+      "id": "1uIriGl9zkztIWJjD8dTcK6ZfwYQdoOyn",
+      "mimeType": "application/x-font-ttf",
+      "size": 160316,
+      "md5": "39d75021a9ebff6db81f340516f8c9ff",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-BlackItalic.ttf",
+      "kind": "file",
+      "id": "1jC7vQOaQGpuw8OPNHAlVhqi792JP9i5C",
+      "mimeType": "application/x-font-ttf",
+      "size": 166780,
+      "md5": "dc9df14caf191cd4c86a6c635c663b28",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-Bold.ttf",
+      "kind": "file",
+      "id": "1tL8wTj5fsMIMK2NOBM5R39xHR6A2isgH",
+      "mimeType": "application/x-font-ttf",
+      "size": 159900,
+      "md5": "2dd437af13b14eb2f3b5de2e79523e65",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-BoldItalic.ttf",
+      "kind": "file",
+      "id": "1pZXLzSE1zOnpNAFqfrpuHEU0omPnNhoh",
+      "mimeType": "application/x-font-ttf",
+      "size": 166256,
+      "md5": "91d8f5ecd6513a291df005de7f165109",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-ExtraBold.ttf",
+      "kind": "file",
+      "id": "1Wh_w2fZ1hx1-W-l83VmY1d6cYSwNsS4H",
+      "mimeType": "application/x-font-ttf",
+      "size": 160012,
+      "md5": "188393ba08e4f99b1a277babfde5a333",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-ExtraBoldItalic.ttf",
+      "kind": "file",
+      "id": "1hO9zqRRRkq3D-WZpnfAUgsNhBrUB4XXZ",
+      "mimeType": "application/x-font-ttf",
+      "size": 166428,
+      "md5": "297fe031a5d54808a19c75bd6db61918",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-ExtraLight.ttf",
+      "kind": "file",
+      "id": "19SfoAy0AVeKcumGw_rNIk-M57PN6G3vU",
+      "mimeType": "application/x-font-ttf",
+      "size": 159200,
+      "md5": "cbc0b9732c73a12a7c9d8597c517763e",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-ExtraLightItalic.ttf",
+      "kind": "file",
+      "id": "145gU3gNFkGbOJsM-p4mfSdR4vNtiqdpp",
+      "mimeType": "application/x-font-ttf",
+      "size": 164780,
+      "md5": "9c167605f1c452245e849d116b272088",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-Italic.ttf",
+      "kind": "file",
+      "id": "1jeiHDN7v7_ATQUM9fE2h8OMYN9W2-PPg",
+      "mimeType": "application/x-font-ttf",
+      "size": 165268,
+      "md5": "f1364eda6a9b2589f69fcc6a890c6447",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-Light.ttf",
+      "kind": "file",
+      "id": "1gB5YOk00_fBUF7uv25-K7ryh7UL4Sb0u",
+      "mimeType": "application/x-font-ttf",
+      "size": 159200,
+      "md5": "12c992e825981ac45c64f58dc24d6f82",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-LightItalic.ttf",
+      "kind": "file",
+      "id": "1f2bXFwHrvisIDGKGbjfYTT4Unw3sTIQu",
+      "mimeType": "application/x-font-ttf",
+      "size": 165052,
+      "md5": "f7b49d44089d3089b0a1b9390bb701c9",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-Medium.ttf",
+      "kind": "file",
+      "id": "1GVWDMgQW9zd9ZoEYv-Z89OTjXm-ozGd3",
+      "mimeType": "application/x-font-ttf",
+      "size": 159296,
+      "md5": "21030564b3bbea7711315b1670eca626",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-MediumItalic.ttf",
+      "kind": "file",
+      "id": "1maGCzoro-WLNMLm-a2_jhDuhwI1rKt7E",
+      "mimeType": "application/x-font-ttf",
+      "size": 165580,
+      "md5": "42049a5d115ca814a49affb6d72eb69f",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-Regular.ttf",
+      "kind": "file",
+      "id": "1_xBRumouOQ1zuegFV3XM5bvXmW55B9Vt",
+      "mimeType": "application/x-font-ttf",
+      "size": 159108,
+      "md5": "678ba85b47044ac65031832c80bdfe4a",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-SemiBold.ttf",
+      "kind": "file",
+      "id": "1HxgLCpqLe4N4Sadwi5hPfdfb15Dkvpam",
+      "mimeType": "application/x-font-ttf",
+      "size": 159876,
+      "md5": "6f0903b5854df8a1210605cab77364eb",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-SemiBoldItalic.ttf",
+      "kind": "file",
+      "id": "1wwgUHIbjdO7Q8dcA-F3_JoCHqOtHrAtm",
+      "mimeType": "application/x-font-ttf",
+      "size": 166148,
+      "md5": "7842d336163077dfe2eeccd82805ae02",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-Thin.ttf",
+      "kind": "file",
+      "id": "19Qk_bDIBLpsjKAem83e_kumjvZk8ovpV",
+      "mimeType": "application/x-font-ttf",
+      "size": 158840,
+      "md5": "74d284590703cedbb7b17cf11f91004f",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto-ThinItalic.ttf",
+      "kind": "file",
+      "id": "1liK_K9q1lH345XJAPOFxkRDBmH_ZYklc",
+      "mimeType": "application/x-font-ttf",
+      "size": 164132,
+      "md5": "239fe757621a9e0e5adf7a4b32fa6a9f",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-Black.ttf",
+      "kind": "file",
+      "id": "1qr1JXQDgEGQqgcbR3n_jHs7QL77N_2Gn",
+      "mimeType": "application/x-font-ttf",
+      "size": 160152,
+      "md5": "5c2cf0f096857689e6913646c243dfe1",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-BlackItalic.ttf",
+      "kind": "file",
+      "id": "1SEPfV8ejP74S7xfOU9vdHWxIWCVh7QmM",
+      "mimeType": "application/x-font-ttf",
+      "size": 166748,
+      "md5": "e112a68b39a46696c5b335f8430082e2",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-Bold.ttf",
+      "kind": "file",
+      "id": "1yqYoOFtLY0MvhgpLQPmd0CNW2YkVAauu",
+      "mimeType": "application/x-font-ttf",
+      "size": 159656,
+      "md5": "ae3713c3fddc1e50f79973efa30d05a5",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-BoldItalic.ttf",
+      "kind": "file",
+      "id": "16LOd0yTVx8_EaNNtrggSx9QlnlkRe1Fi",
+      "mimeType": "application/x-font-ttf",
+      "size": 166156,
+      "md5": "a9a3c21062c2e4aa940946c0c81ca6bf",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-ExtraBold.ttf",
+      "kind": "file",
+      "id": "1dAhBiUq5PCP4BGK4dNKZhtn18xCSHRUx",
+      "mimeType": "application/x-font-ttf",
+      "size": 159948,
+      "md5": "c44e8fce0c4d9ea467428986b932fbc0",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-ExtraBoldItalic.ttf",
+      "kind": "file",
+      "id": "1e-6HeYihtIingzRnP4SilVBX8h-uTAqD",
+      "mimeType": "application/x-font-ttf",
+      "size": 166504,
+      "md5": "5c90098ed8523bc398a3d5504cc07859",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-ExtraLight.ttf",
+      "kind": "file",
+      "id": "16xbj72WEXKkH9R3JMqJy_vS8Rc3SU1kS",
+      "mimeType": "application/x-font-ttf",
+      "size": 159344,
+      "md5": "b540dbb8feb4b3d8ef89170bb375d665",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-ExtraLightItalic.ttf",
+      "kind": "file",
+      "id": "1VOE7ab01C-C0LIloOSbsT4Ki0ki2yNAO",
+      "mimeType": "application/x-font-ttf",
+      "size": 165516,
+      "md5": "aa11227e5f9791adc4b78c7cceccd232",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-Italic.ttf",
+      "kind": "file",
+      "id": "1Cp8VEhls9SuD8yrD3CcFSK6WT96zE1Xg",
+      "mimeType": "application/x-font-ttf",
+      "size": 165308,
+      "md5": "0dc4c17359e3f43cc0b0849224365746",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-Light.ttf",
+      "kind": "file",
+      "id": "1osLrCq014Siem8t5F3DRw8XapqDJSgUy",
+      "mimeType": "application/x-font-ttf",
+      "size": 159200,
+      "md5": "d8fab5d28ea7eb5748d31d8293289c6e",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-LightItalic.ttf",
+      "kind": "file",
+      "id": "1p7WFKnxqiQ6mWN_qk5I5Z630QgKZ9xGJ",
+      "mimeType": "application/x-font-ttf",
+      "size": 165604,
+      "md5": "75f4c47e7333fbb6769f7825e410d65a",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-Medium.ttf",
+      "kind": "file",
+      "id": "1aO3WI2HAPDdvIJwRxYyU1QaIXfaCVz9q",
+      "mimeType": "application/x-font-ttf",
+      "size": 159080,
+      "md5": "a2b32e080b3e0fd3fc24d348174f4019",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-MediumItalic.ttf",
+      "kind": "file",
+      "id": "1pB2tv4miT8WgC640ZnXtJUs7VqNY7Vv7",
+      "mimeType": "application/x-font-ttf",
+      "size": 165584,
+      "md5": "7ce79b2ba1790aaa4d2b9cf0266b6b8a",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-Regular.ttf",
+      "kind": "file",
+      "id": "1aFASTeMziXL2OvsEnu5VdbqQa8agPl6p",
+      "mimeType": "application/x-font-ttf",
+      "size": 158972,
+      "md5": "dfc1ae64a82e449d6b9ccfe324e72cee",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-SemiBold.ttf",
+      "kind": "file",
+      "id": "1Ph81o2MxQPFMeL3le9itsZHcK3xQ7iD8",
+      "mimeType": "application/x-font-ttf",
+      "size": 159600,
+      "md5": "9fe26f0deb1094353838236db1cdf4ea",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-SemiBoldItalic.ttf",
+      "kind": "file",
+      "id": "1O9yexfiL285f3K5wfTG4uOCjieNYkxu-",
+      "mimeType": "application/x-font-ttf",
+      "size": 165788,
+      "md5": "e98af24b17b9b089c53cf495b6773aa7",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-Thin.ttf",
+      "kind": "file",
+      "id": "1GkBgzpQs6WW3vBEasNaOEgd6UIhKUGMr",
+      "mimeType": "application/x-font-ttf",
+      "size": 159400,
+      "md5": "f3be16240ac2d4268c521ab0bfc1db55",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_Condensed-ThinItalic.ttf",
+      "kind": "file",
+      "id": "1TkBGbL5ZheHCwMXaAk4TTxUbThQS8vov",
+      "mimeType": "application/x-font-ttf",
+      "size": 165084,
+      "md5": "cbe7bb3d52d75fd8aeb9dfb953b2f759",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-Black.ttf",
+      "kind": "file",
+      "id": "10rXKoAqbm4JycfPLGlTag27Qy1TEBQmE",
+      "mimeType": "application/x-font-ttf",
+      "size": 160388,
+      "md5": "5136f254af8a73d67bd8490d81c57e60",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-BlackItalic.ttf",
+      "kind": "file",
+      "id": "1x7dTb0KBwLxHmCb7AODE9jNVZqvZvI7Q",
+      "mimeType": "application/x-font-ttf",
+      "size": 166896,
+      "md5": "a26df91cfe798c43f622f60f7f6bd9f6",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-Bold.ttf",
+      "kind": "file",
+      "id": "1hVXTEcwJoLJjSP_94ubnijC6NivU242f",
+      "mimeType": "application/x-font-ttf",
+      "size": 159828,
+      "md5": "77edf55cac2bb20688b9962f041f65c2",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-BoldItalic.ttf",
+      "kind": "file",
+      "id": "1NUjN-B92cBg53a4gUGK0pIA_JBZ6Emfn",
+      "mimeType": "application/x-font-ttf",
+      "size": 166256,
+      "md5": "7001acda5791714e1b0f75beea3aa3f5",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-ExtraBold.ttf",
+      "kind": "file",
+      "id": "1wccaQ2i-cpip6VGCzjUcQLNmq1nAQpmU",
+      "mimeType": "application/x-font-ttf",
+      "size": 159988,
+      "md5": "5ed471e8ba9e856a6b0ab7afe411a0e1",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-ExtraBoldItalic.ttf",
+      "kind": "file",
+      "id": "1VukMpmHMmklT_QCI1Jx4T6L1MKSDXOyP",
+      "mimeType": "application/x-font-ttf",
+      "size": 166524,
+      "md5": "f1e759ea3a288b283ff5af72f45bb28a",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-ExtraLight.ttf",
+      "kind": "file",
+      "id": "1j3Yo11OD4UHYmzTf-8qZmvvukzPWptbf",
+      "mimeType": "application/x-font-ttf",
+      "size": 159320,
+      "md5": "7806f55c23667c76f913488e4625eff7",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-ExtraLightItalic.ttf",
+      "kind": "file",
+      "id": "1z47_o5y1DBoUmZ9r-MbVqMdC-xJs71tJ",
+      "mimeType": "application/x-font-ttf",
+      "size": 165260,
+      "md5": "8135c4e457b64da9ff85ae7a1523bba9",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-Italic.ttf",
+      "kind": "file",
+      "id": "19Cj1vHY30hLF3g0EcLHQyg-km-7nAGp-",
+      "mimeType": "application/x-font-ttf",
+      "size": 165332,
+      "md5": "44d70f89ff5b884f427e4959813cdbe4",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-Light.ttf",
+      "kind": "file",
+      "id": "1WmGBfd6f_WSDpinHKri5_PrZLzZlOPxV",
+      "mimeType": "application/x-font-ttf",
+      "size": 159264,
+      "md5": "c82fce399ecf39008c3d3c6a4b560ebc",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-LightItalic.ttf",
+      "kind": "file",
+      "id": "15qaC_wEraTFQrQXkNnn8bWtqVHjZdoSX",
+      "mimeType": "application/x-font-ttf",
+      "size": 165484,
+      "md5": "1c53f99ca5d78be7cbaadfbfa30ae694",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-Medium.ttf",
+      "kind": "file",
+      "id": "19qTqA4KqUdglyvZqvAbSOzq8z0zQrSLU",
+      "mimeType": "application/x-font-ttf",
+      "size": 159260,
+      "md5": "09b581f8ac353ab1ba03c39c4c2ce810",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-MediumItalic.ttf",
+      "kind": "file",
+      "id": "12Xwenu-3Xx2cFnW0j5bTI8QtfVXq9-uK",
+      "mimeType": "application/x-font-ttf",
+      "size": 165604,
+      "md5": "e7758f6b24ebd21dad20167b9c14888e",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-Regular.ttf",
+      "kind": "file",
+      "id": "1QTodDhQn6-JjIo1ZbxyMhHScRwqaEwQY",
+      "mimeType": "application/x-font-ttf",
+      "size": 159088,
+      "md5": "0c9467735322289c1a1ab447ec8aab5a",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-SemiBold.ttf",
+      "kind": "file",
+      "id": "1o9_YXHSyEkNtNILz6snFv5GmOAFMkRwt",
+      "mimeType": "application/x-font-ttf",
+      "size": 159812,
+      "md5": "fbd5d7077a814807328d91f37ddaab5a",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-SemiBoldItalic.ttf",
+      "kind": "file",
+      "id": "1r5ML18sGSSr88Ld0JTUpg02ZHot_tV8t",
+      "mimeType": "application/x-font-ttf",
+      "size": 165968,
+      "md5": "8b9c43a5e665b7607b7e165f3311007b",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-Thin.ttf",
+      "kind": "file",
+      "id": "1kZ9E7MnCo8ZbuHLCocWHdH8m__ae4Wiw",
+      "mimeType": "application/x-font-ttf",
+      "size": 159328,
+      "md5": "6ff7030a868fc1a4b4d529c2d1ec6e9f",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Roboto/static/Roboto_SemiCondensed-ThinItalic.ttf",
+      "kind": "file",
+      "id": "1B78ZYBfoSMgYOC0YgDkP23ZqdLm9OrUQ",
+      "mimeType": "application/x-font-ttf",
+      "size": 164788,
+      "md5": "4026bd4454c821d3324c968595df04f6",
+      "modifiedTime": "2026-02-19T22:19:04.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro",
+      "kind": "folder",
+      "id": "1tB-S_ODODNZA3oybuxSX4ye1HWaYzn_i",
+      "mimeType": "application/vnd.google-apps.folder",
+      "modifiedTime": "2026-10-13T19:13:14.053Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-Black.otf",
+      "kind": "file",
+      "id": "1fLeTAPvxiEv2Q8Nds2lczJLXbwmgRi8P",
+      "mimeType": "application/x-font-otf",
+      "size": 5921232,
+      "md5": "ae271960ee4e6e588bcaa341b8345dc4",
+      "modifiedTime": "2026-05-28T17:19:08.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-BlackItalic.otf",
+      "kind": "file",
+      "id": "1oq6cTlPlGc71UXaUeiLdaPJN7hS9xWTG",
+      "mimeType": "application/x-font-otf",
+      "size": 5810048,
+      "md5": "7de43c72a1b70b939689cdbf06b506c2",
+      "modifiedTime": "2026-05-28T17:19:08.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-Bold.otf",
+      "kind": "file",
+      "id": "1seiw6c_pNIWKdm_Hle1IUmlP_n1bXlEu",
+      "mimeType": "application/x-font-otf",
+      "size": 6378092,
+      "md5": "4d6ab9d5b647eae784cf72718d87168b",
+      "modifiedTime": "2026-05-28T17:19:08.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-BoldItalic.otf",
+      "kind": "file",
+      "id": "1QhWchpUVoLl8Ca95lUu5l_8wQR66gYFB",
+      "mimeType": "application/x-font-otf",
+      "size": 6266516,
+      "md5": "b05402af7c1bbb9efa2b69e8cb0a43b1",
+      "modifiedTime": "2026-05-28T17:19:08.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-Heavy.otf",
+      "kind": "file",
+      "id": "1glAQ9B5malah1RzXXYBsv-c87vz0Egs6",
+      "mimeType": "application/x-font-otf",
+      "size": 6360268,
+      "md5": "9b70f94d9859dad894436eef9b832c9f",
+      "modifiedTime": "2026-05-28T17:19:08.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-HeavyItalic.otf",
+      "kind": "file",
+      "id": "1N9knPcCzqLGB24GS2pR4hqv05R6kToqX",
+      "mimeType": "application/x-font-otf",
+      "size": 6243348,
+      "md5": "22d342e6dc561898594c0ff393d6dc83",
+      "modifiedTime": "2026-05-28T17:19:08.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-Light.otf",
+      "kind": "file",
+      "id": "1R7dN5OG6-sCUoeWirS_giwQU03tZeWi5",
+      "mimeType": "application/x-font-otf",
+      "size": 6314984,
+      "md5": "c4e9084eab92ae1333b3097ac5aa1971",
+      "modifiedTime": "2026-05-28T17:19:08.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-LightItalic.otf",
+      "kind": "file",
+      "id": "1fcHNpzt4tC2sa2vzaAqsgO55mag8K6Ry",
+      "mimeType": "application/x-font-otf",
+      "size": 6220864,
+      "md5": "20c926a2b4349a0cba4b43bc09f5ab9d",
+      "modifiedTime": "2026-05-28T17:19:08.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-Medium.otf",
+      "kind": "file",
+      "id": "1-oZWWOjtzEG4DHOdsnMcwAfhd6TNd0Z6",
+      "mimeType": "application/x-font-otf",
+      "size": 6344680,
+      "md5": "b64fbb1ada8a8dc91cd1ef500633e022",
+      "modifiedTime": "2026-05-28T17:19:08.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-MediumItalic.otf",
+      "kind": "file",
+      "id": "1JISaqNLWD9uNI67XBq0y3zSLRiJAGLED",
+      "mimeType": "application/x-font-otf",
+      "size": 6211856,
+      "md5": "bcdb1a74a61ef1c0c6075ef11f7f0170",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-Regular.otf",
+      "kind": "file",
+      "id": "1uJHrp1ma4IscoJCQdNC0qqFgi3Q0zn4t",
+      "mimeType": "application/x-font-otf",
+      "size": 6182812,
+      "md5": "e41a397e18fc333c2649409b0dae2f69",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-RegularItalic.otf",
+      "kind": "file",
+      "id": "1hjoBwTcvrm_qGKf0Ek4q48OPY9c_fT8P",
+      "mimeType": "application/x-font-otf",
+      "size": 6080056,
+      "md5": "559645a744731968122643c8e24a50e2",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-Semibold.otf",
+      "kind": "file",
+      "id": "19Kra7vucWHUePg4Y26RyosH1LYhg_j6x",
+      "mimeType": "application/x-font-otf",
+      "size": 6406052,
+      "md5": "dafeef6bf4588f65a0d5afec187f5744",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-SemiboldItalic.otf",
+      "kind": "file",
+      "id": "1Afy-5gxvjwVrbZzNUycR8T8vA1T5nI1X",
+      "mimeType": "application/x-font-otf",
+      "size": 6294840,
+      "md5": "11b48615eed2e5ecda299e6cf9803ca0",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-Thin.otf",
+      "kind": "file",
+      "id": "1VsGBDvjidhDCmVUF9DUfvgzE3c7OTd0N",
+      "mimeType": "application/x-font-otf",
+      "size": 6244072,
+      "md5": "cf297e4a69e8280fefc9c06719023603",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-ThinItalic.otf",
+      "kind": "file",
+      "id": "1LSI8yNa35qMSuuAxDZtJVPSrXr_ChcVe",
+      "mimeType": "application/x-font-otf",
+      "size": 6143448,
+      "md5": "1bc7f2baaa3427a24fbe5d021da7025a",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-Ultralight.otf",
+      "kind": "file",
+      "id": "1K0cVgjPto7BiCR02ZR7Dfl8-ucEEVGtu",
+      "mimeType": "application/x-font-otf",
+      "size": 6217312,
+      "md5": "6170c322406e24785b0c3a686dbfdf5f",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Display-UltralightItalic.otf",
+      "kind": "file",
+      "id": "1D4IZSOO_b-wLMn1rdAUN8qW4rLAPjRV2",
+      "mimeType": "application/x-font-otf",
+      "size": 6117448,
+      "md5": "00103f2eb04e1cec1f9f76cd1b6ddcd4",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Italic.ttf",
+      "kind": "file",
+      "id": "1aksrbkZYu0ivy_AMcGgfrg1Jk7Km7yxo",
+      "mimeType": "application/x-font-ttf",
+      "size": 19998192,
+      "md5": "21dd4270e1188665a50ec26484467a33",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Rounded-Black.otf",
+      "kind": "file",
+      "id": "11SxfdDNjSpkeWjSlYa1vMorPhfIDEzCB",
+      "mimeType": "application/x-font-otf",
+      "size": 6022184,
+      "md5": "09982a3989d9c2626b59204a1c0471a5",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Rounded-Bold.otf",
+      "kind": "file",
+      "id": "1arZPAEssPSi6ignFO6TBGOc9EMiklHtz",
+      "mimeType": "application/x-font-otf",
+      "size": 6497544,
+      "md5": "108df880bca88cd2fc88505a32153e29",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Rounded-Heavy.otf",
+      "kind": "file",
+      "id": "1rwMp49YjF8U_HLDQHtvnHZ5Xq2lefmFq",
+      "mimeType": "application/x-font-otf",
+      "size": 6486168,
+      "md5": "6f2bc5667fb06f407e53ab42cbfc76fe",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Rounded-Light.otf",
+      "kind": "file",
+      "id": "1VfaKt23R1fuzKe1CJFECL2f9Qv6D4AVE",
+      "mimeType": "application/x-font-otf",
+      "size": 6445116,
+      "md5": "616ad27c9e3a43479247eee862753a34",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Rounded-Medium.otf",
+      "kind": "file",
+      "id": "1S3FeFq3ZRIbOpEVueoHIAiIk_ryhYT5e",
+      "mimeType": "application/x-font-otf",
+      "size": 6461368,
+      "md5": "053bfafae220e564e1ab3f36e5e9e0d7",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Rounded-Regular.otf",
+      "kind": "file",
+      "id": "1x4jpkfM2z-2oAKd-9krSe60JUZuLF2KN",
+      "mimeType": "application/x-font-otf",
+      "size": 6261272,
+      "md5": "2c3c8bd2b9b324405afd8b9b16d21b3a",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Rounded-Semibold.otf",
+      "kind": "file",
+      "id": "1SjP_YJ9Nu7PqEaRgVLq7IZSlwJ8uDKLX",
+      "mimeType": "application/x-font-otf",
+      "size": 6523240,
+      "md5": "47b1202b4669ba03aecbaf506094199c",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Rounded-Thin.otf",
+      "kind": "file",
+      "id": "1gUKKBkEw-KRPDn2ADoTe_B74raYLhu6L",
+      "mimeType": "application/x-font-otf",
+      "size": 6373008,
+      "md5": "dc6189b0aeb838d72115ca02b402abcb",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Rounded-Ultralight.otf",
+      "kind": "file",
+      "id": "1xpoUXSvvPg39c6Br8Iso0WTgXVOKcyKg",
+      "mimeType": "application/x-font-otf",
+      "size": 6343856,
+      "md5": "07817592d9b68349eb8765bfb876fe2a",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-Black.otf",
+      "kind": "file",
+      "id": "1giYc53RZ1WZHXpn3gdcWSOTDCr67Ns-R",
+      "mimeType": "application/x-font-otf",
+      "size": 5904956,
+      "md5": "ce2d059d9e1d8ca13004767c5c8934f1",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-BlackItalic.otf",
+      "kind": "file",
+      "id": "1dIbeZpW_Os7Giy8qqPNACid6ALovdEcO",
+      "mimeType": "application/x-font-otf",
+      "size": 5828684,
+      "md5": "981d7e25b1fd9656d7b2e803e915cf3e",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-Bold.otf",
+      "kind": "file",
+      "id": "1CGU_SCYTrWZheGhbZCfJFAY-S4DkF6hj",
+      "mimeType": "application/x-font-otf",
+      "size": 6355744,
+      "md5": "2b6524469ff371326baec312259e85c6",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-BoldItalic.otf",
+      "kind": "file",
+      "id": "12SjX_3JtyRJo61SLjDO7L54riXhnAvuu",
+      "mimeType": "application/x-font-otf",
+      "size": 6285576,
+      "md5": "73a7716ea2116a9519856f1897726836",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-Heavy.otf",
+      "kind": "file",
+      "id": "1g9nB6vr_zPPOhhqK8c95DUvWt4GHAAMt",
+      "mimeType": "application/x-font-otf",
+      "size": 6337680,
+      "md5": "1f0c3bf72e125a8eb0994ef668b8a65d",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-HeavyItalic.otf",
+      "kind": "file",
+      "id": "1ys8aO0C427uRPERYR73TpcCslW9BTFAd",
+      "mimeType": "application/x-font-otf",
+      "size": 6265312,
+      "md5": "7b4575dfde49d4c43758e1a26685b40e",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-Light.otf",
+      "kind": "file",
+      "id": "1zovsQDBqyVvtpK0M5Fxjl1QaKftMlyXg",
+      "mimeType": "application/x-font-otf",
+      "size": 6306448,
+      "md5": "10ce9a22f5b8b54caddd327879b14119",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-LightItalic.otf",
+      "kind": "file",
+      "id": "1IMuWaDIHRXmyWzbXdozMTIrYvgDCeIWx",
+      "mimeType": "application/x-font-otf",
+      "size": 6233572,
+      "md5": "1f0db2140f8e07d4b4fc6de416db5b7d",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-Medium.otf",
+      "kind": "file",
+      "id": "1jhL_X_e0Ph77f9-30GJ-eaz1Up4A08ch",
+      "mimeType": "application/x-font-otf",
+      "size": 6318300,
+      "md5": "e64f9148278dc0c6759880cb57a772b5",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-MediumItalic.otf",
+      "kind": "file",
+      "id": "1PpZB-G9QVchY5D_gfKhJ_mKKYeG5ol5e",
+      "mimeType": "application/x-font-otf",
+      "size": 6231796,
+      "md5": "4ec63b771372629088f33f2bb2f2bf35",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-Regular.otf",
+      "kind": "file",
+      "id": "1tbJEGauXbVsNgLRdhbfkH5RJUC1EJwRG",
+      "mimeType": "application/x-font-otf",
+      "size": 6177148,
+      "md5": "3914adc61a2769c3a4bb39d95d7dbc4c",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-RegularItalic.otf",
+      "kind": "file",
+      "id": "1ynfaC444y8BbzDM83M2amK4Kyrvd-e4b",
+      "mimeType": "application/x-font-otf",
+      "size": 6107124,
+      "md5": "6009b8e80d80ad02c1033147b715a36d",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-Semibold.otf",
+      "kind": "file",
+      "id": "1o1ghFhF8G6xHF2vPFuux9EXMMKp79i6_",
+      "mimeType": "application/x-font-otf",
+      "size": 6381816,
+      "md5": "5ab44224f2e6d23881bd1139858be4c5",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-SemiboldItalic.otf",
+      "kind": "file",
+      "id": "1M3b2KI_NCpzL2DR66_E3d-GvAHWi0DbZ",
+      "mimeType": "application/x-font-otf",
+      "size": 6311856,
+      "md5": "4f29978f9ce8a7bdcc12e9d50dc85faa",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-Thin.otf",
+      "kind": "file",
+      "id": "1A8VstrAYm0n2r9MSojZuvZqev6vo1NA9",
+      "mimeType": "application/x-font-otf",
+      "size": 6230332,
+      "md5": "9d32bfbda2356957fd5ff27b4efd7238",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-ThinItalic.otf",
+      "kind": "file",
+      "id": "1AcRRPSNh7O1sAvM2sKqpVTWX8b3P4mS8",
+      "mimeType": "application/x-font-otf",
+      "size": 6165732,
+      "md5": "7c9336a71adddbb865c056790186b096",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-Ultralight.otf",
+      "kind": "file",
+      "id": "1enlP1thuSdMyiMM_PIU3X6OITHrPNl9P",
+      "mimeType": "application/x-font-otf",
+      "size": 6209064,
+      "md5": "6e31ccbe65af3693d723b94782f1333e",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro-Text-UltralightItalic.otf",
+      "kind": "file",
+      "id": "1uRvuwUy8G90SDlgCbG86wmdhxCloFsxU",
+      "mimeType": "application/x-font-otf",
+      "size": 6132016,
+      "md5": "2635a2ab59b4f311c2786cf65bf6b5ac",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/SF Pro/SF-Pro.ttf",
+      "kind": "file",
+      "id": "10Bggdavdkb6lgee3CcVhnKljqzQBf5wv",
+      "mimeType": "application/x-font-ttf",
+      "size": 21249904,
+      "md5": "9369467d4d30c61026a8dd20e0b2d377",
+      "modifiedTime": "2026-05-28T17:19:09.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/T-Logo",
+      "kind": "folder",
+      "id": "1LqeAGJP60MmAvyDimpX9IGSCsqx5rlJO",
+      "mimeType": "application/vnd.google-apps.folder",
+      "modifiedTime": "2026-10-13T19:11:37.029Z",
+      "version": "2"
+    },
+    {
+      "path": "fonts/T-Logo/T-Logo-ExtraBold.otf",
+      "kind": "file",
+      "id": "1iEBVweOfVToDyQ-j3S6ypcF9dOe0GZVG",
+      "mimeType": "application/x-font-otf",
+      "size": 12172,
+      "md5": "3fe55acc340b6eb51b02a31945743d25",
+      "modifiedTime": "2026-10-13T19:11:14.101Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Шрифт T-Sans_2026",
+      "kind": "folder",
+      "id": "1jjkDMceKZ6ic1mB0ndx6V09urmNbV4dU",
+      "mimeType": "application/vnd.google-apps.folder",
+      "modifiedTime": "2026-10-13T19:07:37.251Z",
+      "version": "1"
+    },
+    {
+      "path": "fonts/Шрифт T-Sans_2026/T-Sans-Condensed_Medium.otf",
+      "kind": "file",
+      "id": "14OcnXAKihxRVmxaY7wm_Wm3uAaKYOcY-",
+      "mimeType": "application/x-font-otf",
+      "size": 52708,
+      "md5": "b6d32581e7f9a48cb4d8e7b2abee22bc",
+      "modifiedTime": "2026-02-06T07:07:32.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Шрифт T-Sans_2026/T-Sans_Bold.otf",
+      "kind": "file",
+      "id": "1532XhiWyw0VKAmTmRcvJ2VT7mj0aUX6C",
+      "mimeType": "application/x-font-otf",
+      "size": 51772,
+      "md5": "58d46ea27cef694e341adf6d8d14d908",
+      "modifiedTime": "2026-02-06T06:47:12.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Шрифт T-Sans_2026/T-Sans_Condensed_Bold.otf",
+      "kind": "file",
+      "id": "155KwHfBsFhFbiJTiOHR4KsmjE8jXMdIK",
+      "mimeType": "application/x-font-otf",
+      "size": 53172,
+      "md5": "85b4831bf30812548c957181245186d4",
+      "modifiedTime": "2026-02-06T07:07:32.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Шрифт T-Sans_2026/T-Sans_Condensed_Regular.otf",
+      "kind": "file",
+      "id": "1gRLWlbH8kbbON8G0vSwWriuye8AsBiLY",
+      "mimeType": "application/x-font-otf",
+      "size": 48960,
+      "md5": "4b233890a1117aa1c5e193159e1926a1",
+      "modifiedTime": "2026-02-06T07:07:32.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Шрифт T-Sans_2026/T-Sans_Medium.otf",
+      "kind": "file",
+      "id": "1hugBvVJwTbS26s1KKfqkVOf4jBizXA8x",
+      "mimeType": "application/x-font-otf",
+      "size": 67252,
+      "md5": "1395c5552aec60c4f6d5755a68412098",
+      "modifiedTime": "2026-02-06T07:38:54.000Z",
+      "version": "3"
+    },
+    {
+      "path": "fonts/Шрифт T-Sans_2026/T-Sans_Regular.otf",
+      "kind": "file",
+      "id": "18d9K-OmjHc_y8iVv4oJh6kfa7Ry7Fxb_",
+      "mimeType": "application/x-font-otf",
+      "size": 49428,
+      "md5": "cc1e68a23ad8e3ebaceac07a81f736fd",
+      "modifiedTime": "2025-12-11T06:57:06.000Z",
+      "version": "3"
+    },
+    {
+      "path": "tokens",
+      "kind": "folder",
+      "id": "1Vk9PeCI8-_4dMCIMmlxLhQLoz8SZMAGP",
+      "mimeType": "application/vnd.google-apps.folder",
+      "modifiedTime": "2026-10-13T18:35:49.534Z",
+      "version": "3"
+    },
+    {
+      "path": "tokens/figma-variables-2026-10-13.tokens.json",
+      "kind": "file",
+      "id": "1JONRsOlru2pC-MpL2IgHosBfTqQjLWNq",
+      "mimeType": "application/json",
+      "size": 747834,
+      "md5": "5729394a05bbcada54ce3ba39e51ac47",
+      "modifiedTime": "2026-10-13T18:34:00.736Z",
+      "version": "2"
+    }
+  ]
+}

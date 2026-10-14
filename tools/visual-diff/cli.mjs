@@ -25,17 +25,31 @@ if (!refPath || !actPath) {
   console.error('usage: pnpm qa:diff <reference.png> <actual.png> [--out diff.png] [--crop-ref N] …');
   process.exit(2);
 }
-/** @param {string} v */
-const pair = (v) => {
-  const [x = 0, y = 0] = v.split(',').map(Number);
-  return { offsetX: x, offsetY: y };
+/** @param {string} name @param {string} v */
+const num = (name, v) => {
+  const n = Number(v);
+  if (!Number.isFinite(n) || n < 0) {
+    console.error(`qa:diff: --${name} must be a non-negative number, got "${v}"`);
+    process.exit(2);
+  }
+  return n;
+};
+/** @param {string} name @param {string} v */
+const pair = (name, v) => {
+  const [x = '0', y = '0'] = v.split(',');
+  return { offsetX: num(name, x), offsetY: num(name, y) };
 };
 
-const result = diffPng(readFileSync(refPath), readFileSync(actPath), {
-  reference: { crop: Number(values['crop-ref']), ...pair(values['offset-ref']) },
-  actual: { crop: Number(values['crop-actual']), ...pair(values['offset-actual']) },
-  threshold: Number(values.threshold),
-});
+const options = {
+  reference: { crop: num('crop-ref', values['crop-ref']), ...pair('offset-ref', values['offset-ref']) },
+  actual: {
+    crop: num('crop-actual', values['crop-actual']),
+    ...pair('offset-actual', values['offset-actual']),
+  },
+  threshold: num('threshold', values.threshold),
+};
+const max = values['max-ratio'] === undefined ? undefined : num('max-ratio', values['max-ratio']);
+const result = diffPng(readFileSync(refPath), readFileSync(actPath), options);
 if (values.out) writeFileSync(values.out, result.png);
 
 const pct = (/** @type {number} */ r) => `${(r * 100).toFixed(2)}%`;
@@ -54,5 +68,4 @@ if (values.json) {
   for (const b of worst) console.log(`  y ${b.y0}–${b.y1}: ${pct(b.ratio)}`);
   if (values.out) console.log(`diff image: ${values.out}`);
 }
-const max = values['max-ratio'] === undefined ? undefined : Number(values['max-ratio']);
 if (max !== undefined && result.ratio > max) process.exit(1);

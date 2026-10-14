@@ -44,7 +44,7 @@
       "required": ["kind"],
       "properties": {
         "kind": {
-          "description": "inbox: Proto/Inbox in Drive (design-input/); figma: Figma file (TODO(connect-figma)); other: any link.",
+          "description": "inbox: Proto/Inbox in Drive (design-input/); figma: Figma file read through the connector (skill figma-intake, ADR-0016); other: any link.",
           "enum": ["inbox", "figma", "other"]
         },
         "url": { "type": "string", "format": "uri", "pattern": "^https://" },

@@ -35,9 +35,9 @@ describe('FixtureSource', () => {
 });
 
 describe('FigmaMcpSource', () => {
-  it('is a stub until Figma is connected', async () => {
+  it('is a stub: Figma is read in the session, not from build code', async () => {
     await expect(new FigmaMcpSource('https://figma.com/design/x').readSpec()).rejects.toThrow(
-      /connect-figma/,
+      /connect-figma-rest/,
     );
   });
 });

@@ -1,0 +1,10 @@
+{
+  "$schema": "../../packages/registry/schemas/prototype.schema.json",
+  "title": "Единая активация",
+  "description": "Пилот: единый сценарий активации одобренного кредита для ИП в виде iOS-подобного PWA с нативными переходами.",
+  "owner": "Claude",
+  "tags": ["pilot", "ios", "pwa", "credit"],
+  "status": "active",
+  "defaultVersion": "latest",
+  "separatePassword": false
+}

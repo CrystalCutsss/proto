@@ -84,6 +84,21 @@ export function resolveDefaultVersion(defaultVersion, versions) {
 }
 
 /**
+ * True when a folder holds only design input delivered by the drive-inbox workflow (every file sits under a
+ * `design-input/` folder): the prototype or version is not created yet, so the registry skips it.
+ * @param {string} dir
+ * @returns {boolean}
+ */
+export function inboxOnly(dir) {
+  /** @param {string} d @param {boolean} inside @returns {boolean} */
+  const walk = (d, inside) =>
+    readdirSync(d, { withFileTypes: true }).every((e) =>
+      e.isDirectory() ? walk(join(d, e.name), inside || e.name === 'design-input') : inside,
+    );
+  return walk(dir, false);
+}
+
+/**
  * Scan the repository and build the registry. Throws RegistryError listing all problems.
  * @param {string} repoRoot
  * @returns {import('./index.d.ts').Registry}
@@ -118,6 +133,7 @@ export function buildRegistry(repoRoot) {
       continue;
     }
     if (!existsSync(protoFile)) {
+      if (inboxOnly(dir)) continue;
       issues.push({ file: rel(protoFile), pointer: '', message: 'missing prototype.json' });
       continue;
     }
@@ -140,6 +156,7 @@ export function buildRegistry(repoRoot) {
         continue;
       }
       if (!existsSync(vfile)) {
+        if (inboxOnly(vdir)) continue;
         issues.push({ file: rel(vfile), pointer: '', message: 'missing version.json' });
         continue;
       }

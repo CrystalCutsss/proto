@@ -74,6 +74,19 @@ describe('buildRegistry', () => {
     expect(p?.versions[0]?.path).toBe('/p/demo/v1/');
   });
 
+  it('skips folders that hold only drive-inbox design input', () => {
+    put('prototypes/early/versions/v1/design-input/01.png', 'png');
+    put('prototypes/demo/prototype.json', proto());
+    addVersion('demo', 'v1');
+    put('prototypes/demo/versions/v2/design-input/01.png', 'png');
+    const reg = buildRegistry(root);
+    expect(reg.prototypes.map((p) => p.slug)).toEqual(['demo']);
+    expect(reg.prototypes[0]?.versions.map((v) => v.version)).toEqual(['v1']);
+    // anything else without metadata is still an error
+    put('prototypes/demo/versions/v3/src/main.ts', '');
+    expect(fail().issues.map((i) => i.file)).toEqual(['prototypes/demo/versions/v3/version.json']);
+  });
+
   it('reports every problem with file and JSON pointer', () => {
     put('prototypes/a/prototype.json', proto({ status: 'wip', extra: 1 }));
     put('prototypes/b/prototype.json', proto({ defaultVersion: 'v3' }));

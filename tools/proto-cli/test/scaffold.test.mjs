@@ -95,3 +95,24 @@ test('escapeValue neutralizes HTML and template-string syntax', () => {
     '&#60;a href=&#34;x&#34;&#62;&#96;&#36;{1}&#96;&#60;/a&#62;',
   );
 });
+
+test('proto:new and proto:version keep design input that drive-inbox delivered first', () => {
+  const inbox = (/** @type {string} */ v) => {
+    const d = join(root, 'prototypes/early/versions', v, 'design-input');
+    mkdirSync(d, { recursive: true });
+    writeFileSync(join(d, `01-${v}.png`), v);
+  };
+  inbox('v1');
+  const { dir } = createPrototype(root, { slug: 'early', owner: 'Owner' });
+  assert.equal(readFileSync(join(dir, 'design-input/01-v1.png'), 'utf8'), 'v1');
+  assert.ok(existsSync(join(root, 'prototypes/early/prototype.json')));
+  assert.throws(() => createPrototype(root, { slug: 'early', owner: 'Owner' }), /already exists/);
+
+  inbox('v2');
+  const v2 = createVersion(root, { slug: 'early', author: 'Owner' });
+  assert.equal(v2.version, 'v2');
+  assert.equal(v2.from, 'v1');
+  assert.ok(existsSync(join(v2.dir, 'design-input/01-v2.png')));
+  assert.ok(!existsSync(join(v2.dir, 'design-input/01-v1.png')));
+  assert.ok(existsSync(join(v2.dir, 'version.json')));
+});

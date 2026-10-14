@@ -12,7 +12,7 @@ import {
 } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { hashTree } from '@proto/build-kit/frozen';
-import { RESERVED_SLUGS, SLUG_RE, VERSION_RE, versionNumber } from '@proto/registry';
+import { inboxOnly, RESERVED_SLUGS, SLUG_RE, VERSION_RE, versionNumber } from '@proto/registry';
 
 export const TEMPLATES = ['vanilla-ts', 'three-gsap', 'react-r3f'];
 /** Never copied between versions. */
@@ -89,7 +89,12 @@ export function createPrototype(repoRoot, { slug, template = 'vanilla-ts', title
   if (!TEMPLATES.includes(template))
     fail(`Unknown template "${template}". Available: ${TEMPLATES.join(', ')}.`);
   const protoDir = join(repoRoot, 'prototypes', slug);
-  if (existsSync(protoDir)) fail(`Prototype "${slug}" already exists: prototypes/${slug}/`);
+  if (existsSync(protoDir)) {
+    // drive-inbox may have delivered versions/v1/design-input before the prototype was created: keep it.
+    const versions = listVersions(repoRoot, slug);
+    const inboxV1 = versions.length === 1 && versions[0] === 'v1' && inboxOnly(protoDir);
+    if (!inboxV1) fail(`Prototype "${slug}" already exists: prototypes/${slug}/`);
+  }
   const name = title || slug;
   const dir = versionDir(repoRoot, slug, 'v1');
   copyTemplate(join(repoRoot, 'templates', template), dir, {
@@ -130,7 +135,11 @@ export function createPrototype(repoRoot, { slug, template = 'vanilla-ts', title
  */
 export function createVersion(repoRoot, { slug, from, author }) {
   assertSlug(slug);
-  const versions = listVersions(repoRoot, slug);
+  // A version folder without version.json holds only drive-inbox input for a version not created yet.
+  const isCreated = (/** @type {string} */ v) =>
+    existsSync(join(versionDir(repoRoot, slug, v), 'version.json'));
+  const all = listVersions(repoRoot, slug);
+  const versions = all.filter(isCreated);
   if (versions.length === 0) fail(`Prototype "${slug}" not found or has no versions.`);
   const source = from ?? /** @type {string} */ (versions.at(-1));
   assertVersion(source);
@@ -139,9 +148,18 @@ export function createVersion(repoRoot, { slug, from, author }) {
   const next = `v${versionNumber(/** @type {string} */ (versions.at(-1))) + 1}`;
   const srcDir = versionDir(repoRoot, slug, source);
   const dir = versionDir(repoRoot, slug, next);
+  const inbox = existsSync(dir);
+  if (inbox && !inboxOnly(dir)) fail(`${slug} ${next} already exists: prototypes/${slug}/versions/${next}/`);
+  const stray = all.filter((v) => !isCreated(v) && v !== next);
+  if (stray.length > 0) fail(`Unexpected inbox-only versions of "${slug}": ${stray.join(', ')}.`);
   cpSync(srcDir, dir, {
     recursive: true,
-    filter: (src) => !SKIP_ON_COPY.has(src.split(/[\\/]/).pop() ?? ''),
+    filter: (src) => {
+      const name = src.split(/[\\/]/).pop() ?? '';
+      // Keep the new version's own design input when drive-inbox delivered it first.
+      if (inbox && src === join(srcDir, 'design-input')) return false;
+      return !SKIP_ON_COPY.has(name);
+    },
   });
 
   const pkgFile = join(dir, 'package.json');

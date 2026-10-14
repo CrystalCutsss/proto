@@ -18,7 +18,8 @@ Arguments: `$ARGUMENTS` (slug, optional template, optional title). Ask only for 
 4. **Metadata:** set `tags` in `prototype.json`. In `versions/v1/version.json` fill `title`, `changelog` and
    `routes`. If a Figma link or Drive inbox path exists, record it in `designSource`.
 5. **Design input:** if the owner has files in Drive `Proto/Inbox/<slug>/v1/`, ask them to run the
-   `drive-inbox` workflow (inputs: slug, v1). The session never downloads them itself.
+   `drive-inbox` workflow (inputs: slug, v1). The session never downloads them itself. Input that arrived
+   before the prototype existed (`prototypes/<slug>/versions/v1/design-input/` only) is kept by `proto:new`.
 6. **Check:** `pnpm registry:validate` and `pnpm --filter @proto/<slug>--v1 build`. Quote the result.
 7. **Commit** on the session branch: `feat(<slug>): new prototype from <template>`.
 

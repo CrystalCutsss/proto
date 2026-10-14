@@ -67,6 +67,7 @@ export declare function resolveDefaultVersion(
   defaultVersion: string,
   versions: { version: string; status: string }[],
 ): string | null;
+export declare function inboxOnly(dir: string): boolean;
 export declare function buildRegistry(repoRoot: string): Registry;
 export declare function validateMetadata(
   kind: 'prototype' | 'version',

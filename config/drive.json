@@ -23,7 +23,8 @@
     "folders": {
       "adr": "1z4wBc7y620dA1qfYLg3QCnd165ngSuud",
       "setup": "16hrCIGJPFY9xtIVcs83YbsTNoxY1bGj9",
-      "research": "1MndXNP_fMbJDXu0rT_9zBQNQYPNpHxKG"
+      "research": "1MndXNP_fMbJDXu0rT_9zBQNQYPNpHxKG",
+      "playbooks": "1dmmKmU-_FBl_XeXkmmQA0_6b5h2zin57"
     },
     "files": {
       "status": "1ZB4tYTN-dJxOKq3Pa-ojL29QglDGBzcl-6g-sDIiH6E",
@@ -43,11 +44,19 @@
       "adr-0014": "16CvXQRHLGXF2bUVTF3z1U_I1k9D79fzc2HJOEroBAdM",
       "adr-0015": "1-BmjhZC5CB9OmNb6DR4ZJJY-WrFRIMoUjDqeMdHIuog",
       "adr-0016": "1UY1d2R3foNwCy2Q5bBhwPiWTzlvS_aXqJkC74gi0PRQ",
+      "adr-0017": "1ZliEv858roMSEoMipbGf0_kmQ7MLQ5vmbe6T2xHIFrM",
       "adr-index": "1yJ8KfZR3pa1igvAUaJiTIulGIwtfM9PVQOC42EB0pqY",
       "setup-cloud-environment": "15r_LcMr9Hvimfm7y-BzfPRtFvAP6Q2Lc3vR8HKyg4Fg",
       "setup-audit-phase0": "1omSC9UEg4ISiO49BqLRSrYpH8mN-8sKrw-ll1ajrTwI",
       "setup-drive-actions": "17RkDrkPgJmSA3AfeBfvyD7yTkakhSTpxoAEDk_py2Ew",
       "setup-hosting-cloudflare": "1lqRkbKcZWBeEJ2qnm0vlz58xsOK0WKC423-H4u1YkrY",
+      "playbooks-index": "1fXGBOvxZMZ0uO89s-FMz_vtoGLxcH74zdxHFwH_MiJU",
+      "playbook-troubleshooting": "1GH9v5j7GSNe5_FjsLqSK67P6jiJ9_7x1TXWzBukuhIo",
+      "playbook-figma-to-prototype": "1YV-SadXLi1IAMP69-cam5H0J_ehChLV4qQn-cyJK77I",
+      "playbook-versions-freeze": "11EiE6jF7rzZPFUqDwxIaKElYRQ-IsQVfHU-RjJBnFpY",
+      "playbook-png-inbox": "1YSmm_L6slUjI-tlkctVJpqNKnr4PVMgWlkLWSkeEECA",
+      "playbook-design-system": "1lvL5MXw2SvwWh6nGXdgxxF_4RwH-Zmxl72weR8f_Y7o",
+      "playbook-access-publishing": "1QMaw8HQRVLpzYbABllu9jWIt5brld_2m1t8Ht7bt-mc",
       "research-ecosystem-analysis": "1jBBD7b_5pnr5hcm2vfCU3ow0GvJqMhZc1ejRj-WRMno",
       "research-sources": "1_XrUAIqJfCzBFqfKnnffgPhWzV_XNLWNBilcenOSPmc"
     }

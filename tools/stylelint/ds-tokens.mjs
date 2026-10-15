@@ -73,6 +73,8 @@ export function isAllowed(value, prop = '') {
   const identifiersOk = IDENTIFIER_PROPS.test(prop) && !/cubic-bezier\(|steps\(/.test(value);
   // Strip token references (with fallbacks) and harmless functions first.
   let rest = value.replace(/var\(--ds-[\w-]+\)/g, ' ');
+  // Device safe areas are the device's values, not design values (ADR-0020).
+  rest = rest.replace(/env\(safe-area-inset-(top|right|bottom|left)(,\s*0[a-z]*)?\)/g, ' ');
   if (/var\((?!--ds-)/.test(rest)) {
     // Local custom properties are allowed: they are checked where they are defined.
     rest = rest.replace(/var\(--[\w-]+\)/g, ' ');

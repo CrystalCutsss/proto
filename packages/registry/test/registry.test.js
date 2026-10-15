@@ -72,6 +72,32 @@ describe('buildRegistry', () => {
     expect(p?.updated).toBe('2026-10-13');
     expect(p?.versions[0]?.routing).toBe('hash');
     expect(p?.versions[0]?.path).toBe('/p/demo/v1/');
+    expect(p?.platform).toBe('desktop');
+    expect(p?.versions[0]?.scenarios).toEqual([{ id: 'main', title: 'Основной', route: '#/' }]);
+  });
+
+  it('keeps platform and scenarios and checks scenario routes', () => {
+    put('prototypes/demo/prototype.json', proto({ platform: 'mobile' }));
+    const scenarios = [
+      { id: 'start', title: 'Старт', route: '#/' },
+      { id: 'done', title: 'Готово', route: '#/done' },
+    ];
+    addVersion('demo', 'v1', { routes: ['#/', '#/done'], scenarios });
+    const p = buildRegistry(root).prototypes[0];
+    expect(p?.platform).toBe('mobile');
+    expect(p?.versions[0]?.scenarios).toEqual(scenarios);
+
+    addVersion('demo', 'v2', {
+      routes: ['#/'],
+      scenarios: [
+        { id: 'x', title: 'X', route: '#/missing' },
+        { id: 'x', title: 'Y', route: '#/' },
+      ],
+    });
+    const msgs = fail().issues.map((i) => `${i.pointer} ${i.message}`);
+    expect(msgs).toContain('/scenarios/0/route "#/missing" must be the start screen #/ or listed in routes');
+    expect(msgs).toContain('/scenarios scenario ids must be unique');
+    expect(validateMetadata('prototype', proto({ platform: 'tablet' }))[0]?.pointer).toBe('/platform');
   });
 
   it('skips folders that hold only drive-inbox design input', () => {

@@ -26,12 +26,15 @@ seat; a 5-screen section took ~20 calls in the pilot. Log every call in the vers
    - hidden layers are in the code: build only what the screenshot shows.
 5. **References.** `get_screenshot` per screen (1x is the maximum) → `design-input/figma/NN-<name>.png`
    with curl right away (URLs are short-lived). Note the device frame (border, radius) if the frames have one.
+   Mobile frames keep their system status bar and home indicator (`system-status-bar`, `system-bottom-bar`):
+   build them, mark them `data-proto-system-bar` and give `:root[data-proto-bars='hidden']` safe-area padding;
+   do not build a device frame — the viewer adds the iPhone mockup (`platform: mobile`, ADR-0020).
 6. **Assets.** Download every icon and image the screens use from the design-context URLs into
    `assets/icons/` (`assets/` is Vite's public dir: reference files as `import.meta.env.BASE_URL + 'icons/…'`).
    Look at each one: exports can be wrong (a star instead of a document). Fix a wrong one with
    `download_assets` on the parent node or a PNG crop of the node export; downscale large rasters.
 7. **Spec.** Write `spec/spec.md`: source (file key, node ids, date), the owner's brief, platform
-   (`data-ds-platform`), shared components, each screen (route, texts, sizes from metadata, tokens), states,
+   (`prototype.json` → `platform`, `data-ds-platform`), scenarios for the viewer menu, shared components, each screen (route, texts, sizes from metadata, tokens), states,
    navigation and motion, and what is visual-only. Unclear points go to the ledger as questions.
 8. Set `designSource` in `version.json` (`{ "kind": "figma", "url": …, "note": … }`), then continue with the
    `prototype` skill from step 2 (build). Visual QA compares against `design-input/figma/*` with

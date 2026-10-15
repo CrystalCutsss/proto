@@ -6,6 +6,8 @@
   "description": "Framework-agnostic base components of the design system: CSS classes and Web Components on --ds-* tokens.",
   "exports": {
     "./ui.css": "./src/ui.css",
+    "./segmented.css": "./src/segmented.css",
+    "./assets/*": "./src/assets/*",
     ".": "./src/index.ts"
   },
   "scripts": {

@@ -1,4 +1,4 @@
-// Pure URL logic of the version switcher (unit-tested without a browser).
+// Pure URL logic of the viewer and the version/scenario menu (unit-tested without a browser).
 
 export interface SwitchVersion {
   version: string;
@@ -21,18 +21,44 @@ export function screenKey(loc: LocationLike, base: string, routing: 'hash' | 'hi
   return `/${tail.replace(/index\.html$/, '')}`;
 }
 
+/** Start screen key of a routing mode. */
+export const startScreen = (routing: 'hash' | 'history') => (routing === 'hash' ? '#/' : '/');
+
 /**
- * URL to open when switching from `current` to `target`. The screen is kept only when the target version
- * lists it in `routes` and uses the same routing; otherwise the target's start screen opens.
+ * Screen to keep when switching from `current` to `target`: kept only when the target version lists it in
+ * `routes` and uses the same routing; otherwise null (open the target's start screen).
  */
-export function targetUrl(loc: LocationLike, slug: string, current: SwitchVersion, target: SwitchVersion) {
-  const base = versionBase(slug, target.version);
-  const key = screenKey(loc, versionBase(slug, current.version), current.routing);
+export function keptScreen(key: string, current: SwitchVersion, target: SwitchVersion): string | null {
   const isRoot = key === '#/' || key === '/';
-  const keep = !isRoot && current.routing === target.routing && target.routes.includes(key);
-  if (!keep) return `${base}${loc.search}`;
-  return target.routing === 'hash' ? `${base}${loc.search}${key}` : `${base}${key.slice(1)}${loc.search}`;
+  return !isRoot && current.routing === target.routing && target.routes.includes(key) ? key : null;
 }
+
+/** URL of a version screen; `search` (with "?") goes before the hash for hash routing. */
+export function screenUrl(slug: string, v: SwitchVersion, key: string | null, search = '') {
+  const base = versionBase(slug, v.version);
+  if (!key || key === startScreen(v.routing)) return `${base}${search}`;
+  return v.routing === 'hash' ? `${base}${search}${key}` : `${base}${key.replace(/^\//, '')}${search}`;
+}
+
+/** URL to open when switching from `current` to `target` (see keptScreen). */
+export function targetUrl(loc: LocationLike, slug: string, current: SwitchVersion, target: SwitchVersion) {
+  const key = screenKey(loc, versionBase(slug, current.version), current.routing);
+  return screenUrl(slug, target, keptScreen(key, current, target), loc.search);
+}
+
+/** Viewer URL (/p/<slug>/?v=…&s=…#screen); the screen goes into the hash for both routing modes. */
+export function viewerUrl(slug: string, version: string, scenario: string, key: string | null) {
+  const q = new URLSearchParams({ v: version, s: scenario });
+  const hash = key && key !== '#/' && key !== '/' ? `#${key.replace(/^#/, '')}` : '';
+  return `/p/${slug}/?${q}${hash}`;
+}
+
+/** Screen key from a viewer hash ("#/cart") for the version's routing. */
+export const screenFromViewerHash = (hash: string, routing: 'hash' | 'history') => {
+  const path = hash.replace(/^#/, '');
+  if (!path.startsWith('/')) return null;
+  return routing === 'hash' ? `#${path}` : path;
+};
 
 /** Read slug and version from the meta tags injected by build-kit, falling back to the URL. */
 export function currentContext(doc: Document, loc: LocationLike) {

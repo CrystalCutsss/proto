@@ -1,0 +1,97 @@
+/* Viewer /p/<slug>/ (ADR-0020). Desktop prototypes fill the window with their own background; mobile
+   prototypes sit in a black iPhone Air mockup on the main page's stage, or fill a phone's screen. */
+.viewer {
+  --device-screen-width: 375px;
+  --device-screen-height: 812px;
+
+  /* The mockup frame is 1490 × 2996 px around a 1290 × 2796 px screen (template.json): at a 375 px wide
+     screen that is 433 × 871 CSS px with a 29 px bezel. */
+  --device-bezel: calc(var(--device-screen-width) * 100 / 1290);
+  --device-width: calc(var(--device-screen-width) * 1490 / 1290);
+  --device-height: calc(var(--device-screen-width) * 2996 / 1290);
+  --device-scale: 1;
+
+  height: 100dvh;
+  margin: 0;
+  overflow: hidden;
+  color-scheme: dark;
+  background: var(--ds-background-accent-on-light);
+}
+
+.viewer-stage {
+  position: fixed;
+  inset: 0;
+}
+
+.viewer-frame {
+  display: block;
+  border: 0;
+  background: transparent;
+}
+
+/* Desktop and phone-screen modes: the prototype is the whole window. */
+.viewer[data-mode='full'] .viewer-frame {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Phone-sized window: the menu gets its own strip below the prototype instead of covering its bottom
+   buttons. */
+.viewer[data-phone] .viewer-frame {
+  height: calc(100% - var(--viewer-menu-space, 0px) - env(safe-area-inset-bottom, 0px));
+}
+
+/* Mockup mode. */
+.viewer[data-mode='device'] .viewer-stage {
+  display: grid;
+  place-items: center;
+  bottom: var(--viewer-menu-space, 0);
+}
+
+.viewer-device {
+  position: relative;
+  width: var(--device-width);
+  height: var(--device-height);
+  flex-shrink: 0;
+  transform: scale(var(--device-scale));
+}
+
+.viewer[data-mode='device'] .viewer-frame {
+  position: absolute;
+  top: var(--device-bezel);
+  left: var(--device-bezel);
+  width: var(--device-screen-width);
+  height: var(--device-screen-height);
+}
+
+.viewer-screen {
+  position: absolute;
+  inset: 0;
+
+  /* The screen's rounded corners come from the mockup's own screen mask (white = screen). */
+  mask-image: var(--device-mask);
+  mask-mode: luminance;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+.viewer-bezel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viewer-message {
+  margin: auto;
+  padding: var(--ds-space-6);
+  font-family: var(--ds-typography-ui-l-font-family);
+  font-size: var(--ds-typography-ui-l-font-size);
+  line-height: var(--ds-typography-ui-l-line-height);
+  text-align: center;
+  color: var(--ds-text-secondary);
+}

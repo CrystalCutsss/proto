@@ -18,6 +18,7 @@ before(async () => {
     writeFileSync(join(root, p), c);
   };
   put('index.html', 'hub');
+  put('_shell/viewer.html', 'viewer');
   put('p/a/v1/index.html', 'a v1');
   put('p/a/v2/index.html', 'a v2 spa');
   put('secret.txt', 'outside?');
@@ -71,11 +72,12 @@ test('the Worker login guards the local server when a password is set', async ()
   assert.equal(await (await fetch(`${base}/`, { headers: cookie })).text(), 'hub');
 });
 
-test('redirects, serves versions and falls back for history routing', async () => {
+test('serves the viewer, redirects, serves versions and falls back for history routing', async () => {
   const auth = await session();
-  const r = await fetch(`${base}/p/a/?x=1`, { headers: auth, redirect: 'manual' });
+  assert.equal(await (await fetch(`${base}/p/a/?v=v1`, { headers: auth })).text(), 'viewer');
+  const r = await fetch(`${base}/p/a?x=1`, { headers: auth, redirect: 'manual' });
   assert.equal(r.status, 302);
-  assert.equal(r.headers.get('location'), '/p/a/v1/?x=1');
+  assert.equal(r.headers.get('location'), '/p/a/?x=1');
   assert.equal(await (await fetch(`${base}/p/a/v2/deep/screen`, { headers: auth })).text(), 'a v2 spa');
   assert.equal((await fetch(`${base}/p/a/v1/deep/screen`, { headers: auth })).status, 404);
 });

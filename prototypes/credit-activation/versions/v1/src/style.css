@@ -410,6 +410,20 @@ body {
   background: var(--ds-background-base);
 }
 
+/* The device draws its own bars (installed web app, phone screen in the viewer): the shell hides the drawn
+   status bar and home indicator ([data-proto-system-bar]); the safe areas take their place (ADR-0020). */
+:root[data-proto-bars='hidden'] .top-bars {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+:root[data-proto-bars='hidden'] .bottom-block {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+:root[data-proto-bars='hidden'] .bottom-block:not(.bottom-block--fade) {
+  padding-bottom: max(env(safe-area-inset-bottom, 0), var(--ds-space-4));
+}
+
 /* TUI floating container: content scrolling under the button fades out. */
 .bottom-block--fade::before {
   position: absolute;

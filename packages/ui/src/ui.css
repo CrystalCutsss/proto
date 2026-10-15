@@ -110,3 +110,78 @@
   outline: var(--ds-border-width-focus) solid var(--ds-border-focus);
   outline-offset: 2px;
 }
+
+/* Glass button: TUI tui-button on dark surfaces (Figma main 22:854). Black glass in both themes, as in
+   the design: the on-light glass token is the black one. */
+.ds-button[data-variant='glass'] {
+  box-sizing: border-box;
+  justify-content: center;
+  min-height: calc(var(--ds-space-12) + var(--ds-space-2));
+  padding: var(--ds-space-4) calc(var(--ds-space-4) + var(--ds-space-1));
+  border: 0;
+  border-radius: var(--ds-radius-m);
+  font-family: var(--ds-typography-ui-m-font-family);
+  font-size: var(--ds-typography-ui-m-font-size);
+  font-weight: var(--ds-typography-ui-m-font-weight);
+  line-height: var(--ds-typography-ui-m-line-height);
+  letter-spacing: var(--ds-typography-ui-m-letter-spacing);
+  color: var(--ds-text-primary-on-dark);
+  white-space: nowrap;
+  background: var(--ds-background-overlay-glass-on-light);
+  backdrop-filter: blur(16px);
+  transition:
+    background-color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard),
+    transform var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ds-button[data-variant='glass']:hover {
+  background: var(--ds-state-background-overlay-glass-on-light-hover);
+}
+
+.ds-button[data-variant='glass']:active {
+  background: var(--ds-state-background-overlay-glass-on-light-pressed);
+  transform: scale(0.97);
+}
+
+.ds-button[data-variant='glass']:focus-visible {
+  outline: var(--ds-border-width-focus) solid var(--ds-border-focus-on-dark);
+  outline-offset: 2px;
+}
+
+/* Stage: the main page background (Figma main 22:842) — black with a warm blurred glow — shared by the hub,
+   the changelog dialog and the mobile prototype viewer. The design's tui/background/accent-opposite (Day)
+   is pure black; in the night theme the same black is accent-on-light. */
+.ds-stage {
+  position: relative;
+  overflow: clip;
+  isolation: isolate;
+  color: var(--ds-text-primary-on-dark);
+  background: var(--ds-background-accent-on-light);
+}
+
+.ds-stage::before {
+  position: absolute;
+  z-index: -1;
+  top: var(--ds-stage-glow-top, 86%);
+  left: 50%;
+  width: var(--ds-stage-glow-size, 1203px);
+  height: var(--ds-stage-glow-size, 1203px);
+  background-image: url('./assets/stage-glow.svg');
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  content: '';
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-button[data-variant='glass'] {
+    transition: none;
+  }
+
+  .ds-button[data-variant='glass']:active {
+    transform: none;
+  }
+}

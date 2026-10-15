@@ -1,73 +1,144 @@
 import { expect, test } from '@playwright/test';
 
-test('hub lists prototypes and filters them', async ({ page }) => {
+test('main lists prototype cards without search or filters', async ({ page }) => {
   const registry = await (await page.request.get('/registry.json')).json();
+  const visible = registry.prototypes.filter((p: { status: string }) => p.status !== 'archived');
   await page.goto('/');
-  await expect(page.locator('.hub-card')).toHaveCount(registry.prototypes.length);
-  // Card previews load when site:build took screenshots (CI builds with --no-previews: no <img> then).
-  for (const img of await page.locator('img.hub-preview').all()) {
-    await expect.poll(() => img.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-  }
-  await page.getByLabel('Поиск').fill('three.js');
-  await expect(page.locator('.hub-card')).toHaveCount(1);
-  await expect(page).toHaveURL(/\?q=three\.js/);
-  await page.getByLabel('Поиск').fill('');
-  await page.getByRole('button', { name: '#basic' }).click();
-  await expect(page.locator('.hub-card h2')).toHaveText(['Демо: базовый']);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Proto Stand B2B Loans');
+  await expect(page.locator('.hub-card')).toHaveCount(visible.length);
+  await expect(page.locator('input, select')).toHaveCount(0);
+  const card = page.locator('.hub-card', { hasText: 'Единая активация' });
+  await expect(card.locator('.hub-card-meta')).toContainText('PWA');
+  await expect(card.getByRole('link', { name: 'Открыть' })).toHaveAttribute('href', '/p/credit-activation/');
 });
 
-test('prototype path redirects to the default version, keeping the query', async ({ page }) => {
-  // demo-basic: v1 frozen, v2 review → "latest" resolves to v2.
-  await page.goto('/p/demo-basic/?shell=0');
-  await expect(page).toHaveURL(/\/p\/demo-basic\/v2\/\?shell=0$/);
+test('Changelog opens a full-screen dialog over main; Esc and Back close it', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  const trigger = page.getByRole('button', { name: 'Changelog: Демо базовый' });
+  await trigger.click();
+  const dialog = page.getByRole('dialog', { name: 'Демо базовый' });
+  await expect(dialog).toBeVisible();
+  await expect(page).toHaveURL(/#changelog=demo-basic$/);
+  expect(await dialog.evaluate((el) => [el.clientWidth, el.clientHeight])).toEqual([1280, 800]);
+  await expect(dialog.locator('.hub-version h3')).toHaveText([/^v2/, /^v1/]);
+  await expect(dialog.getByRole('link', { name: 'Открыть v1' })).toHaveAttribute(
+    'href',
+    '/p/demo-basic/?v=v1',
+  );
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(page).not.toHaveURL(/#changelog/);
+  await expect(trigger).toBeFocused();
+
+  await trigger.click();
+  await expect(dialog).toBeVisible();
+  await page.goBack();
+  await expect(dialog).toBeHidden();
+  await page.goto('/#changelog=credit-activation');
+  await expect(page.getByRole('dialog', { name: 'Единая активация' })).toBeVisible();
+});
+
+test('a version opened directly moves to the viewer, keeping version and screen', async ({ page }) => {
+  await page.goto('/p/demo-basic/v1/#/details');
+  await expect(page).toHaveURL(/\/p\/demo-basic\/\?v=v1&s=main#\/details$/);
+  await expect(page.frameLocator('iframe').locator('h1')).toHaveText('Подробности');
   const res = await page.request.get('/p/demo-basic/latest/', { maxRedirects: 0 });
   expect(res.status()).toBe(302);
   expect(res.headers()['location']).toBe('/p/demo-basic/v2/');
 });
 
-test('shell switches versions and keeps the screen only when it exists', async ({ page }) => {
-  await page.goto('/p/demo-basic/v2/#/details');
-  const pill = page.getByRole('button', { name: 'Версии прототипа' });
-  await expect(pill).toContainText('demo-basic · v2');
-  await pill.click();
-  await page.getByLabel('Версия').selectOption('v1');
-  await expect(page).toHaveURL(/\/p\/demo-basic\/v1\/#\/details$/);
-  await expect(page.locator('h1')).toHaveText('Подробности');
+test('desktop prototypes fill the window; the menu switches versions keeping known screens', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/p/demo-basic/');
+  // demo-basic: v1 frozen, v2 review → "latest" resolves to v2.
+  await expect(page).toHaveURL(/\?v=v2&s=main$/);
+  const frame = page.locator('iframe');
+  expect(await frame.boundingBox()).toEqual({ x: 0, y: 0, width: 1280, height: 800 });
+  await expect(page.locator('.viewer-bezel')).toHaveCount(0);
 
-  await page.goto('/p/demo-basic/v2/#/settings');
-  await page.getByRole('button', { name: 'Версии прототипа' }).click();
-  await page.getByLabel('Версия').selectOption('v1');
-  await expect(page).toHaveURL(/\/p\/demo-basic\/v1\/$/);
+  const version = page.getByRole('radiogroup', { name: 'Версия' });
+  await expect(page.getByRole('radiogroup', { name: 'Сценарий' }).getByRole('radio')).toHaveText([
+    'Основной',
+  ]);
+  await page.frameLocator('iframe').getByRole('link', { name: 'Детали' }).click();
+  await expect(page).toHaveURL(/#\/details$/);
+  await version.getByRole('radio', { name: 'v1' }).click();
+  await expect(page).toHaveURL(/\?v=v1&s=main#\/details$/);
+  await expect(page.frameLocator('iframe').locator('h1')).toHaveText('Подробности');
+
+  await page.goto('/p/demo-basic/?v=v2#/settings');
+  await expect(page.frameLocator('iframe').locator('h1')).toHaveText('Настройки');
+  await version.getByRole('radio', { name: 'v1' }).click();
+  await expect(page).toHaveURL(/\?v=v1&s=main$/);
 });
 
-test('?shell=0 removes the panel and Alt+Shift+H hides it', async ({ page }) => {
+test('mobile prototypes sit in the iPhone mockup with their status bar on a wide screen', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/p/credit-activation/');
+  const bezel = page.locator('img.viewer-bezel');
+  await expect(bezel).toBeVisible();
+  await expect.poll(() => bezel.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBe(1490);
+  const app = page.frameLocator('iframe');
+  await expect(app.locator('.status-bar').first()).toBeVisible();
+  expect(await page.locator('iframe').evaluate((el) => [el.clientWidth, el.clientHeight])).toEqual([
+    375, 812,
+  ]);
+
+  const scenario = page.getByRole('radiogroup', { name: 'Сценарий' });
+  await scenario.getByRole('radio', { name: 'Успех' }).click();
+  await expect(page).toHaveURL(/\?v=v1&s=success#\/success$/);
+});
+
+test('on a phone screen the prototype fills it and the design bars are hidden', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/p/credit-activation/');
+  await expect(page.locator('img.viewer-bezel')).toHaveCount(0);
+  const app = page.frameLocator('iframe');
+  await expect(app.locator('html')).toHaveAttribute('data-proto-bars', 'hidden');
+  await expect(app.locator('.top-bars').first()).toBeVisible();
+  await expect(app.locator('.status-bar').first()).toBeHidden();
+  await expect(app.locator('.home-indicator').first()).toBeHidden();
+  // The menu has its own strip: it does not cover the prototype.
+  const frameBox = (await page.locator('iframe').boundingBox())!;
+  const menuBox = (await page.getByRole('navigation', { name: 'Сценарий и версия' }).boundingBox())!;
+  expect(frameBox.y + frameBox.height).toBeLessThanOrEqual(menuBox.y);
+});
+
+test('an installed web app hides the design bars and shows the collapsible menu', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/p/credit-activation/v1/?proto-display=standalone#/');
+  await expect(page).toHaveURL(/\/p\/credit-activation\/v1\//);
+  await expect(page.locator('html')).toHaveAttribute('data-proto-display', 'standalone');
+  await expect(page.locator('.status-bar').first()).toBeHidden();
+  const version = page.getByRole('radiogroup', { name: 'Версия' });
+  await expect(version.getByRole('radio', { name: 'v1' })).toHaveAttribute('aria-checked', 'true');
+  await page.getByRole('radiogroup', { name: 'Сценарий' }).getByRole('radio', { name: 'Условия' }).click();
+  await expect(page).toHaveURL(/\/v1\/\?proto-display=standalone&s=conditions#\/conditions$/);
+  await page.getByRole('button', { name: 'Свернуть меню' }).click();
+  await expect(version).toBeHidden();
+  await page.getByRole('button', { name: 'Показать меню сценария и версии' }).click();
+  await expect(version).toBeVisible();
+});
+
+test('?shell=0 keeps the bare version page and Alt+Shift+H hides the menu', async ({ page }) => {
   await page.goto('/p/demo-basic/v2/?shell=0');
   await expect(page.locator('h1')).toBeVisible();
-  await page.waitForTimeout(2500);
-  await expect(page.locator('proto-shell')).toHaveCount(0);
+  await page.waitForTimeout(1000);
+  await expect(page).toHaveURL(/\/p\/demo-basic\/v2\/\?shell=0$/);
 
-  await page.goto('/p/demo-basic/v2/');
-  const pill = page.getByRole('button', { name: 'Версии прототипа' });
-  await expect(pill).toBeVisible();
+  await page.goto('/p/demo-basic/');
+  const menu = page.getByRole('navigation', { name: 'Сценарий и версия' });
+  await expect(menu).toBeVisible();
   await page.keyboard.press('Alt+Shift+KeyH');
-  await expect(pill).toBeHidden();
+  await expect(menu).toBeHidden();
   await page.reload();
-  await expect(page.locator('proto-shell')).toBeAttached();
-  await expect(pill).toBeHidden();
-});
-
-test('compare page shows two versions side by side without the shell', async ({ page }) => {
-  await page.goto('/p/demo-basic/compare/?a=v1&b=v2');
-  await expect(page.locator('#frame-a')).toHaveAttribute('src', '/p/demo-basic/v1/?shell=0');
-  await expect(page.locator('#frame-b')).toHaveAttribute('src', '/p/demo-basic/v2/?shell=0');
-  await expect(page.frameLocator('#frame-b').locator('h1')).toHaveText('Демо: базовый');
-});
-
-test('3D templates render a canvas', async ({ page }) => {
-  for (const slug of ['demo-three', 'demo-r3f']) {
-    await page.goto(`/p/${slug}/?shell=0`);
-    await expect(page.locator('canvas').first()).toBeVisible();
-  }
+  await expect(page.locator('iframe')).toBeAttached();
+  await expect(menu).toBeHidden();
 });
 
 test('unknown paths are 404 and every response is private and noindex', async ({ request }) => {

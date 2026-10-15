@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // proto CLI: prototypes and versions (ADR-0009, ADR-0010). Run through the root package scripts:
-//   pnpm proto:new <slug> [--template vanilla-ts|three-gsap|react-r3f] [--title "…"] [--owner "…"]
+//   pnpm proto:new <slug> [--template vanilla-ts|three-gsap|react-r3f] [--platform mobile|desktop] [--title "…"] [--owner "…"]
 //   pnpm proto:version <slug> [--from vN] [--author "…"]
 //   pnpm proto:freeze <slug> <vN>
 //   pnpm proto:list
@@ -56,6 +56,7 @@ const commands = {
       allowPositionals: true,
       options: {
         template: { type: 'string', short: 't', default: 'vanilla-ts' },
+        platform: { type: 'string', default: 'desktop' },
         title: { type: 'string' },
         owner: { type: 'string' },
         description: { type: 'string' },
@@ -69,8 +70,9 @@ const commands = {
       title: values.title,
       owner: values.owner ?? gitUser(),
       description: values.description,
+      platform: values.platform,
     });
-    console.log(`Created ${rel(dir)} from template ${values.template}.`);
+    console.log(`Created ${rel(dir)} from template ${values.template} (${values.platform}).`);
     if (!values['no-install']) run('pnpm', ['install']);
     console.log(`Next: pnpm dev ${slug}`);
   },

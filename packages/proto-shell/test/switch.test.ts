@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { currentContext, screenKey, targetUrl, type SwitchVersion } from '../src/switch.ts';
+import {
+  currentContext,
+  keptScreen,
+  screenFromViewerHash,
+  screenKey,
+  screenUrl,
+  targetUrl,
+  viewerUrl,
+  type SwitchVersion,
+} from '../src/switch.ts';
 
 const hash = (version: string, routes: string[] = []): SwitchVersion => ({
   version,
@@ -44,5 +53,29 @@ describe('currentContext', () => {
     document.head.innerHTML = '';
     expect(currentContext(document, loc('/p/other/v2/'))).toEqual({ slug: 'other', version: 'v2' });
     expect(currentContext(document, loc('/'))).toBeNull();
+  });
+});
+
+describe('viewer URLs', () => {
+  it('builds iframe and viewer URLs for both routing modes', () => {
+    expect(screenUrl('a', hash('v2'), '#/cart', '?bars=0')).toBe('/p/a/v2/?bars=0#/cart');
+    expect(screenUrl('a', hash('v2'), '#/', '?bars=0')).toBe('/p/a/v2/?bars=0');
+    expect(screenUrl('a', hist('v2'), '/cart', '?bars=0')).toBe('/p/a/v2/cart?bars=0');
+    expect(screenUrl('a', hist('v2'), null)).toBe('/p/a/v2/');
+    expect(viewerUrl('a', 'v2', 'main', '#/cart')).toBe('/p/a/?v=v2&s=main#/cart');
+    expect(viewerUrl('a', 'v2', 'main', '/cart')).toBe('/p/a/?v=v2&s=main#/cart');
+    expect(viewerUrl('a', 'v1', 'main', '#/')).toBe('/p/a/?v=v1&s=main');
+  });
+
+  it('reads the screen back from the viewer hash', () => {
+    expect(screenFromViewerHash('#/cart', 'hash')).toBe('#/cart');
+    expect(screenFromViewerHash('#/cart', 'history')).toBe('/cart');
+    expect(screenFromViewerHash('', 'hash')).toBeNull();
+  });
+
+  it('keeps a screen only when the target lists it', () => {
+    expect(keptScreen('#/cart', hash('v1'), hash('v2', ['#/cart']))).toBe('#/cart');
+    expect(keptScreen('#/', hash('v1'), hash('v2', ['#/']))).toBeNull();
+    expect(keptScreen('#/cart', hash('v1'), hist('v2', ['#/cart']))).toBeNull();
   });
 });

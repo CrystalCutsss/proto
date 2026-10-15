@@ -2,9 +2,8 @@
 // Used by tools/site/preview.mjs now and by the Cloudflare Worker in Phase 5.
 //
 //   /                          hub
-//   /p/<slug>/                 302 → default version (query string kept)
+//   /p/<slug>/                 viewer (/_shell/viewer.html, ADR-0020): ?v=<vN>&s=<scenario>, #screen
 //   /p/<slug>/latest/<rest>    302 → highest non-draft version, same <rest>
-//   /p/<slug>/compare/         side-by-side comparison page (?a=v1&b=v2)
 //   /p/<slug>/<vN>/<rest>      version files; history routing falls back to the version's index.html
 //   /registry.json, /_shell/*  always revalidated
 //   /_previews/<slug>.jpg      hub card screenshots
@@ -12,6 +11,7 @@
 const SLUG = '[a-z0-9]+(?:-[a-z0-9]+)*';
 const VERSION_PATH = new RegExp(`^/p/(${SLUG})(?:/(.*))?$`);
 const HASHED_ASSET = /\/assets\/[^/]+[-.][A-Za-z0-9_-]{8,}\.[a-z0-9]+$/;
+const VIEWER = '/_shell/viewer.html';
 const HAS_EXTENSION = /\/[^/]+\.[A-Za-z0-9]+$/;
 
 /** @typedef {import('./index.d.ts').RouteRegistry} RouteRegistry */
@@ -73,15 +73,13 @@ export function route(pathname, search, registry) {
   const proto = registry.prototypes.find((p) => p.slug === slug);
   if (!proto) return notFound;
   if (rest === undefined) return redirect(`/p/${slug}/${search}`);
-  if (rest === '') return redirect(`/p/${slug}/${proto.defaultVersion}/${search}`);
+  if (rest === '') return asset(VIEWER, undefined, 'no-cache');
 
   const slash = rest.indexOf('/');
   const head = slash === -1 ? rest : rest.slice(0, slash);
   const tail = slash === -1 ? null : rest.slice(slash + 1);
 
   if (head === 'latest') return redirect(`/p/${slug}/${latestVersion(proto)}/${tail ?? ''}${search}`);
-  if (head === 'compare')
-    return tail === null ? redirect(`/p/${slug}/compare/${search}`) : asset('/compare.html');
 
   const version = proto.versions.find((v) => v.version === head);
   if (!version) return notFound;

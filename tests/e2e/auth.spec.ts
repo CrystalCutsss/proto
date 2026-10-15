@@ -13,8 +13,9 @@ test('a deep link asks for the password and returns to the same page', async ({ 
 
   await page.getByLabel('Пароль').fill(AUTH_PASSWORD);
   await page.getByRole('button', { name: 'Войти' }).click();
-  await expect(page).toHaveURL(/\/p\/demo-basic\/v2\/$/);
-  await expect(page.getByRole('button', { name: 'Версии прототипа' })).toBeVisible();
+  // Back on the version, which moves into the viewer with its menu.
+  await expect(page).toHaveURL(/\/p\/demo-basic\/\?v=v2&s=main$/);
+  await expect(page.getByRole('navigation', { name: 'Сценарий и версия' })).toBeVisible();
 
   const cookies = await page.context().cookies();
   const session = cookies.find((c) => c.name === 'proto_session');
@@ -27,7 +28,7 @@ test('a deep link asks for the password and returns to the same page', async ({ 
 });
 
 test('without a session nothing but the login page and robots.txt is served', async ({ request }) => {
-  for (const path of ['/', '/registry.json', '/_shell/shell.js', '/p/demo-basic/v1/']) {
+  for (const path of ['/', '/registry.json', '/_shell/shell.js', '/p/demo-basic/', '/p/demo-basic/v1/']) {
     const res = await request.get(path, { maxRedirects: 0 });
     expect(res.status(), path).toBe(401);
   }

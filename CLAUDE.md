@@ -35,7 +35,7 @@ work around it.
 
 ```
 pnpm install                       # SessionStart hook runs it when needed
-pnpm proto:new <slug> [--template vanilla-ts|three-gsap|react-r3f] [--title "…"]
+pnpm proto:new <slug> [--template vanilla-ts|three-gsap|react-r3f] [--platform mobile|desktop] [--title "…"]
 pnpm proto:version <slug> [--from vN]
 pnpm proto:freeze <slug> <vN>      # owner-approved only
 pnpm dev <slug> [vN]               # one version with the version panel
@@ -50,7 +50,11 @@ pnpm registry:validate
   `@proto/<slug>--vN` with `version.json`, `design-input/`, `spec/`, `src/`, `qa/` (ADR-0009).
 - `packages/` — `tokens` (TUI → `--ds-*`), `fonts`, `ui`, `motion` (GSAP), `three-kit`, `registry`,
   `site-router`, `build-kit`, `proto-shell`, `figma-bridge`.
-- `apps/hub` — catalogue and version comparison. `templates/` — prototype templates.
+- `apps/hub` — main page (Figma «main»): prototype cards and the full-screen changelog dialog.
+  `templates/` — prototype templates.
+- `packages/proto-shell` — runtime layer (ADR-0011, ADR-0020): `loader.js` in every version, the viewer at
+  `/p/<slug>/` (iPhone mockup for `platform: mobile`, bottom «Сценарий / Версия» menu) and the menu of an
+  installed web app.
 - `tools/` — `proto-cli`, `site`, `drive`, `stylelint`. `config/` — Drive IDs, env placeholders.
 - `infra/worker` + `wrangler.jsonc` — hosting Worker (password login, ADR-0015); `site:preview` runs the same
   handler, so test auth locally with `PROTO_PREVIEW_PASSWORD=… pnpm site:preview`.

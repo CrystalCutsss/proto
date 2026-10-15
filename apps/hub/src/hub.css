@@ -1,100 +1,236 @@
-.hub-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--ds-space-6);
+/* Main (Figma 22:842) and the changelog dialog. Night theme (data-ds-theme on <html>).
+   The 96/80 display title has no TUI typography style: its size and line height are local properties
+   (qa: apps/hub/QA.md). */
+.hub {
+  --hub-column: 912px;
+  --hub-title-size: clamp(48px, 9vw, 96px);
+  --hub-title-line: calc(var(--hub-title-size) * 0.8333);
+  --hub-card-radius: 40px;
+  --ds-stage-glow-top: 825px;
+
+  min-height: 100dvh;
+  margin: 0;
+  color-scheme: dark;
+}
+
+.hub-content {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ds-space-12) + var(--ds-space-4));
+  width: min(var(--hub-column), 100% - 2 * var(--ds-space-4));
+  margin-inline: auto;
+  padding-block-end: calc(var(--ds-space-12) * 2);
 }
 
 .hub-header {
-  border-bottom: 1px solid var(--ds-border-normal);
-  background: var(--ds-background-base);
-}
-
-.hub-controls {
-  display: grid;
-  grid-template-columns: 1fr minmax(180px, 240px);
-  gap: var(--ds-space-3);
-}
-
-.hub-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--ds-space-6);
-}
-
-.hub-preview {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 10;
-  border-radius: var(--ds-radius-m);
-  object-fit: cover;
-  background: var(--ds-background-base-alt);
-}
-
-.hub-placeholder {
-  display: grid;
-  place-items: center;
-  font-size: var(--ds-typography-heading-desktop-h2-font-size);
-  font-weight: var(--ds-font-font-weight-bold);
-  color: var(--ds-text-primary-on-accent-1);
-  background: var(--ds-background-accent-1);
-}
-
-.hub-card-head {
-  justify-content: space-between;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: calc(var(--hub-title-line) * 2 + var(--ds-space-6) + var(--ds-space-12) * 2.5);
 }
 
 .hub-title {
   margin: 0;
-  font-size: var(--ds-typography-heading-desktop-h5-font-size);
+  font-family: var(--ds-typography-heading-desktop-h1-font-family);
+  font-size: var(--hub-title-size);
+  font-weight: var(--ds-font-font-weight-bold);
+  font-feature-settings: 'liga' 0;
+  line-height: var(--hub-title-line);
+  text-align: center;
+  color: transparent;
+  background-image: linear-gradient(
+    to top,
+    var(--ds-text-primary-on-dark) 5.978%,
+    var(--ds-color-gradient-text-primary-on-dark-fade-point-2-night-value) 115.76%
+  );
+  background-clip: text;
 }
 
-.hub-title a {
-  color: inherit;
-  text-decoration: none;
+.hub-title span {
+  display: block;
 }
 
-.hub-description {
+/* The design's 24px gap between the two lines of the title. */
+.hub-title span + span {
+  margin-block-start: var(--ds-space-6);
+}
+
+.hub-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-5);
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.hub-tag {
-  font-size: var(--ds-typography-body-s-font-size);
+/* Card: tui-header [card] with two tui-button. */
+.hub-card {
+  display: flex;
+  gap: var(--ds-space-4);
+  align-items: center;
+  overflow: clip;
+  padding: var(--ds-space-6) var(--ds-space-10);
+  border-radius: var(--hub-card-radius);
+  background: var(--ds-background-neutral-1-on-dark);
+}
+
+.hub-card-text {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+  min-width: 0;
+  padding-block: var(--ds-space-4) var(--ds-space-3);
+}
+
+.hub-card-title {
+  margin: 0;
+  font-family: var(--ds-typography-heading-desktop-h3-font-family);
+  font-size: var(--ds-typography-heading-desktop-h3-font-size);
+  font-weight: var(--ds-typography-heading-desktop-h3-font-weight);
+  font-feature-settings: 'liga' 0;
+  line-height: var(--ds-typography-heading-desktop-h3-line-height);
+  color: var(--ds-text-primary-on-dark);
+  overflow-wrap: anywhere;
+}
+
+.hub-card-meta {
+  margin: 0;
+  font-family: var(--ds-typography-ui-l-font-family);
+  font-size: var(--ds-typography-ui-l-font-size);
+  font-weight: var(--ds-typography-ui-l-font-weight);
+  line-height: var(--ds-typography-ui-l-line-height);
   color: var(--ds-text-secondary);
 }
 
-.hub-versions,
+.hub-card-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--ds-space-4);
+  align-items: center;
+}
+
+/* Changelog: a full-screen modal over main with the same background. */
+.hub-dialog {
+  --ds-stage-glow-top: 825px;
+
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.hub-dialog::backdrop {
+  background: var(--ds-background-accent-on-light);
+}
+
+.hub-dialog[open] {
+  animation: hub-dialog-in var(--ds-animation-duration-moderate) var(--ds-animation-curve-productive-entrance);
+}
+
+.hub-dialog-content {
+  padding-block-start: var(--ds-space-12);
+}
+
+.hub-dialog-header {
+  display: flex;
+  gap: var(--ds-space-4);
+  align-items: center;
+  padding-inline: var(--ds-space-10);
+}
+
+/* On the bare black stage the black glass would vanish: the close button uses the neutral on-dark fill. */
+.hub-dialog-header .ds-button {
+  background: var(--ds-background-neutral-1-on-dark);
+}
+
+.hub-dialog-header .ds-button:hover {
+  background: var(--ds-state-background-neutral-1-on-dark-hover);
+}
+
+.hub-dialog-header .ds-button:active {
+  background: var(--ds-state-background-neutral-1-on-dark-pressed);
+}
+
+.hub-version {
+  align-items: flex-start;
+}
+
+.hub-version .hub-card-title {
+  font-size: var(--ds-typography-heading-desktop-h5-font-size);
+  line-height: var(--ds-typography-heading-desktop-h5-line-height);
+}
+
+.hub-version .hub-card-actions {
+  padding-block-start: var(--ds-space-4);
+}
+
 .hub-changelog {
   margin: var(--ds-space-2) 0 0;
-  padding-inline-start: var(--ds-space-4);
+  padding-inline-start: var(--ds-space-5);
+  font-family: var(--ds-typography-body-m-font-family);
+  font-size: var(--ds-typography-body-m-font-size);
+  line-height: var(--ds-typography-body-m-line-height);
+  color: var(--ds-text-primary);
 }
 
-.hub-versions > li {
-  margin-block-end: var(--ds-space-2);
+.hub-changelog li + li {
+  margin-block-start: var(--ds-space-1);
 }
 
-.compare {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  height: 100vh;
+@keyframes hub-dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
 }
 
-.compare-bar {
-  padding: var(--ds-space-3) var(--ds-space-4);
-  border-bottom: 1px solid var(--ds-border-normal);
-  background: var(--ds-background-base);
+@media (width <= 720px) {
+  .hub {
+    --hub-card-radius: var(--ds-radius-xl);
+    --ds-stage-glow-top: 640px;
+  }
+
+  .hub-header {
+    min-height: calc(var(--hub-title-line) * 2 + var(--ds-space-6) + var(--ds-space-12) * 1.5);
+  }
+
+  .hub-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--ds-space-5);
+  }
+
+  .hub-card-text {
+    padding-block: 0;
+  }
+
+  .hub-card-title {
+    font-size: var(--ds-typography-heading-mobile-m-font-size);
+    line-height: var(--ds-typography-heading-mobile-m-line-height);
+  }
+
+  .hub-card-actions > * {
+    flex: 1 1 0;
+  }
+
+  .hub-dialog-header {
+    padding-inline: var(--ds-space-5);
+  }
+
+  .hub-dialog-content {
+    padding-block-start: var(--ds-space-8);
+  }
 }
 
-.compare-panes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1px;
-  background: var(--ds-border-normal);
-}
-
-.compare-panes iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  background: var(--ds-background-base);
+@media (prefers-reduced-motion: reduce) {
+  .hub-dialog[open] {
+    animation: none;
+  }
 }

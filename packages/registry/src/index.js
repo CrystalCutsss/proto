@@ -34,6 +34,9 @@ export class RegistryError extends Error {
   }
 }
 
+/** Scenario listed for a version without `scenarios`: its start screen. */
+export const DEFAULT_SCENARIO = { id: 'main', title: 'Основной' };
+
 /** Numeric part of "vN". @param {string} v */
 export const versionNumber = (v) => Number(v.slice(1));
 
@@ -188,6 +191,22 @@ export function buildRegistry(repoRoot) {
           message: 'frozen version has no .frozen/manifest.json — freeze it with `pnpm proto:freeze`',
         });
       }
+      const routing = v.routing ?? 'hash';
+      const routes = v.routes ?? [];
+      const start = routing === 'hash' ? '#/' : '/';
+      (v.scenarios ?? []).forEach(
+        (/** @type {{ id: string, route: string }} */ s, /** @type {number} */ i) => {
+          if (s.route !== start && !routes.includes(s.route))
+            issues.push({
+              file: rel(vfile),
+              pointer: `/scenarios/${i}/route`,
+              message: `"${s.route}" must be the start screen ${start} or listed in routes`,
+            });
+        },
+      );
+      const ids = (v.scenarios ?? []).map((/** @type {{ id: string }} */ s) => s.id);
+      if (new Set(ids).size !== ids.length)
+        issues.push({ file: rel(vfile), pointer: '/scenarios', message: 'scenario ids must be unique' });
       versions.push({
         version: name,
         title: v.title ?? '',
@@ -197,8 +216,9 @@ export function buildRegistry(repoRoot) {
         changelog: v.changelog,
         baseVersion: v.baseVersion ?? null,
         designSource: v.designSource ?? null,
-        routing: v.routing ?? 'hash',
-        routes: v.routes ?? [],
+        routing,
+        routes,
+        scenarios: v.scenarios ?? [{ id: DEFAULT_SCENARIO.id, title: DEFAULT_SCENARIO.title, route: start }],
         path: `/p/${slug}/${name}/`,
       });
     }
@@ -235,6 +255,7 @@ export function buildRegistry(repoRoot) {
       designSource: meta.designSource ?? null,
       defaultVersion: /** @type {string} */ (defaultVersion),
       separatePassword: meta.separatePassword ?? false,
+      platform: meta.platform ?? 'desktop',
       updated:
         versions
           .map((v) => v.date)

@@ -37,9 +37,15 @@ test('proto:new creates a valid prototype from each template', () => {
       existsSync(join(dir, 'design-input')) && existsSync(join(dir, 'qa')) && existsSync(join(dir, 'spec')),
     );
   }
+  createPrototype(root, { slug: 'phone', owner: 'Owner', platform: 'mobile' });
   const reg = buildRegistry(root);
-  assert.equal(reg.prototypes.length, 3);
-  assert.equal(reg.prototypes[0]?.title, 'Тест "1"');
+  assert.equal(reg.prototypes.length, 4);
+  assert.equal(reg.prototypes.find((p) => p.slug === 'phone')?.platform, 'mobile');
+  assert.equal(reg.prototypes.find((p) => p.slug === 'p-vanilla-ts')?.platform, 'desktop');
+  assert.throws(
+    () => createPrototype(root, { slug: 'tab', owner: 'o', platform: 'tablet' }),
+    /Unknown platform/,
+  );
 });
 
 test('proto:new rejects bad, reserved and existing slugs and unknown templates', () => {

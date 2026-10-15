@@ -28,6 +28,7 @@ const files = {
   '/index.html': ['hub', 'text/html'],
   '/registry.json': [JSON.stringify(registry), 'application/json'],
   '/robots.txt': ['User-agent: *\nDisallow: /\n', 'text/plain'],
+  '/_shell/viewer.html': ['viewer', 'text/html'],
   '/p/demo/v1/index.html': ['demo v1', 'text/html'],
   '/p/demo/v2/index.html': ['demo v2 spa', 'text/html'],
   '/p/demo/v1/assets/app-AbCdEf12.js': ['js', 'text/javascript'],
@@ -142,12 +143,13 @@ describe('worker', () => {
     }
   });
 
-  it('routes like site-router: redirects, immutable assets, history fallback, 404', async () => {
+  it('routes like site-router: viewer, redirects, immutable assets, history fallback, 404', async () => {
     const { cookie } = await login('site-pass');
     const h = { Cookie: cookie };
-    const r = await get('/p/demo/?x=1', { headers: h });
+    expect(await (await get('/p/demo/?v=v1', { headers: h })).text()).toBe('viewer');
+    const r = await get('/p/demo', { headers: h });
     expect(r.status).toBe(302);
-    expect(r.headers.get('Location')).toBe('/p/demo/v1/?x=1');
+    expect(r.headers.get('Location')).toBe('/p/demo/');
     const js = await get('/p/demo/v1/assets/app-AbCdEf12.js', { headers: h });
     expect(js.headers.get('Cache-Control')).toBe('private, max-age=31536000, immutable');
     expect(js.headers.get('Content-Type')).toBe('text/javascript');

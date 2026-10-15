@@ -23,10 +23,7 @@ export default defineConfig({
     emptyOutDir: true,
     target: 'es2022',
     rolldownOptions: {
-      input: {
-        index: resolve(import.meta.dirname, 'index.html'),
-        compare: resolve(import.meta.dirname, 'compare.html'),
-      },
+      input: { index: resolve(import.meta.dirname, 'index.html') },
     },
   },
   server: { host: '0.0.0.0' },

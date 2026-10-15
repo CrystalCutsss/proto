@@ -9,6 +9,15 @@ export interface DesignSource {
   note?: string;
 }
 
+export type Platform = 'mobile' | 'desktop';
+
+export interface Scenario {
+  id: string;
+  title: string;
+  /** Start screen of the scenario: "#/path" (hash routing) or "/path" (history routing). */
+  route: string;
+}
+
 export interface RegistryVersion {
   version: string;
   title: string;
@@ -20,6 +29,8 @@ export interface RegistryVersion {
   designSource: DesignSource | null;
   routing: 'hash' | 'history';
   routes: string[];
+  /** Never empty: versions without scenarios get DEFAULT_SCENARIO at the start screen. */
+  scenarios: Scenario[];
   /** Site path, always /p/<slug>/<vN>/ */
   path: string;
 }
@@ -35,6 +46,8 @@ export interface RegistryPrototype {
   /** Resolved version id (never "latest"). */
   defaultVersion: string;
   separatePassword: boolean;
+  /** How the viewer shows the prototype (ADR-0020). */
+  platform: Platform;
   /** Latest version date, YYYY-MM-DD. */
   updated: string;
   /** Site path, always /p/<slug>/ */
@@ -55,6 +68,7 @@ export interface RegistryIssue {
   message: string;
 }
 
+export declare const DEFAULT_SCENARIO: { id: string; title: string };
 export declare const SLUG_RE: RegExp;
 export declare const VERSION_RE: RegExp;
 export declare const RESERVED_SLUGS: Set<string>;

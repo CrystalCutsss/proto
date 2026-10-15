@@ -30,11 +30,11 @@ describe('route', () => {
     });
   });
 
-  it('redirects a prototype to its default version and keeps the query', () => {
-    expect(r('/p/demo/', '?shell=0')).toEqual({
-      type: 'redirect',
-      location: '/p/demo/v1/?shell=0',
-      status: 302,
+  it('serves the viewer for a prototype and adds trailing slashes', () => {
+    expect(r('/p/demo/', '?v=v2&s=main')).toEqual({
+      type: 'asset',
+      path: '/_shell/viewer.html',
+      cache: 'no-cache',
     });
     expect(r('/p/demo')).toMatchObject({ location: '/p/demo/' });
     expect(r('/p/demo/v2')).toMatchObject({ location: '/p/demo/v2/' });
@@ -51,11 +51,6 @@ describe('route', () => {
     expect(r('/p/demo/v2/screen/1')).toMatchObject({ fallback: '/p/demo/v2/index.html' });
     expect(r('/p/demo/v2/logo.svg')).not.toHaveProperty('fallback');
     expect(r('/p/demo/v1/assets/main-0123456789.js')).toMatchObject({ cache: 'immutable' });
-  });
-
-  it('serves the compare page', () => {
-    expect(r('/p/demo/compare/', '?a=v1&b=v2')).toMatchObject({ type: 'asset', path: '/compare.html' });
-    expect(r('/p/demo/compare')).toMatchObject({ type: 'redirect', location: '/p/demo/compare/' });
   });
 
   it('rejects unknown prototypes and versions and unsafe paths', () => {

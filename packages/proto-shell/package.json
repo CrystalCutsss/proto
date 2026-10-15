@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Service panel injected into every prototype version at runtime: version switcher, changelog, design source (ADR-0011).",
+  "description": "Runtime layer of every prototype (ADR-0011, ADR-0020): the loader, the viewer at /p/<slug>/ with the iPhone mockup and the scenario/version menu, and the menu of an installed web app.",
   "exports": {
     "./package.json": "./package.json",
     "./switch": "./src/switch.ts"
@@ -20,5 +20,8 @@
     "typescript": "6.0.3",
     "vite": "8.3.4",
     "vitest": "5.0.4"
+  },
+  "dependencies": {
+    "@proto/ui": "workspace:*"
   }
 }

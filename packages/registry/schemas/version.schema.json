@@ -35,6 +35,22 @@
       "items": { "type": "string", "pattern": "^(#?/)[^\\s]*$", "maxLength": 200 },
       "uniqueItems": true,
       "maxItems": 500
+    },
+    "scenarios": {
+      "description": "Named entry points shown in the viewer's \"Сценарий\" menu (ADR-0020). Each route must be the start screen or listed in routes. Without scenarios the menu shows one \"Основной\" scenario at the start screen.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "route"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 40 },
+          "title": { "type": "string", "minLength": 1, "maxLength": 40 },
+          "route": { "type": "string", "pattern": "^(#?/)[^\\s]*$", "maxLength": 200 }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 12
     }
   },
   "$defs": {

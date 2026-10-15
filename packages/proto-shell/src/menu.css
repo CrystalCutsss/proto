@@ -1,0 +1,101 @@
+/* Bottom menu over every prototype (ADR-0020): two tui-segmented controls, "Сценарий" and "Версия", on black
+   glass. Used by the viewer page and, inside Shadow DOM, by the shell of an installed web app. */
+.proto-menu {
+  position: fixed;
+  z-index: 2147483000;
+  bottom: calc(env(safe-area-inset-bottom, 0) + var(--ds-space-4));
+  left: 50%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2);
+  align-items: center;
+  justify-content: center;
+  max-width: calc(100vw - 2 * var(--ds-space-4));
+  padding: var(--ds-space-2);
+  border-radius: var(--ds-radius-l);
+  color: var(--ds-text-primary);
+  background: var(--ds-background-overlay-glass-on-light);
+  backdrop-filter: blur(16px);
+  transform: translateX(-50%);
+  transition:
+    opacity var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard),
+    transform var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
+}
+
+.proto-menu[hidden] {
+  display: none;
+}
+
+.proto-menu ds-segmented {
+  min-width: 0;
+}
+
+/* The version control keeps its size; a long scenario list scrolls instead. */
+.proto-menu ds-segmented[data-menu='version'] {
+  flex: none;
+}
+
+.proto-menu-collapse,
+.proto-menu-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  font-family: var(--ds-typography-ui-m-font-family);
+  font-size: var(--ds-typography-ui-m-font-size);
+  line-height: var(--ds-typography-ui-m-line-height);
+  color: var(--ds-text-primary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.proto-menu-collapse {
+  min-width: var(--ds-space-10);
+  min-height: calc(var(--ds-space-12) + var(--ds-space-1));
+  border-radius: var(--ds-radius-m);
+  background: transparent;
+}
+
+.proto-menu-pill {
+  position: fixed;
+  z-index: 2147483000;
+  bottom: calc(env(safe-area-inset-bottom, 0) + var(--ds-space-2));
+  left: 50%;
+  padding: var(--ds-space-1) var(--ds-space-3);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-background-overlay-glass-on-light);
+  backdrop-filter: blur(16px);
+  transform: translateX(-50%);
+}
+
+.proto-menu-pill[hidden] {
+  display: none;
+}
+
+.proto-menu-collapse:hover,
+.proto-menu-pill:hover {
+  background: var(--ds-state-background-overlay-glass-on-light-hover);
+}
+
+.proto-menu-collapse:focus-visible,
+.proto-menu-pill:focus-visible {
+  outline: var(--ds-border-width-focus) solid var(--ds-border-focus);
+}
+
+@media (width <= 500px) {
+  .proto-menu {
+    flex-wrap: nowrap;
+    gap: var(--ds-space-1);
+    padding: var(--ds-space-1);
+  }
+
+  .proto-menu ds-segmented[data-menu='scenario'] {
+    flex: 0 1 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proto-menu {
+    transition: none;
+  }
+}

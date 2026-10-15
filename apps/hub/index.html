@@ -1,38 +1,32 @@
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-ds-theme="night">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="robots" content="noindex, nofollow" />
-    <title>Прототипы</title>
+    <meta name="theme-color" content="#000000" />
+    <title>Proto Stand · B2B Loans</title>
   </head>
-  <body class="ds-root">
-    <header class="hub-header">
-      <div class="hub-container ds-stack">
-        <h1 class="ds-heading">Прототипы</h1>
-        <div class="hub-controls">
-          <input
-            id="search"
-            class="ds-input"
-            type="search"
-            placeholder="Поиск по названию, описанию, владельцу"
-            aria-label="Поиск"
-          />
-          <select id="status" class="ds-input" aria-label="Статус">
-            <option value="current">Активные и на паузе</option>
-            <option value="active">Только активные</option>
-            <option value="paused">На паузе</option>
-            <option value="archived">Архив</option>
-            <option value="all">Все</option>
-          </select>
-        </div>
-        <div id="tags" class="ds-cluster" aria-label="Теги"></div>
-      </div>
-    </header>
-    <main class="hub-container">
-      <p id="summary" class="ds-muted"></p>
-      <div id="grid" class="hub-grid" aria-live="polite"></div>
+  <body class="ds-root ds-stage hub">
+    <main class="hub-content">
+      <header class="hub-header">
+        <h1 class="hub-title"><span>Proto Stand</span> <span>B2B Loans</span></h1>
+      </header>
+      <section id="list" class="hub-list" aria-label="Прототипы" aria-live="polite"></section>
     </main>
+
+    <dialog id="changelog" class="hub-dialog ds-stage" aria-labelledby="changelog-title">
+      <div class="hub-content hub-dialog-content">
+        <header class="hub-dialog-header">
+          <div class="hub-card-text">
+            <h2 id="changelog-title" class="hub-card-title"></h2>
+            <p class="hub-card-meta">Версии и changelog</p>
+          </div>
+          <button type="button" class="ds-button" data-variant="glass" data-close>Закрыть</button>
+        </header>
+        <ol id="versions" class="hub-list hub-versions"></ol>
+      </div>
+    </dialog>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

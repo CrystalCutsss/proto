@@ -106,6 +106,13 @@ export function pwaTags(ctx, names, html) {
       attrs: { name: 'apple-mobile-web-app-title', content: names.shortName },
       injectTo: 'head',
     },
+    {
+      // Installed app draws under the system status bar; prototypes pad with env(safe-area-inset-top)
+      // and hide the status bar they draw themselves (ADR-0020).
+      tag: 'meta',
+      attrs: { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
+      injectTo: 'head',
+    },
   ];
   return tags.filter((t) => {
     const key = t.attrs?.rel ? `rel="${t.attrs.rel}"` : `name="${t.attrs?.name}"`;

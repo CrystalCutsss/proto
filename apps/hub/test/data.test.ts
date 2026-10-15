@@ -1,6 +1,21 @@
 import type { RegistryPrototype } from '@proto/registry';
 import { describe, expect, it } from 'vitest';
-import { allTags, filterPrototypes, plural } from '../src/data.ts';
+import { cardMeta, plural, versionsNewestFirst, viewerUrl, visiblePrototypes } from '../src/data.ts';
+
+const version = (v: string) => ({
+  version: v,
+  title: '',
+  date: '2026-10-01',
+  author: 'Кирилл',
+  status: 'review' as const,
+  changelog: [],
+  baseVersion: null,
+  designSource: null,
+  routing: 'hash' as const,
+  routes: [],
+  scenarios: [{ id: 'main', title: 'Основной', route: '#/' }],
+  path: `/p/x/${v}/`,
+});
 
 const p = (slug: string, over: Partial<RegistryPrototype> = {}): RegistryPrototype => ({
   slug,
@@ -12,38 +27,41 @@ const p = (slug: string, over: Partial<RegistryPrototype> = {}): RegistryPrototy
   designSource: null,
   defaultVersion: 'v1',
   separatePassword: false,
+  platform: 'desktop',
   updated: '2026-10-01',
   path: `/p/${slug}/`,
-  versions: [],
+  versions: [version('v1')],
   ...over,
 });
 
-const list = [
-  p('checkout', { tags: ['mobile', 'payments'], updated: '2026-10-10', description: 'Оформление заказа' }),
-  p('onboarding', { tags: ['mobile'], status: 'paused' }),
-  p('old', { status: 'archived' }),
-];
-
-describe('filterPrototypes', () => {
-  it('hides archived by default and sorts by update date', () => {
-    expect(filterPrototypes(list, { query: '', status: 'current', tags: [] }).map((x) => x.slug)).toEqual([
-      'checkout',
-      'onboarding',
-    ]);
+describe('hub data', () => {
+  it('hides archived prototypes and sorts by update date, then title', () => {
+    const list = [
+      p('b'),
+      p('old', { status: 'archived', updated: '2026-12-01' }),
+      p('a'),
+      p('new', { updated: '2026-10-10', status: 'paused' }),
+    ];
+    expect(visiblePrototypes(list).map((x) => x.slug)).toEqual(['new', 'a', 'b']);
   });
 
-  it('filters by status, all tags and a case-insensitive query', () => {
-    expect(filterPrototypes(list, { query: '', status: 'archived', tags: [] }).map((x) => x.slug)).toEqual([
-      'old',
-    ]);
-    expect(filterPrototypes(list, { query: '', status: 'all', tags: ['mobile', 'payments'] })).toHaveLength(
-      1,
+  it('builds the card subtitle with the platform label and version count', () => {
+    expect(cardMeta(p('x', { platform: 'mobile', updated: '2026-10-14' }))).toBe(
+      'Обновлён 2026-10-14 · PWA · 1 версия',
     );
-    expect(filterPrototypes(list, { query: 'ЗАКАЗ', status: 'all', tags: [] })[0]?.slug).toBe('checkout');
+    expect(cardMeta(p('x', { versions: [version('v1'), version('v2')] }))).toBe(
+      'Обновлён 2026-10-01 · Desktop · 2 версии',
+    );
   });
 
-  it('collects tags and pluralizes in Russian', () => {
-    expect(allTags(list)).toEqual(['mobile', 'payments']);
+  it('lists versions newest first and links to the viewer', () => {
+    const x = p('x', { versions: [version('v1'), version('v2')] });
+    expect(versionsNewestFirst(x).map((v) => v.version)).toEqual(['v2', 'v1']);
+    expect(viewerUrl(x)).toBe('/p/x/');
+    expect(viewerUrl(x, 'v1')).toBe('/p/x/?v=v1');
+  });
+
+  it('pluralizes in Russian', () => {
     expect([1, 2, 5, 11, 21, 22].map((n) => plural(n, ['версия', 'версии', 'версий']))).toEqual([
       '1 версия',
       '2 версии',

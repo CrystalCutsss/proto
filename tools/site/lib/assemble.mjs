@@ -1,5 +1,5 @@
 // Assemble dist/site from built packages (ADR-0012):
-//   /               apps/hub/dist (index.html, compare.html, assets/)
+//   /               apps/hub/dist (index.html, assets/)
 //   /_shell/        packages/proto-shell/dist
 //   /p/<slug>/<vN>/ prototypes/<slug>/versions/<vN>/dist (frozen versions: copied from .frozen/site by their build)
 //   /registry.json, /robots.txt, /_headers

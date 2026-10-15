@@ -21,5 +21,32 @@
     "note": "Копия владельца «Единая активация», секция «Тест прототипа» (0:5447)"
   },
   "routing": "hash",
-  "routes": ["#/", "#/conditions", "#/review", "#/documents", "#/success"]
+  "routes": ["#/", "#/conditions", "#/review", "#/documents", "#/success"],
+  "scenarios": [
+    {
+      "id": "offer",
+      "title": "Предложение",
+      "route": "#/"
+    },
+    {
+      "id": "conditions",
+      "title": "Условия",
+      "route": "#/conditions"
+    },
+    {
+      "id": "review",
+      "title": "Проверка",
+      "route": "#/review"
+    },
+    {
+      "id": "documents",
+      "title": "Документы",
+      "route": "#/documents"
+    },
+    {
+      "id": "success",
+      "title": "Успех",
+      "route": "#/success"
+    }
+  ]
 }

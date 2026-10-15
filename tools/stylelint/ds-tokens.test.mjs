@@ -33,4 +33,6 @@ test('isAllowed edge cases', () => {
   assert.equal(isAllowed('var(--ds-a) var(--local)'), true);
   assert.equal(isAllowed('2px solid red'), false);
   assert.equal(isAllowed('opacity cubic-bezier(0, 0, 1, 1)', 'transition'), false);
+  assert.equal(isAllowed('max(env(safe-area-inset-bottom, 0), var(--ds-space-4))'), true);
+  assert.equal(isAllowed('env(safe-area-inset-top, 12px)'), false);
 });

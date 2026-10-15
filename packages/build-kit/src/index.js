@@ -5,10 +5,21 @@
 //   export default defineVersionConfig(import.meta.dirname);
 import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { basename, dirname, join, resolve } from 'node:path';
+import { basename, dirname, extname, join, resolve } from 'node:path';
 import { buildRegistry, serializeRegistry, SLUG_RE, VERSION_RE } from '@proto/registry';
 import { optimize } from 'svgo';
 import { pwa } from './pwa.js';
+
+/** Content types of the built shell files served by the dev server. @type {Record<string, string>} */
+const DEV_TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript',
+  '.css': 'text/css',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml',
+  '.woff2': 'font/woff2',
+  '.json': 'application/json',
+};
 
 export * from './pwa.js';
 
@@ -50,7 +61,8 @@ export function shellTags(ctx) {
     {
       tag: 'script',
       attrs: { type: 'module', src: '/_shell/loader.js', 'data-proto-shell': '' },
-      injectTo: 'body',
+      // First module script: it marks <html> (display mode, hidden system bars) before the prototype runs.
+      injectTo: 'head-prepend',
     },
   ];
 }
@@ -81,16 +93,19 @@ export function protoShell(ctx) {
           }
           return;
         }
-        if (url.startsWith('/_shell/')) {
+        // The viewer (/p/<slug>/, ADR-0020) and its files come from the built shell as on the site.
+        const shellFile =
+          url === `/p/${ctx.slug}/` ? 'viewer.html' : url.startsWith('/_shell/') ? url.slice(8) : null;
+        if (shellFile !== null && !shellFile.split('/').includes('..')) {
           let shellDist;
           try {
             shellDist = join(dirname(require.resolve('@proto/proto-shell/package.json')), 'dist');
           } catch {
             shellDist = join(ctx.repoRoot, 'packages/proto-shell/dist');
           }
-          const file = join(shellDist, basename(url));
+          const file = join(shellDist, shellFile);
           if (existsSync(file)) {
-            res.setHeader('Content-Type', 'text/javascript');
+            res.setHeader('Content-Type', DEV_TYPES[extname(file)] ?? 'application/octet-stream');
             res.end(readFileSync(file));
             return;
           }

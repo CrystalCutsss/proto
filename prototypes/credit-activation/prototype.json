@@ -5,6 +5,7 @@
   "owner": "Claude",
   "tags": ["pilot", "ios", "pwa", "credit"],
   "status": "active",
+  "platform": "mobile",
   "defaultVersion": "latest",
   "separatePassword": false
 }

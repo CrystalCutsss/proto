@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Site root: catalog of all prototypes and the version comparison page. Data comes only from /registry.json.",
+  "description": "Site root (main): prototype cards and the full-screen changelog dialog. Data comes only from /registry.json.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

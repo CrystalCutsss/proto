@@ -1,111 +1,104 @@
+// Main page (Figma "main" 22:842): prototype cards with "Открыть" and "Changelog". The changelog opens in a
+// full-screen modal dialog over main; its state lives in the URL hash (#changelog=<slug>) so it can be linked
+// and closed with the browser's Back button.
 import '@proto/ui/ui.css';
 import './hub.css';
 import type { RegistryPrototype } from '@proto/registry';
-import { defineElements } from '@proto/ui';
 import {
-  allTags,
+  cardMeta,
   esc,
-  filterPrototypes,
-  type Filters,
   loadRegistry,
-  plural,
   STATUS_LABEL,
-  type StatusFilter,
+  versionsNewestFirst,
+  viewerUrl,
+  visiblePrototypes,
 } from './data.ts';
 
-defineElements();
-
-const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
-const grid = $('#grid');
-const summary = $('#summary');
-const search = $<HTMLInputElement>('#search');
-const status = $<HTMLSelectElement>('#status');
-const tagsBox = $('#tags');
-
-const params = new URLSearchParams(location.search);
-const filters: Filters = {
-  query: params.get('q') ?? '',
-  status: (params.get('status') as StatusFilter) ?? 'current',
-  tags: params.getAll('tag'),
-};
-search.value = filters.query;
-status.value = filters.status;
-
-function card(p: RegistryPrototype) {
-  const preview = p.preview
-    ? `<img class="hub-preview" src="${esc(p.preview)}" alt="" loading="lazy" width="640" height="400" />`
-    : `<div class="hub-preview hub-placeholder" aria-hidden="true">${esc(p.title.slice(0, 1).toUpperCase())}</div>`;
-  const versions = [...p.versions]
-    .reverse()
-    .map(
-      (v) => `<li>
-        <a href="${esc(v.path)}">${esc(v.version)}${v.title ? ` — ${esc(v.title)}` : ''}</a>
-        <ds-badge status="${esc(v.status)}">${STATUS_LABEL[v.status] ?? esc(v.status)}</ds-badge>
-        <span class="ds-muted">${esc(v.date)}</span>
-        ${v.changelog.length ? `<ul class="hub-changelog">${v.changelog.map((c) => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}
-      </li>`,
-    )
-    .join('');
-  return `<article class="ds-card hub-card">
-    <a href="${esc(p.path)}" class="hub-preview-link" tabindex="-1">${preview}</a>
-    <div class="ds-cluster hub-card-head">
-      <h2 class="hub-title"><a href="${esc(p.path)}">${esc(p.title)}</a></h2>
-      <ds-badge status="${esc(p.status)}">${STATUS_LABEL[p.status] ?? esc(p.status)}</ds-badge>
-    </div>
-    ${p.description ? `<p class="hub-description">${esc(p.description)}</p>` : ''}
-    <div class="ds-muted">${esc(p.owner)} · обновлён ${esc(p.updated)} · ${plural(p.versions.length, ['версия', 'версии', 'версий'])}</div>
-    ${p.tags.length ? `<div class="ds-cluster">${p.tags.map((t) => `<span class="hub-tag">#${esc(t)}</span>`).join('')}</div>` : ''}
-    <div class="ds-cluster">
-      <a class="ds-button" href="${esc(p.path)}">Открыть ${esc(p.defaultVersion)}</a>
-      ${p.versions.length > 1 ? `<a class="ds-button" data-variant="ghost" href="${esc(p.path)}compare/">Сравнить</a>` : ''}
-    </div>
-    <details><summary>Версии и changelog</summary><ul class="hub-versions">${versions}</ul></details>
-  </article>`;
-}
-
-function syncUrl() {
-  const q = new URLSearchParams();
-  if (filters.query) q.set('q', filters.query);
-  if (filters.status !== 'current') q.set('status', filters.status);
-  for (const t of filters.tags) q.append('tag', t);
-  history.replaceState(null, '', `${location.pathname}${q.size ? `?${q}` : ''}`);
-}
+const list = document.querySelector<HTMLElement>('#list')!;
+const dialog = document.querySelector<HTMLDialogElement>('#changelog')!;
+const dialogTitle = dialog.querySelector<HTMLElement>('#changelog-title')!;
+const versionsList = dialog.querySelector<HTMLElement>('#versions')!;
 
 let prototypes: RegistryPrototype[] = [];
+let trigger: HTMLElement | null = null;
 
-function render() {
-  const list = filterPrototypes(prototypes, filters);
-  grid.innerHTML = list.map(card).join('') || '<p class="ds-muted">Ничего не найдено.</p>';
-  summary.textContent = `${plural(list.length, ['прототип', 'прототипа', 'прототипов'])} из ${prototypes.length}`;
-  tagsBox.innerHTML = allTags(prototypes)
-    .map(
-      (t) =>
-        `<button type="button" class="ds-tag" data-tag="${esc(t)}" aria-pressed="${filters.tags.includes(t)}">#${esc(t)}</button>`,
-    )
-    .join('');
-  syncUrl();
+const card = (p: RegistryPrototype) => `<article class="hub-card">
+    <div class="hub-card-text">
+      <h2 class="hub-card-title">${esc(p.title)}</h2>
+      <p class="hub-card-meta">${esc(cardMeta(p))}</p>
+    </div>
+    <div class="hub-card-actions">
+      <a class="ds-button" data-variant="glass" href="${esc(viewerUrl(p))}">Открыть</a>
+      <button type="button" class="ds-button" data-variant="glass" data-changelog="${esc(p.slug)}"
+        aria-haspopup="dialog" aria-label="Changelog: ${esc(p.title)}">Changelog</button>
+    </div>
+  </article>`;
+
+const versionItem =
+  (p: RegistryPrototype) => (v: RegistryPrototype['versions'][number]) => `<li class="hub-card hub-version">
+    <div class="hub-card-text">
+      <h3 class="hub-card-title">${esc(v.version)}${v.title ? ` — ${esc(v.title)}` : ''}</h3>
+      <p class="hub-card-meta">${esc(v.date)} · ${esc(STATUS_LABEL[v.status] ?? v.status)} · ${esc(v.author)}</p>
+      ${v.changelog.length ? `<ul class="hub-changelog">${v.changelog.map((c) => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}
+    </div>
+    <div class="hub-card-actions">
+      <a class="ds-button" data-variant="glass" href="${esc(viewerUrl(p, v.version))}">Открыть ${esc(v.version)}</a>
+    </div>
+  </li>`;
+
+const slugFromHash = () => /^#changelog=([a-z0-9-]+)$/.exec(location.hash)?.[1] ?? null;
+
+function openDialog(p: RegistryPrototype) {
+  dialogTitle.textContent = p.title;
+  versionsList.innerHTML = versionsNewestFirst(p).map(versionItem(p)).join('');
+  if (!dialog.open) dialog.showModal();
+  dialog.scrollTop = 0;
+  document.title = `${p.title} — changelog · Proto Stand`;
 }
 
-search.addEventListener('input', () => {
-  filters.query = search.value;
-  render();
+function closeDialog() {
+  if (dialog.open) dialog.close();
+  document.title = 'Proto Stand · B2B Loans';
+  trigger?.focus();
+  trigger = null;
+}
+
+/** Open or close the dialog to match the URL. */
+function sync() {
+  const slug = slugFromHash();
+  const p = slug ? prototypes.find((x) => x.slug === slug) : undefined;
+  if (p) openDialog(p);
+  else closeDialog();
+}
+
+function requestClose() {
+  if ((history.state as { changelog?: boolean } | null)?.changelog) history.back();
+  else {
+    history.replaceState(null, '', `${location.pathname}${location.search}`);
+    sync();
+  }
+}
+
+list.addEventListener('click', (e) => {
+  const button = (e.target as HTMLElement).closest<HTMLElement>('[data-changelog]');
+  if (!button) return;
+  trigger = button;
+  history.pushState({ changelog: true }, '', `#changelog=${button.dataset.changelog}`);
+  sync();
 });
-status.addEventListener('change', () => {
-  filters.status = status.value as StatusFilter;
-  render();
+dialog.addEventListener('cancel', (e) => {
+  e.preventDefault();
+  requestClose();
 });
-tagsBox.addEventListener('click', (e) => {
-  const tag = (e.target as HTMLElement).closest<HTMLElement>('[data-tag]')?.dataset.tag;
-  if (!tag) return;
-  filters.tags = filters.tags.includes(tag) ? filters.tags.filter((t) => t !== tag) : [...filters.tags, tag];
-  render();
-});
+dialog.querySelector('[data-close]')?.addEventListener('click', requestClose);
+window.addEventListener('popstate', sync);
 
 loadRegistry()
   .then((registry) => {
-    prototypes = registry.prototypes;
-    render();
+    prototypes = visiblePrototypes(registry.prototypes);
+    list.innerHTML = prototypes.map(card).join('') || '<p class="hub-card-meta">Прототипов пока нет.</p>';
+    sync();
   })
   .catch((err: Error) => {
-    grid.innerHTML = `<p class="ds-muted">Не удалось загрузить реестр: ${esc(err.message)}</p>`;
+    list.innerHTML = `<p class="hub-card-meta">Не удалось загрузить реестр: ${esc(err.message)}</p>`;
   });

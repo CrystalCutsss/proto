@@ -82,10 +82,15 @@ function copyTemplate(from, to, vars) {
 
 /**
  * @param {string} repoRoot
- * @param {{ slug: string, template?: string, title?: string, owner: string, description?: string }} opts
+ * @param {{ slug: string, template?: string, title?: string, owner: string, description?: string, platform?: string }} opts
  */
-export function createPrototype(repoRoot, { slug, template = 'vanilla-ts', title, owner, description = '' }) {
+export function createPrototype(
+  repoRoot,
+  { slug, template = 'vanilla-ts', title, owner, description = '', platform = 'desktop' },
+) {
   assertSlug(slug);
+  if (!['mobile', 'desktop'].includes(platform))
+    fail(`Unknown platform "${platform}". Available: mobile, desktop.`);
   if (!TEMPLATES.includes(template))
     fail(`Unknown template "${template}". Available: ${TEMPLATES.join(', ')}.`);
   const protoDir = join(repoRoot, 'prototypes', slug);
@@ -109,6 +114,7 @@ export function createPrototype(repoRoot, { slug, template = 'vanilla-ts', title
     owner,
     tags: [],
     status: 'active',
+    platform,
     defaultVersion: 'latest',
     separatePassword: false,
   });

@@ -4,18 +4,27 @@ paths:
   - "templates/**"
 ---
 
-# Prototypes and versions (ADR-0009 … ADR-0012)
+# Prototypes and versions (ADR-0009 … ADR-0012, ADR-0020)
 
 - Create prototypes and versions only with the CLI (`pnpm proto:new`, `pnpm proto:version`); never copy version
   folders by hand. A frozen version (`version.json` → `"status": "frozen"`) is immutable.
 - Each version is a self-contained workspace package `@proto/<slug>--vN`: depend on workspace packages
   (`@proto/ui`, `@proto/motion`, `@proto/three-kit`) and exact npm versions; no CDN URLs anywhere.
-- Keep `version.json` honest: `changelog` lists user-visible changes, `routes` lists every hash route (the version
-  panel keeps the route when switching versions), `status` moves draft → review → frozen.
+- Keep `version.json` honest: `changelog` lists user-visible changes, `routes` lists every hash route (the menu
+  keeps the route when switching versions), `scenarios` names the entry points of the viewer's «Сценарий» menu
+  (`{ id, title, route }`, each route in `routes`; without it the menu shows «Основной»), `status` moves
+  draft → review → frozen.
+- `prototype.json` → `platform`: `mobile` (shown in the iPhone mockup on wide screens, full-screen on phones and as
+  an installed web app) or `desktop` (default: the whole window, the design's own background, no frame).
+- Mobile designs keep the system status bar and home indicator from the mockup, marked with
+  `data-proto-system-bar`. The loader hides them where the device has its own (installed web app, phone screen):
+  `:root[data-proto-bars='hidden']` is set, so pad the layout with `env(safe-area-inset-*)` there. Do not draw a
+  device frame or centre a fixed-size "device" yourself: the viewer does it.
 - Routing is hash-based (`#/settings`); the site serves each version at `/p/<slug>/vN/` (ADR-0012), so use
   relative asset URLs or `import.meta.env.BASE_URL`, never absolute `/…` paths.
 - Inputs: `design-input/` (from the drive-inbox workflow or the owner), `spec/spec.json` (`pnpm proto:spec`).
   Output checks: `qa/` (screenshots, diffs, notes).
-- Do not import the version panel: the build-kit plugin injects the shell loader.
+- Do not import the menu or the viewer: the build-kit plugin injects the shell loader, which opens a version
+  inside the viewer (`/p/<slug>/`); `?shell=0` shows the bare page (screenshots, debugging).
 - Accessibility basics are part of done: semantic elements, focus states (`--ds-border-focus`), labels, and
   `prefers-reduced-motion` handled through `@proto/motion`.

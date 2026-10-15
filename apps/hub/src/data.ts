@@ -1,13 +1,5 @@
-// Catalog filtering (pure, unit-tested).
-import type { Registry, RegistryPrototype } from '@proto/registry';
-
-export type StatusFilter = 'current' | 'active' | 'paused' | 'archived' | 'all';
-
-export interface Filters {
-  query: string;
-  status: StatusFilter;
-  tags: string[];
-}
+// Hub data helpers (pure, unit-tested).
+import type { Registry, RegistryPrototype, RegistryVersion } from '@proto/registry';
 
 export async function loadRegistry(fetchImpl: typeof fetch = fetch): Promise<Registry> {
   const res = await fetchImpl('/registry.json', { cache: 'no-cache', credentials: 'same-origin' });
@@ -15,25 +7,32 @@ export async function loadRegistry(fetchImpl: typeof fetch = fetch): Promise<Reg
   return (await res.json()) as Registry;
 }
 
-export function allTags(prototypes: RegistryPrototype[]): string[] {
-  return [...new Set(prototypes.flatMap((p) => p.tags))].sort();
-}
-
-const matchesStatus = (p: RegistryPrototype, status: StatusFilter) =>
-  status === 'all' || (status === 'current' ? p.status !== 'archived' : p.status === status);
-
-export function filterPrototypes(prototypes: RegistryPrototype[], f: Filters): RegistryPrototype[] {
-  const q = f.query.trim().toLocaleLowerCase('ru');
+/** Prototypes shown on main: everything but archived, most recently updated first. */
+export function visiblePrototypes(prototypes: RegistryPrototype[]): RegistryPrototype[] {
   return prototypes
-    .filter((p) => matchesStatus(p, f.status))
-    .filter((p) => f.tags.every((t) => p.tags.includes(t)))
-    .filter(
-      (p) =>
-        !q ||
-        [p.title, p.description, p.owner, p.slug, ...p.tags].join(' ').toLocaleLowerCase('ru').includes(q),
-    )
+    .filter((p) => p.status !== 'archived')
     .sort((a, b) => b.updated.localeCompare(a.updated) || a.title.localeCompare(b.title, 'ru'));
 }
+
+export const PLATFORM_LABEL: Record<RegistryPrototype['platform'], string> = {
+  mobile: 'PWA',
+  desktop: 'Desktop',
+};
+
+/** Card subtitle, e.g. "Обновлён 2026-10-14 · PWA · 1 версия". */
+export const cardMeta = (p: RegistryPrototype) =>
+  [
+    `Обновлён ${p.updated}`,
+    PLATFORM_LABEL[p.platform] ?? PLATFORM_LABEL.desktop,
+    plural(p.versions.length, ['версия', 'версии', 'версий']),
+  ].join(' · ');
+
+/** Versions for the changelog dialog, newest first. */
+export const versionsNewestFirst = (p: RegistryPrototype): RegistryVersion[] => [...p.versions].reverse();
+
+/** Viewer URL of a prototype, optionally pinned to a version. */
+export const viewerUrl = (p: RegistryPrototype, version?: string) =>
+  version ? `${p.path}?v=${encodeURIComponent(version)}` : p.path;
 
 export const esc = (s: string) =>
   s.replace(
@@ -42,9 +41,6 @@ export const esc = (s: string) =>
   );
 
 export const STATUS_LABEL: Record<string, string> = {
-  active: 'активен',
-  paused: 'на паузе',
-  archived: 'архив',
   draft: 'черновик',
   review: 'на ревью',
   frozen: 'заморожена',

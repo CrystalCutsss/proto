@@ -27,6 +27,11 @@
       "type": "string",
       "pattern": "^(latest|v[1-9][0-9]{0,3})$"
     },
+    "platform": {
+      "description": "mobile: shown in an iPhone mockup in desktop browsers, full-screen without the design's system bars on phones and as an installed web app; desktop: full window (ADR-0020).",
+      "enum": ["mobile", "desktop"],
+      "default": "desktop"
+    },
     "separatePassword": {
       "description": "Protect this prototype with its own password (Phase 5, ADR-0006).",
       "type": "boolean",

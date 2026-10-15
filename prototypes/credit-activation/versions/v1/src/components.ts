@@ -6,9 +6,10 @@ export type NavAction = 'next' | 'back' | 'close';
 
 const action = (a: NavAction) => `data-action="${a}"`;
 
+/** Drawn iOS status bar; hidden where the device has its own (data-proto-system-bar, ADR-0020). */
 export function statusBar(): string {
   return `
-    <div class="status-bar" aria-hidden="true">
+    <div class="status-bar" aria-hidden="true" data-proto-system-bar>
       <img class="status-bar__time" src="${icon('status-time.svg')}" alt="" width="28" height="11" />
       <span class="status-bar__right">
         <img src="${icon('status-signal-wifi.svg')}" alt="" width="63" height="10" />
@@ -56,7 +57,8 @@ export function secondaryButton(label: string): string {
   return `<button type="button" class="button button--secondary button--m"><span class="button__label">${label}</span></button>`;
 }
 
-export const homeIndicator = () => `<div class="home-indicator" aria-hidden="true"></div>`;
+export const homeIndicator = () =>
+  `<div class="home-indicator" aria-hidden="true" data-proto-system-bar></div>`;
 
 interface BottomBlock {
   button?: string;

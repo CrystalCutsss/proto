@@ -13,3 +13,6 @@ Values without a TUI or project token (local custom properties, as `.claude/rule
 - `tui-segmented`: track inset 2 px and item radius 10 px (`packages/ui/src/segmented.css`).
 - Stage black: the design uses `tui/background/accent-opposite` (Day) = black; in the night theme the same
   black is `--ds-background-accent-on-light`.
+- Card rim: the cards carry Figma's Glass effect, which the Figma code export drops. `.hub-card::before` draws
+  it as a 1 px rim: `--ds-background-neutral-3-on-dark` on the top edge, `--ds-background-neutral-2-on-dark` on
+  the bottom, none on the sides (measured on the 22:850 render: +58 / +42 over the fill).

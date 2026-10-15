@@ -71,8 +71,31 @@
   align-items: center;
   overflow: clip;
   padding: var(--ds-space-6) var(--ds-space-10);
+  position: relative;
   border-radius: var(--hub-card-radius);
   background: var(--ds-background-neutral-1-on-dark);
+}
+
+/* Figma Glass effect on the card (light from above): a 1 px rim, brightest on the top edge, a little
+   weaker on the bottom edge, none on the sides. Figma's code export drops the effect, so it is drawn here:
+   a gradient in the padding box of a pseudo-element, its content box masked out. */
+.hub-card::before {
+  position: absolute;
+  inset: 0;
+  padding: var(--ds-border-width-thin);
+  border-radius: inherit;
+  background-image: linear-gradient(
+    to bottom,
+    var(--ds-background-neutral-3-on-dark),
+    transparent 30%,
+    transparent 70%,
+    var(--ds-background-neutral-2-on-dark)
+  );
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  pointer-events: none;
+  content: '';
 }
 
 .hub-card-text {

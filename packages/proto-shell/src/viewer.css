@@ -37,8 +37,8 @@
   height: 100%;
 }
 
-/* Phone-sized window: the menu gets its own strip below the prototype instead of covering its bottom
-   buttons. */
+/* Phone screen: no menu (menu.css); the prototype stops above the home indicator, because safe-area insets
+   do not reach into the iframe. */
 .viewer[data-phone] .viewer-frame {
   height: calc(100% - var(--viewer-menu-space, 0px) - env(safe-area-inset-bottom, 0px));
 }

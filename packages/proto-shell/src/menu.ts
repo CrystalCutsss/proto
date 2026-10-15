@@ -4,6 +4,12 @@ import { defineElements, type DsSegmented } from '@proto/ui';
 
 export const HIDDEN_KEY = 'proto-shell:hidden';
 
+/**
+ * Mobile browser: a phone screen in portrait or landscape. There the viewer shows a mobile prototype
+ * full-screen without the design's bars, and the menu is not shown at all (menu.css repeats this query).
+ */
+export const PHONE_MEDIA = '(width <= 500px), (pointer: coarse) and (height <= 500px)';
+
 export interface MenuHandlers {
   scenario(id: string): void;
   version(version: string): void;

@@ -24,6 +24,8 @@ paths:
   relative asset URLs or `import.meta.env.BASE_URL`, never absolute `/…` paths.
 - Inputs: `design-input/` (from the drive-inbox workflow or the owner), `spec/spec.json` (`pnpm proto:spec`).
   Output checks: `qa/` (screenshots, diffs, notes).
+- The «Сценарий / Версия» menu is never shown on phone screens (ADR-0021): every state of a mobile prototype
+  must be reachable inside the prototype itself.
 - Do not import the menu or the viewer: the build-kit plugin injects the shell loader, which opens a version
   inside the viewer (`/p/<slug>/`); `?shell=0` shows the bare page (screenshots, debugging).
 - Accessibility basics are part of done: semantic elements, focus states (`--ds-border-focus`), labels, and

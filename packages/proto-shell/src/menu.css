@@ -82,15 +82,13 @@
   outline: var(--ds-border-width-focus) solid var(--ds-border-focus);
 }
 
-@media (width <= 500px) {
-  .proto-menu {
-    flex-wrap: nowrap;
-    gap: var(--ds-space-1);
-    padding: var(--ds-space-1);
-  }
-
-  .proto-menu ds-segmented[data-menu='scenario'] {
-    flex: 0 1 auto;
+/* Mobile browsers (phone screens, portrait or landscape) get no menu at all: on a small screen it covers the
+   prototype's states. Versions open from the changelog on main; tablets and desktops keep the menu. Keep in
+   sync with PHONE_MEDIA in menu.ts. */
+@media (width <= 500px), (pointer: coarse) and (height <= 500px) {
+  .proto-menu,
+  .proto-menu-pill {
+    display: none;
   }
 }
 

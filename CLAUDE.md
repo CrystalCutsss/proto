@@ -54,7 +54,7 @@ pnpm registry:validate
   `templates/` — prototype templates.
 - `packages/proto-shell` — runtime layer (ADR-0011, ADR-0020): `loader.js` in every version, the viewer at
   `/p/<slug>/` (iPhone mockup for `platform: mobile`, bottom «Сценарий / Версия» menu) and the menu of an
-  installed web app.
+  installed web app. Mobile browsers (phone screens) get no menu at all (ADR-0021).
 - `tools/` — `proto-cli`, `site`, `drive`, `stylelint`. `config/` — Drive IDs, env placeholders.
 - `infra/worker` + `wrangler.jsonc` — hosting Worker (password login, ADR-0015); `site:preview` runs the same
   handler, so test auth locally with `PROTO_PREVIEW_PASSWORD=… pnpm site:preview`.

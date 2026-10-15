@@ -94,7 +94,7 @@ test('mobile prototypes sit in the iPhone mockup with their status bar on a wide
   await expect(page).toHaveURL(/\?v=v1&s=success#\/success$/);
 });
 
-test('on a phone screen the prototype fills it and the design bars are hidden', async ({ page }) => {
+test('on a phone screen the prototype fills it, without design bars or the menu', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/p/credit-activation/');
   await expect(page.locator('img.viewer-bezel')).toHaveCount(0);
@@ -103,14 +103,41 @@ test('on a phone screen the prototype fills it and the design bars are hidden', 
   await expect(app.locator('.top-bars').first()).toBeVisible();
   await expect(app.locator('.status-bar').first()).toBeHidden();
   await expect(app.locator('.home-indicator').first()).toBeHidden();
-  // The menu has its own strip: it does not cover the prototype.
-  const frameBox = (await page.locator('iframe').boundingBox())!;
-  const menuBox = (await page.getByRole('navigation', { name: 'Сценарий и версия' }).boundingBox())!;
-  expect(frameBox.y + frameBox.height).toBeLessThanOrEqual(menuBox.y);
+  // Mobile browsers get no menu: the prototype keeps the whole screen, in portrait and landscape.
+  await expect(page.getByRole('navigation', { name: 'Сценарий и версия' })).toBeHidden();
+  expect(await page.locator('iframe').boundingBox()).toEqual({ x: 0, y: 0, width: 390, height: 844 });
 });
 
-test('an installed web app hides the design bars and shows the collapsible menu', async ({ page }) => {
+test.describe('a phone in landscape', () => {
+  test.use({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true });
+
+  test('still counts as a mobile browser: full screen, no menu', async ({ page }) => {
+    await page.goto('/p/credit-activation/');
+    await expect(page.frameLocator('iframe').locator('html')).toHaveAttribute('data-proto-bars', 'hidden');
+    await expect(page.locator('img.viewer-bezel')).toHaveCount(0);
+    await expect(page.getByRole('navigation', { name: 'Сценарий и версия' })).toBeHidden();
+  });
+});
+
+test('on a phone the desktop prototype has no menu either', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/p/demo-basic/');
+  await expect(page.frameLocator('iframe').locator('h1')).toBeVisible();
+  await expect(page.getByRole('navigation', { name: 'Сценарий и версия' })).toBeHidden();
+});
+
+test('an installed web app hides the design bars; the menu is collapsible on tablets, absent on phones', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/p/credit-activation/v1/?proto-display=standalone#/');
+  await expect(page.locator('html')).toHaveAttribute('data-proto-display', 'standalone');
+  await expect(page.locator('.status-bar').first()).toBeHidden();
+  await expect(page.locator('proto-shell')).toBeAttached();
+  await expect(page.getByRole('navigation', { name: 'Сценарий и версия' })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Показать меню сценария и версии' })).toBeHidden();
+
+  await page.setViewportSize({ width: 820, height: 1180 });
   await page.goto('/p/credit-activation/v1/?proto-display=standalone#/');
   await expect(page).toHaveURL(/\/p\/credit-activation\/v1\//);
   await expect(page.locator('html')).toHaveAttribute('data-proto-display', 'standalone');

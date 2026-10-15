@@ -2,19 +2,17 @@
 //   - desktop prototypes: the whole window, the prototype's own background, no frame;
 //   - mobile prototypes on a wide screen: a black iPhone Air mockup on the main page's stage, with the
 //     system bars drawn by the design;
-//   - mobile prototypes on a phone-sized screen: the whole screen, the design's system bars hidden (?bars=0).
-// The bottom menu switches scenario and version; the viewer URL follows the iframe's screen.
+//   - mobile prototypes on a phone screen (PHONE_MEDIA): the whole screen, the design's system bars hidden
+//     (?bars=0), and no menu.
+// Elsewhere the bottom menu switches scenario and version; the viewer URL follows the iframe's screen.
 import '@proto/ui/ui.css';
 import './menu.css';
 import './viewer.css';
 import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
 import bezelUrl from '../assets/iphone-air-space-black/frame.png?url';
 import maskUrl from '../assets/iphone-air-space-black/mask.png?url';
-import { createMenu, hideShortcut, loadRegistryPrototype, pickScenario } from './menu.ts';
+import { createMenu, hideShortcut, loadRegistryPrototype, PHONE_MEDIA, pickScenario } from './menu.ts';
 import { keptScreen, screenFromViewerHash, screenKey, screenUrl, versionBase, viewerUrl } from './switch.ts';
-
-/** Narrower than this, a mobile prototype fills the screen instead of sitting in the mockup. */
-const PHONE_MAX_WIDTH = 500;
 
 const body = document.body;
 const stage = document.querySelector<HTMLElement>('.viewer-stage')!;
@@ -42,7 +40,7 @@ const menu = createMenu({
   },
 });
 
-const isPhone = () => matchMedia(`(width <= ${PHONE_MAX_WIDTH}px)`).matches;
+const isPhone = () => matchMedia(PHONE_MEDIA).matches;
 const mode = () => (proto.platform === 'mobile' && !isPhone() ? 'device' : 'full');
 
 /** Screen shown in the iframe, as a routes key ("#/cart" or "/cart"). */
@@ -77,7 +75,8 @@ function navigate(key: string) {
 function layout() {
   const m = mode();
   body.toggleAttribute('data-phone', isPhone());
-  const menuSpace = menu.element.hidden ? 0 : menu.element.offsetHeight + 32;
+  // No space for a menu that is hidden (Alt+Shift+H) or not shown at all (mobile browsers, menu.css).
+  const menuSpace = menu.element.getClientRects().length ? menu.element.offsetHeight + 32 : 0;
   body.style.setProperty('--viewer-menu-space', `${menuSpace}px`);
   if (body.dataset.mode !== m) {
     body.dataset.mode = m;

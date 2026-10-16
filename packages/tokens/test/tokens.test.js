@@ -116,8 +116,18 @@ describe('figma-import', () => {
     expect(convertValue('JetBrains Mono', 'fontFamily', family)[1]).toBe('JetBrains Mono');
     expect(convertValue('SF Pro', 'fontFamily', family)[1]).toBe('-apple-system');
     const text = v('Primitive', ['Font', 'Font Family', 'Text', 'iOS Value'], 'string', ['FONT_FAMILY'], {});
-    const display = v('Primitive', ['Font', 'Font Family', 'Display', 'iOS Value'], 'string', ['FONT_FAMILY'], {});
-    expect(convertValue('SF Pro', 'fontFamily', text).slice(0, 3)).toEqual(['SF Pro', 'SF Pro Text', '-apple-system']);
+    const display = v(
+      'Primitive',
+      ['Font', 'Font Family', 'Display', 'iOS Value'],
+      'string',
+      ['FONT_FAMILY'],
+      {},
+    );
+    expect(convertValue('SF Pro', 'fontFamily', text).slice(0, 3)).toEqual([
+      'SF Pro',
+      'SF Pro Text',
+      '-apple-system',
+    ]);
     expect(convertValue('SF Pro', 'fontFamily', display)[1]).toBe('SF Pro Display');
     expect(convertValue('SF Pro Rounded', 'fontFamily', display).slice(0, 3)).toEqual([
       'SF Pro Rounded',

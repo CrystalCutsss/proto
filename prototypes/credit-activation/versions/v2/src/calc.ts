@@ -10,13 +10,10 @@ export const CHECK_BONUS = 2_000_000;
 /** From this slider value the pledge card is on. */
 export const PLEDGE_THRESHOLD = AMOUNT.min + PLEDGE_BONUS;
 
-/** Monthly payment fixed by the owner (2026-10-16): the same for any amount, pledge and option. */
-const PAYMENT = 17_713.05;
-/**
- * КН with «Все включено» off. Computed once from the old formula at its reference state (7 000 000 ₽, pledge on):
- * 17 713,05 × annuity(7 млн, 19,5 %) / annuity(7 млн, 19,5 % × 0,85) over 60 months = 18 858,08 ₽.
- */
-const PAYMENT_NO_PACKAGE = 18_858.08;
+/** Monthly payment at the design's reference amount (owner, 2026-10-16): 17 713,05 ₽ for 7 000 000 ₽. */
+const PAYMENT = { amount: 7_000_000, value: 17_713.05 } as const;
+/** КН with «Все включено» off pays 15 % more (owner, 2026-10-16). */
+export const NO_PACKAGE_RAISE = 1.15;
 
 /** Fee in tenths of a percent, so 2,9 % is 29 (no floating point drift). */
 const FEE = { base: 29, pledge: 25, turnoverStep: 5 } as const;
@@ -63,9 +60,15 @@ export function totalAmount(c: Pick<Choice, 'slider' | 'check'>): number {
   return c.slider + (c.check ? CHECK_BONUS : 0);
 }
 
-/** Monthly payment in rubles: fixed, only КН without the package pays more. */
-export const monthlyPayment = (c: Pick<Choice, 'product' | 'package'>): number =>
-  c.product === 'kn' && !c.package ? PAYMENT_NO_PACKAGE : PAYMENT;
+/**
+ * Monthly payment in rubles, rounded to kopecks: proportional to the total amount (17 713,05 ₽ per 7 000 000 ₽),
+ * +15 % in КН without the package. Pledge and the other options change no rate.
+ */
+export function monthlyPayment(c: Pick<Choice, 'product' | 'package' | 'slider' | 'check'>): number {
+  const base = (PAYMENT.value * totalAmount(c)) / PAYMENT.amount;
+  const raised = c.product === 'kn' && !c.package ? base * NO_PACKAGE_RAISE : base;
+  return Math.round(raised * 100) / 100;
+}
 
 /** ОК fee in percent (2.9, 2.5, 2.4, 2.0). */
 export function fee(c: Pick<Choice, 'pledge' | 'turnover'>): number {

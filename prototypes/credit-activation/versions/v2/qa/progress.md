@@ -78,6 +78,8 @@ in screenshots (2 in Figma), as in v1.
   ratio at 7 млн with pledge). Annuity/scale code removed.
 - Slider stays linear; pledge tap-off returns to the last value below 7 млн (`state.sliderBelow`, reset on
   «Закрыть»), pure `rememberBelow` / `sliderAfterPledgeTap(on, remembered)` unit-tested.
+- 2026-10-16, third round: payment recalculated again on all screens, proportional to the total amount
+  (17 713,05 ₽ per 7 000 000 ₽); КН package off → +15 %.
 - Payment chip: КН green with the package, ОК green with a pledge, otherwise neutral.
 
 ## Open questions

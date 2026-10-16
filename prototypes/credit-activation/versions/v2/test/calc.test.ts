@@ -31,15 +31,13 @@ const choice = (over: Partial<Choice> = {}): Choice => ({
 });
 
 describe('monthly payment', () => {
-  it('is 17 713,05 ₽ for any amount, pledge and option (package on in КН)', () => {
+  it('is 17 713,05 ₽ at 7 000 000 ₽ whatever the pledge and the fee options', () => {
     for (const product of ['kn', 'ok'] as const) {
-      for (const slider of [AMOUNT.min, 5_500_000, 7_000_000, AMOUNT.max]) {
-        for (const pledge of [true, false]) {
-          for (const check of [true, false]) {
-            for (const turnover of [true, false]) {
-              const c = choice({ product, slider, pledge, check, turnover, package: product === 'kn' });
-              expect(monthlyPayment(c)).toBe(17_713.05);
-            }
+      for (const pledge of [true, false]) {
+        for (const turnover of [true, false]) {
+          for (const statement of [true, false]) {
+            const c = choice({ product, pledge, turnover, statement, package: product === 'kn' });
+            expect(monthlyPayment(c)).toBe(17_713.05);
           }
         }
       }
@@ -48,13 +46,21 @@ describe('monthly payment', () => {
     expect(formatRub(monthlyPayment(choice()))).toBe(`17${NBSP}713${NBSP}₽`);
   });
 
-  it('turning the КН package off raises it to a fixed 18 858,08 ₽', () => {
-    for (const slider of [AMOUNT.min, AMOUNT.max]) {
-      for (const pledge of [true, false]) {
-        expect(monthlyPayment(choice({ slider, pledge, package: false }))).toBe(18_858.08);
-      }
+  it('follows the total amount (slider and «Проверить данные»)', () => {
+    expect(monthlyPayment(choice({ slider: AMOUNT.min }))).toBe(10_121.74);
+    expect(monthlyPayment(choice({ slider: AMOUNT.max }))).toBe(22_773.92);
+    expect(monthlyPayment(choice({ slider: 5_000_000, check: true }))).toBe(17_713.05);
+    expect(monthlyPayment(choice({ slider: 6_000_000 }))).toBeGreaterThan(
+      monthlyPayment(choice({ slider: 5_000_000 })),
+    );
+  });
+
+  it('turning the КН package off raises it by 15 %', () => {
+    expect(monthlyPayment(choice({ package: false }))).toBe(20_370.01);
+    for (const slider of [AMOUNT.min, 5_500_000, AMOUNT.max]) {
+      const on = monthlyPayment(choice({ slider }));
+      expect(monthlyPayment(choice({ slider, package: false }))).toBeCloseTo(on * 1.15, 1);
     }
-    expect(monthlyPayment(choice({ package: false }))).toBeGreaterThan(monthlyPayment(choice()));
   });
 
   it('ОК ignores the package flag', () => {

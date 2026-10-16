@@ -64,11 +64,12 @@ on phones; for now the URL parameters are the way.
   first, then animates to that value + 3 000 000 ₽ (at most 9 000 000 ₽; owner, 2026-10-16). Tapping the pledge off animates back to `sliderBelow`
   (`sliderAfterPledgeTap(on, remembered)`). If the pledge came on by dragging past 7 млн, tap-off returns to the
   last value below 7 млн seen during that drag.
-- Monthly payment (owner, 2026-10-16): fixed 17 713,05 ₽ for any slider amount, pledge, «Проверить данные» and
-  «Поддерживать оборот». Only КН with the «Все включено» package off pays more: a fixed 18 858,08 ₽, computed once
-  from the earlier formula at its reference state (7 000 000 ₽, pledge on): 17 713,05 × annuity(19,5 %) /
-  annuity(19,5 % × 0,85) over 60 months. ОК ignores the package. Formats: offer card «Платеж в месяц» and panel
-  chip «17 713 ₽ / мес» rounded to rubles, review «17 713,05 ₽».
+- Monthly payment (owner, 2026-10-16, third round): recalculated on every screen, proportional to the total amount
+  (slider + «Проверить данные»): 17 713,05 ₽ × total / 7 000 000 ₽, rounded to kopecks (4 млн → 10 121,74 ₽,
+  9 млн → 22 773,92 ₽). КН with the «Все включено» package off pays 15 % more (7 млн → 20 370,01 ₽). Pledge,
+  «Поддерживать оборот» and «Предоставить выписку» change no payment; ОК ignores the package. The offer card counts
+  along while the slider moves. Formats: offer card «Платеж в месяц» and panel chip «17 713 ₽ / мес» rounded to
+  rubles, review «17 713,05 ₽».
 - ОК fee: 2,9 %; with a pledge 2,5 % (as drawn, although the chip says −0,5%); «Поддерживать оборот» −0,5 pp more
   (2,4 % without pledge, 2,0 % with). Display «2,9%» when unchanged, else «<s>2,9%</s> → 2,5%» with the new value
   in `--ds-text-positive` (see `01c-fee-active.png`).

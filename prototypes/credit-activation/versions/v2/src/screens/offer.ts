@@ -73,6 +73,9 @@ function drawSlider(root: HTMLElement, value: number): void {
   const progress = (value - AMOUNT.min) / (AMOUNT.max - AMOUNT.min);
   slider.parentElement!.style.setProperty('--progress', String(progress));
   slider.setAttribute('aria-valuetext', text);
+  // The payment counts along with the amount while the slider moves.
+  const payment = root.querySelector('[data-value="payment"]');
+  if (payment) payment.textContent = formatRub(monthlyPayment({ ...choice(), slider: clampAmount(value) }));
 }
 
 /** Everything that depends on the state; `withSlider: false` leaves a running slider animation alone. */
@@ -89,8 +92,10 @@ function render(root: HTMLElement, withSlider = true): void {
     if (controls.length > 1) control.tabIndex = checked || state.pledge === null ? 0 : -1;
   });
   const c = choice();
-  const payment = root.querySelector('[data-value="payment"]');
-  if (payment) payment.textContent = formatRub(monthlyPayment(c));
+  if (!withSlider) {
+    const payment = root.querySelector('[data-value="payment"]');
+    if (payment) payment.textContent = formatRub(monthlyPayment(c));
+  }
   const fee = root.querySelector('[data-value="fee"]');
   if (fee) fee.innerHTML = feeHtml(c);
 }

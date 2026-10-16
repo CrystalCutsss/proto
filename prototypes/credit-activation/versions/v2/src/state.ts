@@ -10,6 +10,8 @@ export interface FlowState {
   slider: number;
   /** Last slider value below 7 000 000 ₽; a pledge tap-off returns the slider to it. */
   sliderBelow: number;
+  /** What the last pledge tap-on added to the slider (0 when a drag switched the pledge on). */
+  pledgeAdded: number;
   /** Selected pledge card (one at a time), null when off. */
   pledge: Pledge | null;
   /** Options on #/options. */
@@ -28,6 +30,7 @@ export function pledgeCards(variant: Config['pledge'] = config.pledge): Pledge[]
 const initial = (): FlowState => ({
   slider: AMOUNT.initial,
   sliderBelow: AMOUNT.initial,
+  pledgeAdded: 0,
   pledge: null,
   options: { package: config.product === 'kn', check: false, turnover: false, statement: false },
   docsUploaded: false,

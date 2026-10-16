@@ -41,6 +41,7 @@ body.ds-root {
   --tracking-text-l: -0.41px;
   --tracking-text-m: -0.24px;
   --tracking-number-2xl: 0.357px;
+  --tracking-text-s: var(--ds-typography-ui-s-letter-spacing);
   --bar-height: 44px;
 
   position: relative;
@@ -51,6 +52,22 @@ body.ds-root {
   color: var(--ds-text-primary);
   background: var(--ds-background-base);
   -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Safari (WebKit, iOS and macOS) already tracks Apple's system font by size from the font's own tracking table:
+ * the tracking of the Figma iOS styles is exactly that table, so adding it again doubles it (titles such as
+ * «Пакет «Все включено»» then wrap). There the text keeps the font's own tracking only.
+ */
+@supports (font: -apple-system-body) {
+  .app {
+    --tracking-heading-l: 0;
+    --tracking-heading-m: 0;
+    --tracking-text-l: 0;
+    --tracking-text-m: 0;
+    --tracking-number-2xl: 0;
+    --tracking-text-s: 0;
+  }
 }
 
 .app *,
@@ -176,7 +193,7 @@ body.ds-root {
   font-size: var(--ds-typography-ui-s-font-size);
   font-weight: var(--ds-typography-ui-s-font-weight);
   line-height: var(--ds-typography-ui-s-line-height);
-  letter-spacing: var(--ds-typography-ui-s-letter-spacing);
+  letter-spacing: var(--tracking-text-s);
 }
 
 .t-number-2xl {
@@ -451,7 +468,7 @@ body.ds-root {
   font-family: var(--ds-typography-ui-s-font-family);
   font-size: var(--ds-typography-ui-s-font-size);
   line-height: var(--ds-typography-ui-s-line-height);
-  letter-spacing: var(--ds-typography-ui-s-letter-spacing);
+  letter-spacing: var(--tracking-text-s);
   color: var(--ds-text-secondary);
   text-align: center;
 }
@@ -741,7 +758,7 @@ body.ds-root {
   font-size: var(--ds-typography-ui-s-bold-font-size);
   font-weight: var(--ds-typography-ui-s-bold-font-weight);
   line-height: var(--ds-typography-ui-s-bold-line-height);
-  letter-spacing: var(--ds-typography-ui-s-bold-letter-spacing);
+  letter-spacing: var(--tracking-text-s);
 }
 
 .card-large.is-on .badge,

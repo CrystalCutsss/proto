@@ -1,6 +1,6 @@
 // #/ — approved credit offer: amount slider, terms and pledge cards. Reaching 7 000 000 ₽ switches the
-// pledge on; tapping a card switches it and moves the slider (animated) to 7 млн and, on tap-off, back to the
-// value it had below 7 млн.
+// pledge on; tapping a card switches it and moves the slider (animated) by +3 млн and, on tap-off, takes that
+// back from the current value (or, if a drag switched it on, returns to the last value below 7 млн).
 import { duration, ease, gsap } from '@proto/motion';
 import {
   AMOUNT,
@@ -10,7 +10,8 @@ import {
   PLEDGE_BONUS,
   pledgeOnAt,
   rememberBelow,
-  sliderAfterPledgeTap,
+  sliderAfterPledgeOff,
+  sliderAfterPledgeOn,
 } from '../calc';
 import {
   badge,
@@ -168,7 +169,10 @@ export const offer: Screen = {
       state.slider = Number(slider.value);
       state.sliderBelow = rememberBelow(state.sliderBelow, state.slider);
       const on = pledgeOnAt(state.slider);
-      if (on && state.pledge === null) state.pledge = first;
+      if (on && state.pledge === null) {
+        state.pledge = first;
+        state.pledgeAdded = 0; // switched on by the drag: tap-off returns to the last value below 7 млн
+      }
       if (!on) state.pledge = null;
       render(root);
     });
@@ -197,11 +201,14 @@ export const offer: Screen = {
     const tap = (pledge: Pledge) => {
       if (state.pledge === pledge) {
         state.pledge = null;
-        animateTo(sliderAfterPledgeTap(false, state.sliderBelow));
+        animateTo(sliderAfterPledgeOff(state.slider, state.sliderBelow, state.pledgeAdded));
+        state.sliderBelow = rememberBelow(state.sliderBelow, state.slider);
       } else if (state.pledge === null) {
         state.sliderBelow = rememberBelow(state.sliderBelow, state.slider);
         state.pledge = pledge;
-        animateTo(sliderAfterPledgeTap(true, state.sliderBelow));
+        const { slider: target, added } = sliderAfterPledgeOn(state.slider);
+        state.pledgeAdded = added;
+        animateTo(target);
       } else {
         state.pledge = pledge; // two pledges: the selection moves, the amount stays
       }

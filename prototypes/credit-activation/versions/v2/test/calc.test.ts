@@ -14,7 +14,8 @@ import {
   PLEDGE_THRESHOLD,
   pledgeOnAt,
   rememberBelow,
-  sliderAfterPledgeTap,
+  sliderAfterPledgeOff,
+  sliderAfterPledgeOn,
   totalAmount,
 } from '../src/calc';
 
@@ -100,24 +101,65 @@ describe('pledge threshold and slider', () => {
     expect(rememberBelow(6_900_000, AMOUNT.max)).toBe(6_900_000);
   });
 
-  it('tap on adds the pledge chip (+3 млн, at most 9 млн), tap off returns it to the remembered value', () => {
-    expect(sliderAfterPledgeTap(true, AMOUNT.initial)).toBe(7_000_000);
-    expect(sliderAfterPledgeTap(true, 5_500_000)).toBe(8_500_000);
-    expect(sliderAfterPledgeTap(true, 6_800_000)).toBe(AMOUNT.max);
-    expect(sliderAfterPledgeTap(false, 5_500_000)).toBe(5_500_000);
-    expect(sliderAfterPledgeTap(false, AMOUNT.initial)).toBe(AMOUNT.initial);
-    expect(sliderAfterPledgeTap(false, 6_900_000)).toBe(6_900_000);
+  it('tap on adds the pledge chip (+3 млн, at most 9 млн) and reports what it added', () => {
+    expect(sliderAfterPledgeOn(AMOUNT.initial)).toEqual({ slider: 7_000_000, added: 3_000_000 });
+    expect(sliderAfterPledgeOn(5_500_000)).toEqual({ slider: 8_500_000, added: 3_000_000 });
+    expect(sliderAfterPledgeOn(6_800_000)).toEqual({ slider: AMOUNT.max, added: 2_200_000 });
   });
 
-  it('drag 5,5 → 9 млн then tap off returns to the last value below 7 млн seen in the drag', () => {
+  it('tap off after a tap on takes the added amount back from the current value', () => {
+    expect(sliderAfterPledgeOff(8_000_000, 5_000_000, 3_000_000)).toBe(5_000_000);
+    // tap on 5 → 8, drag to 8,5, tap off → 5,5 (not back to 5), tap on → 8,5
+    const off = sliderAfterPledgeOff(8_500_000, 5_000_000, 3_000_000);
+    expect(off).toBe(5_500_000);
+    expect(sliderAfterPledgeOn(off).slider).toBe(8_500_000);
+    // capped tap on 6,8 → 9 (+2,2), drag to 8, tap off → 5,8
+    expect(sliderAfterPledgeOff(8_000_000, 6_800_000, 2_200_000)).toBe(5_800_000);
+  });
+
+  it('tap off after a drag switched the pledge on returns to the last value below 7 млн seen in the drag', () => {
     let below: number = AMOUNT.initial;
     for (const v of [5_500_000, 6_200_000, 6_800_000, 7_100_000, 9_000_000]) below = rememberBelow(below, v);
-    expect(sliderAfterPledgeTap(false, below)).toBe(6_800_000);
+    expect(sliderAfterPledgeOff(9_000_000, below, 0)).toBe(6_800_000);
+  });
+
+  it('alternating drags and taps never pin the slider to 7 млн', () => {
+    let slider = 5_000_000;
+    let below = slider;
+    let added = 0;
+    const tapOn = () => {
+      below = rememberBelow(below, slider);
+      ({ slider, added } = sliderAfterPledgeOn(slider));
+    };
+    const tapOff = () => {
+      slider = sliderAfterPledgeOff(slider, below, added);
+      below = rememberBelow(below, slider);
+    };
+    const drag = (v: number) => {
+      slider = v;
+      below = rememberBelow(below, v);
+    };
+    tapOn();
+    drag(8_500_000);
+    tapOff();
+    expect(slider).toBe(5_500_000);
+    tapOn();
+    expect(slider).toBe(8_500_000);
+    drag(7_600_000);
+    tapOff();
+    expect(slider).toBe(4_600_000);
+    drag(6_000_000);
+    tapOn();
+    expect(slider).toBe(9_000_000);
+    tapOff();
+    expect(slider).toBe(6_000_000);
   });
 
   it('tap off stays inside the range and below the threshold', () => {
-    expect(sliderAfterPledgeTap(false, 1_000_000)).toBe(AMOUNT.min);
-    expect(sliderAfterPledgeTap(false, 8_000_000)).toBeLessThan(PLEDGE_THRESHOLD);
+    expect(sliderAfterPledgeOff(AMOUNT.min, 1_000_000, 0)).toBe(AMOUNT.min);
+    expect(sliderAfterPledgeOff(AMOUNT.max, 8_000_000, 0)).toBeLessThan(PLEDGE_THRESHOLD);
+    expect(sliderAfterPledgeOff(AMOUNT.max, AMOUNT.min, 1_000_000)).toBeLessThan(PLEDGE_THRESHOLD);
+    expect(sliderAfterPledgeOff(7_000_000, AMOUNT.min, 3_500_000)).toBe(AMOUNT.min);
   });
 });
 

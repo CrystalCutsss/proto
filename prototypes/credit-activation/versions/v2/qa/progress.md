@@ -93,6 +93,12 @@ in screenshots (2 in Figma), as in v1.
   so the `#/options` panel continues under the home indicator; card gaps 12 px (title → description) and 8 px
   (package title → list). Chromium iPhone 13 emulation: frame 664/664 px, 2 ticks for 2 touched steps. Real
   iOS haptics not verifiable here.
+- 2026-10-16: «Пакет «Все включено»» wrapped on iPhone after the Figma tracking (PR #27): Safari already applies
+  the system font's tracking table, so the CSS tracking doubled it. `--tracking-*` are 0 under
+  `@supports (font: -apple-system-body)`. No WebKit browser in this environment: check on the device.
+- 2026-10-16 bug: alternating drags and pledge taps brought the slider back to the old point (from 4 млн: exactly
+  7 млн) because tap-off returned to the remembered value. Now tap-off takes back what the tap-on added from
+  the current value; replayed in Chromium: 4 → 7 → drag 8,5 → off 5,5 → on 8,5 → drag 7,6 → off 4,6.
 - Payment chip: КН green with the package, ОК green with a pledge, otherwise neutral.
 
 ## Open questions

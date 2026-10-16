@@ -58,12 +58,13 @@ on phones; for now the URL parameters are the way.
 - Slider: 4 000 000 … 9 000 000 ₽, step 100 000, initial 4 000 000. Pledge threshold = min + pledge chip
   (3 000 000) = 7 000 000.
 - Total amount = slider + 2 000 000 if «Проверить данные» is on. «Предоставить выписку» changes no number.
-- Slider memory (owner, 2026-10-16): the slider stays linear 4–9 млн. State keeps `sliderBelow`, the last slider
-  value below 7 000 000 ₽ (initially 4 000 000, reset on «Закрыть»): every drag updates it while the value is
-  below the threshold (`rememberBelow`); a pledge tapped on from below the threshold remembers the current value
-  first, then animates to that value + 3 000 000 ₽ (at most 9 000 000 ₽; owner, 2026-10-16). Tapping the pledge off animates back to `sliderBelow`
-  (`sliderAfterPledgeTap(on, remembered)`). If the pledge came on by dragging past 7 млн, tap-off returns to the
-  last value below 7 млн seen during that drag.
+- Slider memory (owner, 2026-10-16): the slider stays linear 4–9 млн. A pledge tapped on adds its chip to the
+  current value (+3 000 000 ₽, at most 9 000 000 ₽) and remembers what it added (`state.pledgeAdded`); tapped
+  off, it takes exactly that back from the current value, so drags in between are kept (tap on 5 → 8, drag to
+  8,5, tap off → 5,5, tap on → 8,5). If a drag past 7 млн switched the pledge on (`pledgeAdded` = 0), tap-off
+  returns to `sliderBelow`, the last value below 7 млн seen during the drag. Tap-off always ends below 7 млн.
+  Pure `sliderAfterPledgeOn` / `sliderAfterPledgeOff` / `rememberBelow`, unit-tested with alternating drags and
+  taps.
 - Monthly payment (owner, 2026-10-16, third round): recalculated on every screen, proportional to the total amount
   (slider + «Проверить данные»): 17 713,05 ₽ × total / 7 000 000 ₽, rounded to kopecks (4 млн → 10 121,74 ₽,
   9 млн → 22 773,92 ₽). КН with the «Все включено» package off pays 15 % more (7 млн → 20 370,01 ₽). Pledge,
@@ -265,7 +266,10 @@ The TUI tokens round the tracking differently (Heading M -0.45, Heading L 0.4, 1
 0.35) and give Heading S the display family, so `style.css` keeps the Figma tracking in provisional local
 properties (`--tracking-*`) and points `.t-heading-s` at the text family. SF Pro is not embedded (Apple license):
 the stacks try `SF Pro`, then the static `SF Pro Text` / `SF Pro Display` (`ui-rounded` for Rounded), then the
-system font; without SF Pro installed the browser falls back to Inter.
+system font; without SF Pro installed the browser falls back to Inter. Safari (WebKit, `@supports (font: -apple-system-body)`) tracks the
+system font itself from the font's tracking table, which is what the Figma tracking encodes, so there the
+`--tracking-*` properties are 0 (otherwise the tracking doubles and «Пакет «Все включено»» wraps; owner,
+2026-10-16).
 
 ## Phone screen and haptics (owner, 2026-10-16)
 

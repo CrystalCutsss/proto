@@ -46,14 +46,27 @@ export const pledgeOnAt = (slider: number): boolean => slider >= PLEDGE_THRESHOL
 export const rememberBelow = (remembered: number, slider: number): number =>
   slider < PLEDGE_THRESHOLD ? slider : remembered;
 
+/** Highest slider value with the pledge off. */
+const BELOW_THRESHOLD = PLEDGE_THRESHOLD - AMOUNT.step;
+
 /**
- * Slider value after tapping a pledge card. `remembered` is the last value below the threshold (when the pledge
- * is off, that is the current value). On → it plus the pledge chip (+3 млн), at most the slider maximum; off →
- * back to it (clamped to the slider range and kept below the threshold).
+ * Tapping a pledge on adds its chip (+3 млн) to the current value, at most the slider maximum. Returns the new
+ * value and how much was actually added (the tap-off takes exactly that back).
  */
-export function sliderAfterPledgeTap(on: boolean, remembered: number): number {
-  if (on) return Math.min(AMOUNT.max, clampAmount(remembered) + PLEDGE_BONUS);
-  return Math.min(clampAmount(remembered), PLEDGE_THRESHOLD - AMOUNT.step);
+export function sliderAfterPledgeOn(current: number): { slider: number; added: number } {
+  const from = clampAmount(current);
+  const slider = Math.min(AMOUNT.max, from + PLEDGE_BONUS);
+  return { slider, added: slider - from };
+}
+
+/**
+ * Tapping a pledge off. `added` > 0 when a tap switched it on: the slider gives that amount back from where it
+ * is now (also after a drag above 7 млн). `added` = 0 when a drag switched it on: back to `remembered`, the last
+ * value below 7 млн. Either way it ends below the threshold.
+ */
+export function sliderAfterPledgeOff(current: number, remembered: number, added: number): number {
+  const target = added > 0 ? clampAmount(current - added) : clampAmount(remembered);
+  return Math.min(target, BELOW_THRESHOLD);
 }
 
 export function totalAmount(c: Pick<Choice, 'slider' | 'check'>): number {

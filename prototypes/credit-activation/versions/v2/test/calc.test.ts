@@ -94,9 +94,10 @@ describe('pledge threshold and slider', () => {
     expect(rememberBelow(6_900_000, AMOUNT.max)).toBe(6_900_000);
   });
 
-  it('tap on moves the slider to 7 млн, tap off returns it to the remembered value', () => {
+  it('tap on adds the pledge chip (+3 млн, at most 9 млн), tap off returns it to the remembered value', () => {
     expect(sliderAfterPledgeTap(true, AMOUNT.initial)).toBe(7_000_000);
-    expect(sliderAfterPledgeTap(true, 5_500_000)).toBe(7_000_000);
+    expect(sliderAfterPledgeTap(true, 5_500_000)).toBe(8_500_000);
+    expect(sliderAfterPledgeTap(true, 6_800_000)).toBe(AMOUNT.max);
     expect(sliderAfterPledgeTap(false, 5_500_000)).toBe(5_500_000);
     expect(sliderAfterPledgeTap(false, AMOUNT.initial)).toBe(AMOUNT.initial);
     expect(sliderAfterPledgeTap(false, 6_900_000)).toBe(6_900_000);

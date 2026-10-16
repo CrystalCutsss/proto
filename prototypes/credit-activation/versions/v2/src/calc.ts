@@ -50,11 +50,12 @@ export const rememberBelow = (remembered: number, slider: number): number =>
   slider < PLEDGE_THRESHOLD ? slider : remembered;
 
 /**
- * Slider value after tapping a pledge card: on → the threshold (7 млн); off → the remembered value below the
- * threshold (clamped to the slider range and kept below the threshold).
+ * Slider value after tapping a pledge card. `remembered` is the last value below the threshold (when the pledge
+ * is off, that is the current value). On → it plus the pledge chip (+3 млн), at most the slider maximum; off →
+ * back to it (clamped to the slider range and kept below the threshold).
  */
 export function sliderAfterPledgeTap(on: boolean, remembered: number): number {
-  if (on) return PLEDGE_THRESHOLD;
+  if (on) return Math.min(AMOUNT.max, clampAmount(remembered) + PLEDGE_BONUS);
   return Math.min(clampAmount(remembered), PLEDGE_THRESHOLD - AMOUNT.step);
 }
 

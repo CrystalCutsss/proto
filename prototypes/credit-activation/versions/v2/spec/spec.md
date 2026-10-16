@@ -31,7 +31,7 @@ is a full 16 px icon used as a mask. Do not use `doc.svg`/`star` exports from Fi
   native push / pop (keep v1 `nav.ts` behaviour: parallax, dimming, edge swipe, no forward, «Закрыть» reset).
 - Offer slider: reaching 7 000 000 ₽ switches the pledge card on (radio checked, its chips turn green) and, in ОК,
   the fee shows «2,9% → 2,5%». Moving the slider back below switches it off again. Tapping a pledge card switches
-  it on and moves the slider to 7 000 000 ₽ (4 000 000 ₽ + the card's chip amount); tapping it again switches it
+  it on and moves the slider up by the card's chip amount (+3 000 000 ₽, at most 9 000 000 ₽); tapping it again switches it
   off and moves the slider back to the value it had below 7 000 000 ₽ before (owner, 2026-10-16; see Calculations).
 - «Доп. опции»: sticky bottom panel with chips and the button. Turning an option on recolours its chips (green, as
   the pledge card) and recalculates the panel chips. «Предоставить выписку» (до +10 000 000 ₽) only paints the
@@ -61,7 +61,7 @@ on phones; for now the URL parameters are the way.
 - Slider memory (owner, 2026-10-16): the slider stays linear 4–9 млн. State keeps `sliderBelow`, the last slider
   value below 7 000 000 ₽ (initially 4 000 000, reset on «Закрыть»): every drag updates it while the value is
   below the threshold (`rememberBelow`); a pledge tapped on from below the threshold remembers the current value
-  first, then animates to 7 000 000 ₽. Tapping the pledge off animates back to `sliderBelow`
+  first, then animates to that value + 3 000 000 ₽ (at most 9 000 000 ₽; owner, 2026-10-16). Tapping the pledge off animates back to `sliderBelow`
   (`sliderAfterPledgeTap(on, remembered)`). If the pledge came on by dragging past 7 млн, tap-off returns to the
   last value below 7 млн seen during that drag.
 - Monthly payment (owner, 2026-10-16): fixed 17 713,05 ₽ for any slider amount, pledge, «Проверить данные» and

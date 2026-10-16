@@ -111,14 +111,16 @@ test('a version with menu axes shows one captioned control per axis instead of s
     '2 залога',
   ]);
 
+  const historyLength = await page.evaluate(() => history.length);
   await page.getByRole('radiogroup', { name: 'Сценарий' }).getByRole('radio', { name: 'ОК' }).click();
   await expect(page).toHaveURL(/\?v=v2&product=ok&pledge=auto&docs=one$/);
-  await expect(page.locator('iframe')).toHaveAttribute(
-    'src',
-    /\/p\/credit-activation\/v2\/\?product=ok&pledge=auto&docs=one$/,
-  );
+  const frameUrl = () =>
+    page.locator('iframe').evaluate((el) => (el as HTMLIFrameElement).contentWindow!.location.href);
+  await expect.poll(frameUrl).toMatch(/\/p\/credit-activation\/v2\/\?product=ok&pledge=auto&docs=one$/);
   await page.getByRole('radiogroup', { name: 'Документы' }).getByRole('radio', { name: '2 дока' }).click();
   await expect(page).toHaveURL(/product=ok&pledge=auto&docs=two$/);
+  // A choice replaces the iframe's document instead of adding history entries with the old axes.
+  expect(await page.evaluate(() => history.length)).toBe(historyLength);
 
   // A version opened directly keeps its axis values on the way to the viewer.
   await page.goto('/p/credit-activation/v2/?pledge=both#/options');

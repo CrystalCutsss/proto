@@ -85,7 +85,15 @@ function syncUrl(key = currentScreen()) {
 }
 
 function navigate(key: string) {
-  frame.src = screenUrl(slug, version, key, frameSearch());
+  const url = screenUrl(slug, version, key, frameSearch());
+  // Once a document is loaded, replace it: setting src would add a history entry, and browser Back would bring
+  // back the previous version or menu axes while the menu shows the new ones.
+  try {
+    if (frame.src && frame.contentWindow) frame.contentWindow.location.replace(url);
+    else frame.src = url;
+  } catch {
+    frame.src = url;
+  }
   syncUrl(key);
 }
 
@@ -177,6 +185,8 @@ async function start() {
   navigate(key);
   addEventListener('resize', layout);
   new MutationObserver(layout).observe(menu.element, { attributes: true, attributeFilter: ['hidden'] });
+  // The menu's height changes when its controls are rebuilt (menu axes) or wrap.
+  new ResizeObserver(() => layout()).observe(menu.element);
 }
 
 start().catch((err: Error) => fail(`Не удалось открыть прототип: ${err.message}`));

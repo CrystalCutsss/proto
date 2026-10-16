@@ -7,9 +7,10 @@ body {
   height: 100%;
 }
 
-body {
+/* White like the design's screens: on a phone it also colours the status bar and home indicator areas. */
+body.ds-root {
   overflow: hidden;
-  background: var(--ds-background-base-alt);
+  background: var(--ds-background-base);
 }
 
 /* The app always fills its window; the viewer draws the iPhone mockup on wide screens (ADR-0020). */
@@ -30,6 +31,16 @@ body {
   /* provisional: no TUI shadow token (left edge of a pushed screen). */
   --shadow-edge: calc(var(--ds-space-2) * -1) 0 var(--ds-space-6) var(--ds-color-black-black-alpha-10);
   --side: var(--ds-space-4);
+
+  /*
+   * provisional: letter spacing of this file's iOS text styles (Figma 42:5516), which differ from the TUI tokens
+   * (owner, 2026-10-16: text exactly as in Figma). UI S / UI S Bold match the tokens (-0.08px).
+   */
+  --tracking-heading-l: 0.36px;
+  --tracking-heading-m: 0.38px;
+  --tracking-text-l: -0.41px;
+  --tracking-text-m: -0.24px;
+  --tracking-number-2xl: 0.357px;
   --bar-height: 44px;
 
   position: relative;
@@ -120,7 +131,7 @@ body {
   font-size: var(--ds-typography-heading-mobile-l-font-size);
   font-weight: var(--ds-typography-heading-mobile-l-font-weight);
   line-height: var(--ds-typography-heading-mobile-l-line-height);
-  letter-spacing: var(--ds-typography-heading-mobile-l-letter-spacing);
+  letter-spacing: var(--tracking-heading-l);
 }
 
 .t-heading-m {
@@ -128,15 +139,16 @@ body {
   font-size: var(--ds-typography-heading-mobile-m-font-size);
   font-weight: var(--ds-typography-heading-mobile-m-font-weight);
   line-height: var(--ds-typography-heading-mobile-m-line-height);
-  letter-spacing: var(--ds-typography-heading-mobile-m-letter-spacing);
+  letter-spacing: var(--tracking-heading-m);
 }
 
+/* iOS/Heading S is SF Pro Text Semibold in Figma; the TUI token points it at the display family. */
 .t-heading-s {
-  font-family: var(--ds-typography-heading-mobile-s-font-family);
+  font-family: var(--ds-typography-body-l-font-family);
   font-size: var(--ds-typography-heading-mobile-s-font-size);
   font-weight: var(--ds-typography-heading-mobile-s-font-weight);
   line-height: var(--ds-typography-heading-mobile-s-line-height);
-  letter-spacing: var(--ds-typography-heading-mobile-s-letter-spacing);
+  letter-spacing: var(--tracking-text-l);
 }
 
 /* Figma uses SF Pro "normal" line heights: body-l 17/20 and body-m 15/18, i.e. the iOS ui-l / ui-m values. */
@@ -147,7 +159,7 @@ body {
   font-size: var(--ds-typography-body-l-font-size);
   font-weight: var(--ds-typography-body-l-font-weight);
   line-height: var(--ds-typography-ui-l-line-height);
-  letter-spacing: var(--ds-typography-body-l-letter-spacing);
+  letter-spacing: var(--tracking-text-l);
 }
 
 .t-body-m,
@@ -156,7 +168,7 @@ body {
   font-size: var(--ds-typography-body-m-font-size);
   font-weight: var(--ds-typography-body-m-font-weight);
   line-height: var(--ds-typography-ui-m-line-height);
-  letter-spacing: var(--ds-typography-body-m-letter-spacing);
+  letter-spacing: var(--tracking-text-m);
 }
 
 .t-ui-s {
@@ -172,7 +184,7 @@ body {
   font-size: var(--ds-typography-numbers-2-xl-font-size);
   font-weight: var(--ds-typography-numbers-2-xl-font-weight);
   line-height: var(--ds-typography-numbers-2-xl-line-height);
-  letter-spacing: var(--ds-typography-numbers-2-xl-letter-spacing);
+  letter-spacing: var(--tracking-number-2xl);
 }
 
 .text-secondary {
@@ -1047,8 +1059,11 @@ body {
   padding: var(--ds-space-2) var(--side) 0;
 }
 
+/* The file input uses Desktop/Body M in Figma (Neue Haas Unica 15/24, no tracking), not an iOS style. */
 .file-field__button {
   position: relative;
+  font-family: var(--ds-font-font-family-text-desktop-value);
+  letter-spacing: 0;
   display: block;
   padding: var(--ds-space-4);
   border: var(--ds-border-width-thin) solid var(--ds-background-accent-2);
@@ -1078,8 +1093,11 @@ body {
   opacity: 0;
 }
 
+/* Desktop/Body S in Figma: Neue Haas Unica 13/20, no tracking. */
 .file-field__hint {
+  font-family: var(--ds-font-font-family-text-desktop-value);
   line-height: var(--ds-font-line-height-x5);
+  letter-spacing: 0;
 }
 
 .file-field__list {
@@ -1144,4 +1162,16 @@ body {
   .app .button:active {
     transform: none;
   }
+}
+
+/* Hidden native switch that plays the iOS haptic (haptics.ts). */
+.haptic-switch {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
 }

@@ -25,6 +25,7 @@ import {
   topBars,
 } from '../components';
 import { config } from '../config';
+import { hapticTick } from '../haptics';
 import { icon } from '../icons';
 import { choice, type Pledge, pledgeCards, state } from '../state';
 import type { Screen } from './types';
@@ -146,8 +147,17 @@ export const offer: Screen = {
       slider.step = String(AMOUNT.step);
     };
 
+    // A light haptic tick on every 100 000 ₽ step while a finger drags the thumb (not for mouse or keys: the
+    // iOS haptic toggles a hidden switch, which must not disturb keyboard focus).
+    let touching = false;
+    // Touch events, not pointer events: iOS cancels the pointer once the native range takes over the drag.
+    slider.addEventListener('touchstart', () => (touching = true), { passive: true });
+    for (const type of ['touchend', 'touchcancel'] as const)
+      slider.addEventListener(type, () => (touching = false), { passive: true });
+
     slider.addEventListener('input', () => {
       stopTween();
+      if (touching && Number(slider.value) !== state.slider) hapticTick();
       state.slider = Number(slider.value);
       state.sliderBelow = rememberBelow(state.sliderBelow, state.slider);
       const on = pledgeOnAt(state.slider);

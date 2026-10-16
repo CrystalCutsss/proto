@@ -245,3 +245,34 @@ a badge button «Загрузить» (neutral-1 bg, `--ds-text-action`, ui-s-bo
 - Real behaviour behind «Срок», «Платеж в месяц», «?», «Изменить пакет», «График платежей», «Как это работает»,
   «Изменить», «Образцы обеих сторон СТС» — visual only, as in v1.
 - Documents for the realty pledge: the design only has СТС and «Гарантийное письмо»; used for every variant.
+
+## Typography (owner, 2026-10-16: exactly as in Figma)
+
+Text styles of the file (`get_variable_defs` on 42:2765 / 42:2292 / 42:5516) and the classes that carry them:
+
+| Figma style                  | Font                           | Size / line      | Tracking | Class                                           |
+| ---------------------------- | ------------------------------ | ---------------- | -------- | ----------------------------------------------- |
+| iOS/Heading Large, Heading L | SF Pro Display Bold            | 30 / 36          | 0.36     | `.t-heading-l`                                  |
+| iOS/Heading M                | SF Pro Display Bold            | 20 / normal (24) | 0.38     | `.t-heading-m`                                  |
+| iOS/Heading S                | SF Pro Text Semibold           | 17 / normal (20) | -0.41    | `.t-heading-s`                                  |
+| iOS/Body L                   | SF Pro Text Regular            | 17 / normal (20) | -0.41    | `.t-body-l`, large button label                 |
+| iOS/Body M                   | SF Pro Text Regular            | 15 / normal (18) | -0.24    | `.t-body-m`, medium button label                |
+| iOS/UI S, UI S Bold          | SF Pro Text Regular / Semibold | 13 / normal (16) | -0.08    | `.t-ui-s`, badge, chip                          |
+| iOS/Numbers 2XL              | SF Pro Rounded Bold            | 48 / normal (57) | 0.357    | `.t-number-2xl`                                 |
+| Desktop/Body M, Body S       | Neue Haas Unica W1G Regular    | 15 / 24, 13 / 20 | 0        | file input label and hint (`#/sts`, `#/upload`) |
+
+The TUI tokens round the tracking differently (Heading M -0.45, Heading L 0.4, 17 px -0.43, 15 px -0.23, Numbers
+0.35) and give Heading S the display family, so `style.css` keeps the Figma tracking in provisional local
+properties (`--tracking-*`) and points `.t-heading-s` at the text family. SF Pro is not embedded (Apple license):
+the stacks try `SF Pro`, then the static `SF Pro Text` / `SF Pro Display` (`ui-rounded` for Rounded), then the
+system font; without SF Pro installed the browser falls back to Inter.
+
+## Phone screen and haptics (owner, 2026-10-16)
+
+- Phone screen (viewer full-screen mode): the page background is `--ds-background-base` (white, as in the design),
+  and the viewer paints the browser status bar and the home indicator strip below the frame with the prototype's
+  page background (and sets `theme-color` to it), not the black stage. No rounded corners.
+- Slider haptics: a light tick on every 100 000 ₽ step while a finger drags the thumb (`src/haptics.ts`).
+  `navigator.vibrate(8)` where the Vibration API exists (Android); on iOS 18+ Safari a hidden native switch
+  (`<input type="checkbox" switch>`) is toggled through its label, which plays the system selection haptic.
+  Mouse, keyboard and animated slider moves stay silent.

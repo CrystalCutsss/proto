@@ -80,6 +80,14 @@ in screenshots (2 in Figma), as in v1.
   «Закрыть»), pure `rememberBelow` / `sliderAfterPledgeTap(on, remembered)` unit-tested.
 - 2026-10-16, third round: payment recalculated again on all screens, proportional to the total amount
   (17 713,05 ₽ per 7 000 000 ₽); КН package off → +15 %.
+- 2026-10-16, typography audit: 16 `get_design_context` calls (one per screen) + 3 `get_variable_defs`. Role →
+  style mapping matched; fixed tracking of all iOS styles to the Figma values, Heading S family (SF Pro Text),
+  file input label/hint in Neue Haas Unica (Desktop/Body M, Body S as drawn). Font stacks now try static SF Pro
+  Text/Display and `ui-rounded` (`@proto/tokens`).
+- 2026-10-16, phone fixes: white page background behind the status bar and home indicator (viewer reads the
+  frame's page background), haptic tick on slider steps (Vibration API / iOS switch). Verified in Chromium iPhone
+  13 emulation (white viewer background and theme-color, 2 ticks for 2 touched steps); real iOS haptics not
+  verifiable here.
 - Payment chip: КН green with the package, ОК green with a pledge, otherwise neutral.
 
 ## Open questions

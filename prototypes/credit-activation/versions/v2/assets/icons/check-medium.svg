@@ -1,0 +1,19 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="tui-ic-medium / check">
+<mask id="mask0_0_6838" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="1" width="14" height="11">
+<g id="Mask">
+<path id="Mask_2" d="M8.42019 4.19557C9.78702 2.82874 12.0031 2.82874 13.3699 4.19557L5.94531 11.6202L3.47044 9.14532L8.42019 4.19557Z" fill="black"/>
+<path id="Mask_3" d="M0.58312 6.25795C1.94995 4.89111 4.16603 4.89111 5.53287 6.25795L8.42022 9.1453L5.94535 11.6202L0.58312 6.25795Z" fill="url(#paint0_linear_0_6838)"/>
+</g>
+</mask>
+<g mask="url(#mask0_0_6838)">
+<path id="Color" d="M0 0H14V14H0V0Z" fill="#00B92D"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_6838" x1="8.42022" y1="9.1453" x2="4.39918" y2="11.8764" gradientUnits="userSpaceOnUse">
+<stop stop-opacity="0.6"/>
+<stop offset="1" stop-opacity="0.4"/>
+</linearGradient>
+</defs>
+</svg>

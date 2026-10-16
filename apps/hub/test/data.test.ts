@@ -14,6 +14,7 @@ const version = (v: string) => ({
   routing: 'hash' as const,
   routes: [],
   scenarios: [{ id: 'main', title: 'Основной', route: '#/' }],
+  axes: [],
   path: `/p/x/${v}/`,
 });
 

@@ -73,9 +73,15 @@ in screenshots (2 in Figma), as in v1.
   removed for this prototype (opt-in `axes` in version.json). Glow removed from the viewer for all prototypes.
 - Numbers: formula calibrated to the design (17 713,05 ₽ at 7 000 000 ₽); ОК fee 2,9% → 2,5% as drawn.
 - «Проверка без опций» only when no pledge and no option is on.
+- 2026-10-16, second round: payment fixed at 17 713 ₽ (review 17 713,05 ₽) regardless of amount, pledge,
+  «Проверить данные» and «Поддерживать оборот»; КН package off → fixed 18 858,08 ₽ (old formula's package-off
+  ratio at 7 млн with pledge). Annuity/scale code removed.
+- Slider stays linear; pledge tap-off returns to the last value below 7 млн (`state.sliderBelow`, reset on
+  «Закрыть»), pure `rememberBelow` / `sliderAfterPledgeTap(on, remembered)` unit-tested.
+- Payment chip: КН green with the package, ОК green with a pledge, otherwise neutral.
 
 ## Open questions
 
 - Phones have no menu (ADR-0021): how should the variant be switched inside the prototype there?
 - Documents for the realty pledge (design has only СТС and «Гарантийное письмо»).
-- First-screen payment 193 500 ₽ in the design contradicts 17 713 ₽ later; the formula gives ≈ 10 000 ₽ at 4 млн.
+- First-screen payment 193 500 ₽ in the design contradicts 17 713 ₽ later; resolved: fixed 17 713 ₽ everywhere.

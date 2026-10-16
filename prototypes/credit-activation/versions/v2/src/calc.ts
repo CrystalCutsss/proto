@@ -10,11 +10,13 @@ export const CHECK_BONUS = 2_000_000;
 /** From this slider value the pledge card is on. */
 export const PLEDGE_THRESHOLD = AMOUNT.min + PLEDGE_BONUS;
 
-const MONTHS = 60;
-const BASE_RATE = 0.2;
-const RATE_STEP = 0.005; // −0,5 pp
-const PACKAGE_FACTOR = 0.85; // «Ставка ниже на 15%»
-const REFERENCE = { amount: 7_000_000, payment: 17_713.05 } as const;
+/** Monthly payment fixed by the owner (2026-10-16): the same for any amount, pledge and option. */
+const PAYMENT = 17_713.05;
+/**
+ * КН with «Все включено» off. Computed once from the old formula at its reference state (7 000 000 ₽, pledge on):
+ * 17 713,05 × annuity(7 млн, 19,5 %) / annuity(7 млн, 19,5 % × 0,85) over 60 months = 18 858,08 ₽.
+ */
+const PAYMENT_NO_PACKAGE = 18_858.08;
 
 /** Fee in tenths of a percent, so 2,9 % is 29 (no floating point drift). */
 const FEE = { base: 29, pledge: 25, turnoverStep: 5 } as const;
@@ -40,41 +42,29 @@ export const clampAmount = (value: number): number =>
 /** Whether a slider value switches the pledge card on. */
 export const pledgeOnAt = (slider: number): boolean => slider >= PLEDGE_THRESHOLD;
 
-/** Slider value after tapping a pledge card: on → min + bonus, off → back by the bonus (not below min). */
-export function sliderAfterPledgeTap(slider: number, on: boolean): number {
-  return on ? clampAmount(AMOUNT.min + PLEDGE_BONUS) : clampAmount(slider - PLEDGE_BONUS);
+/**
+ * Last slider value below the pledge threshold, remembered while the pledge is off (initially AMOUNT.initial).
+ * Called on every drag and before a pledge tap moves the slider to the threshold.
+ */
+export const rememberBelow = (remembered: number, slider: number): number =>
+  slider < PLEDGE_THRESHOLD ? slider : remembered;
+
+/**
+ * Slider value after tapping a pledge card: on → the threshold (7 млн); off → the remembered value below the
+ * threshold (clamped to the slider range and kept below the threshold).
+ */
+export function sliderAfterPledgeTap(on: boolean, remembered: number): number {
+  if (on) return PLEDGE_THRESHOLD;
+  return Math.min(clampAmount(remembered), PLEDGE_THRESHOLD - AMOUNT.step);
 }
 
 export function totalAmount(c: Pick<Choice, 'slider' | 'check'>): number {
   return c.slider + (c.check ? CHECK_BONUS : 0);
 }
 
-/** Annual rate. ОК payment depends on the amount only, so its rate is always the base one. */
-export function annualRate(c: Pick<Choice, 'product' | 'pledge' | 'turnover' | 'package'>): number {
-  if (c.product === 'ok') return BASE_RATE;
-  const rate = BASE_RATE - (c.pledge ? RATE_STEP : 0) - (c.turnover ? RATE_STEP : 0);
-  return c.package ? rate * PACKAGE_FACTOR : rate;
-}
-
-/** Monthly annuity payment over 60 months. */
-export function annuity(amount: number, rate: number): number {
-  const r = rate / 12;
-  return (amount * r) / (1 - (1 + r) ** -MONTHS);
-}
-
-/** Scale so that the reference state of each product gives the design's 17 713,05 ₽. */
-const SCALE: Record<Product, number> = {
-  kn:
-    REFERENCE.payment /
-    annuity(REFERENCE.amount, annualRate({ product: 'kn', pledge: true, turnover: false, package: true })),
-  ok: REFERENCE.payment / annuity(REFERENCE.amount, BASE_RATE),
-};
-
-/** Monthly payment in rubles, rounded to kopecks. */
-export function monthlyPayment(c: Choice): number {
-  const value = SCALE[c.product] * annuity(totalAmount(c), annualRate(c));
-  return Math.round(value * 100) / 100;
-}
+/** Monthly payment in rubles: fixed, only КН without the package pays more. */
+export const monthlyPayment = (c: Pick<Choice, 'product' | 'package'>): number =>
+  c.product === 'kn' && !c.package ? PAYMENT_NO_PACKAGE : PAYMENT;
 
 /** ОК fee in percent (2.9, 2.5, 2.4, 2.0). */
 export function fee(c: Pick<Choice, 'pledge' | 'turnover'>): number {
@@ -93,7 +83,9 @@ export type Tone = 'neutral' | 'positive';
 export const amountTone = (c: Choice): Tone =>
   totalAmount(c) > c.slider || c.statement ? 'positive' : 'neutral';
 
-export const paymentTone = (c: Choice): Tone => (c.product === 'kn' && c.package ? 'positive' : 'neutral');
+/** КН: positive with the package; ОК: positive with a pledge. */
+export const paymentTone = (c: Choice): Tone =>
+  (c.product === 'kn' ? c.package : c.pledge) ? 'positive' : 'neutral';
 
 export const feeTone = (c: Choice): Tone => (feeLowered(c) ? 'positive' : 'neutral');
 

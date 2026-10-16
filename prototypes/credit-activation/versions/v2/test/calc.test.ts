@@ -13,6 +13,7 @@ import {
   paymentTone,
   PLEDGE_THRESHOLD,
   pledgeOnAt,
+  rememberBelow,
   sliderAfterPledgeTap,
   totalAmount,
 } from '../src/calc';
@@ -30,30 +31,34 @@ const choice = (over: Partial<Choice> = {}): Choice => ({
 });
 
 describe('monthly payment', () => {
-  it('КН reference state (7 млн, pledge on, package on) gives 17 713,05 ₽', () => {
-    expect(monthlyPayment(choice())).toBe(17_713.05);
-    expect(formatRubKopecks(monthlyPayment(choice()))).toBe(`17${NBSP}713,05${NBSP}₽`);
-  });
-
-  it('ОК at 7 млн gives 17 713,05 ₽ with any pledge and options', () => {
-    for (const pledge of [true, false]) {
-      for (const turnover of [true, false]) {
-        expect(monthlyPayment(choice({ product: 'ok', pledge, turnover, package: false }))).toBe(17_713.05);
+  it('is 17 713,05 ₽ for any amount, pledge and option (package on in КН)', () => {
+    for (const product of ['kn', 'ok'] as const) {
+      for (const slider of [AMOUNT.min, 5_500_000, 7_000_000, AMOUNT.max]) {
+        for (const pledge of [true, false]) {
+          for (const check of [true, false]) {
+            for (const turnover of [true, false]) {
+              const c = choice({ product, slider, pledge, check, turnover, package: product === 'kn' });
+              expect(monthlyPayment(c)).toBe(17_713.05);
+            }
+          }
+        }
       }
     }
+    expect(formatRubKopecks(monthlyPayment(choice()))).toBe(`17${NBSP}713,05${NBSP}₽`);
+    expect(formatRub(monthlyPayment(choice()))).toBe(`17${NBSP}713${NBSP}₽`);
   });
 
-  it('turning the КН package off raises the payment', () => {
+  it('turning the КН package off raises it to a fixed 18 858,08 ₽', () => {
+    for (const slider of [AMOUNT.min, AMOUNT.max]) {
+      for (const pledge of [true, false]) {
+        expect(monthlyPayment(choice({ slider, pledge, package: false }))).toBe(18_858.08);
+      }
+    }
     expect(monthlyPayment(choice({ package: false }))).toBeGreaterThan(monthlyPayment(choice()));
   });
 
-  it('КН pledge and turnover lower the payment', () => {
-    expect(monthlyPayment(choice({ pledge: false }))).toBeGreaterThan(monthlyPayment(choice()));
-    expect(monthlyPayment(choice({ turnover: true }))).toBeLessThan(monthlyPayment(choice()));
-  });
-
-  it('«Проверить данные» raises the amount and the payment', () => {
-    expect(monthlyPayment(choice({ check: true }))).toBeGreaterThan(monthlyPayment(choice()));
+  it('ОК ignores the package flag', () => {
+    expect(monthlyPayment(choice({ product: 'ok', package: false }))).toBe(17_713.05);
   });
 });
 
@@ -82,12 +87,30 @@ describe('pledge threshold and slider', () => {
     expect(pledgeOnAt(AMOUNT.max)).toBe(true);
   });
 
-  it('tapping a card moves the slider to 7 млн and back by the bonus, not below the minimum', () => {
-    expect(sliderAfterPledgeTap(AMOUNT.initial, true)).toBe(7_000_000);
-    expect(sliderAfterPledgeTap(5_500_000, true)).toBe(7_000_000);
-    expect(sliderAfterPledgeTap(7_000_000, false)).toBe(4_000_000);
-    expect(sliderAfterPledgeTap(9_000_000, false)).toBe(6_000_000);
-    expect(sliderAfterPledgeTap(7_000_000, false)).toBeGreaterThanOrEqual(AMOUNT.min);
+  it('remembers the last slider value below 7 млн', () => {
+    expect(rememberBelow(AMOUNT.initial, 5_500_000)).toBe(5_500_000);
+    expect(rememberBelow(5_500_000, 6_900_000)).toBe(6_900_000);
+    expect(rememberBelow(6_900_000, 7_000_000)).toBe(6_900_000);
+    expect(rememberBelow(6_900_000, AMOUNT.max)).toBe(6_900_000);
+  });
+
+  it('tap on moves the slider to 7 млн, tap off returns it to the remembered value', () => {
+    expect(sliderAfterPledgeTap(true, AMOUNT.initial)).toBe(7_000_000);
+    expect(sliderAfterPledgeTap(true, 5_500_000)).toBe(7_000_000);
+    expect(sliderAfterPledgeTap(false, 5_500_000)).toBe(5_500_000);
+    expect(sliderAfterPledgeTap(false, AMOUNT.initial)).toBe(AMOUNT.initial);
+    expect(sliderAfterPledgeTap(false, 6_900_000)).toBe(6_900_000);
+  });
+
+  it('drag 5,5 → 9 млн then tap off returns to the last value below 7 млн seen in the drag', () => {
+    let below: number = AMOUNT.initial;
+    for (const v of [5_500_000, 6_200_000, 6_800_000, 7_100_000, 9_000_000]) below = rememberBelow(below, v);
+    expect(sliderAfterPledgeTap(false, below)).toBe(6_800_000);
+  });
+
+  it('tap off stays inside the range and below the threshold', () => {
+    expect(sliderAfterPledgeTap(false, 1_000_000)).toBe(AMOUNT.min);
+    expect(sliderAfterPledgeTap(false, 8_000_000)).toBeLessThan(PLEDGE_THRESHOLD);
   });
 });
 
@@ -105,10 +128,12 @@ describe('total and chips', () => {
     expect(monthlyPayment(choice({ statement: true }))).toBe(monthlyPayment(choice()));
   });
 
-  it('payment chip follows the КН package; ОК stays neutral', () => {
+  it('payment chip: КН green with the package, ОК green with a pledge', () => {
     expect(paymentTone(choice())).toBe('positive');
+    expect(paymentTone(choice({ pledge: false }))).toBe('positive');
     expect(paymentTone(choice({ package: false }))).toBe('neutral');
-    expect(paymentTone(choice({ product: 'ok', package: false }))).toBe('neutral');
+    expect(paymentTone(choice({ product: 'ok', package: false, pledge: true }))).toBe('positive');
+    expect(paymentTone(choice({ product: 'ok', package: false, pledge: false }))).toBe('neutral');
   });
 
   it('«Проверка без опций» only when nothing is on', () => {

@@ -1,5 +1,6 @@
 // #/ — approved credit offer: amount slider, terms and pledge cards. Reaching 7 000 000 ₽ switches the
-// pledge on; tapping a card switches it and moves the slider (animated) by the pledge amount.
+// pledge on; tapping a card switches it and moves the slider (animated) to 7 млн and, on tap-off, back to the
+// value it had below 7 млн.
 import { duration, ease, gsap } from '@proto/motion';
 import {
   AMOUNT,
@@ -8,6 +9,7 @@ import {
   monthlyPayment,
   PLEDGE_BONUS,
   pledgeOnAt,
+  rememberBelow,
   sliderAfterPledgeTap,
 } from '../calc';
 import {
@@ -142,6 +144,7 @@ export const offer: Screen = {
     slider.addEventListener('input', () => {
       stopTween();
       state.slider = Number(slider.value);
+      state.sliderBelow = rememberBelow(state.sliderBelow, state.slider);
       const on = pledgeOnAt(state.slider);
       if (on && state.pledge === null) state.pledge = first;
       if (!on) state.pledge = null;
@@ -172,10 +175,11 @@ export const offer: Screen = {
     const tap = (pledge: Pledge) => {
       if (state.pledge === pledge) {
         state.pledge = null;
-        animateTo(sliderAfterPledgeTap(state.slider, false));
+        animateTo(sliderAfterPledgeTap(false, state.sliderBelow));
       } else if (state.pledge === null) {
+        state.sliderBelow = rememberBelow(state.sliderBelow, state.slider);
         state.pledge = pledge;
-        animateTo(sliderAfterPledgeTap(state.slider, true));
+        animateTo(sliderAfterPledgeTap(true, state.sliderBelow));
       } else {
         state.pledge = pledge; // two pledges: the selection moves, the amount stays
       }

@@ -1,4 +1,5 @@
 // Shared building blocks rendered as HTML strings. Texts are static; user input is set via textContent.
+import { duration, ease, gsap, prefersReducedMotion } from '@proto/motion';
 import { BASE_FEE, fee, formatPercent, type Tone } from './calc';
 import { icon, maskStyle } from './icons';
 
@@ -193,8 +194,56 @@ export function setCardChecked(control: HTMLElement, checked: boolean): void {
   control.closest('.card-large')?.classList.toggle('is-on', checked);
 }
 
-/** Space / Enter toggle a card control (click handles pointer and the rest). */
+/** Same depth as the yellow button's pressed state. */
+const PRESSED_SCALE = 0.98;
+
+/**
+ * Press feedback of a card: it shrinks a little while pressed and springs back on release. A quick tap still
+ * plays the whole press before the return, so the feedback is always visible. Off under reduced motion.
+ */
+function pressFeedback(control: HTMLElement): void {
+  const card = control.closest<HTMLElement>('.card-large');
+  if (!card || prefersReducedMotion()) return;
+  let pressedAt = 0;
+  const release = () => {
+    if (!pressedAt) return;
+    const held = (performance.now() - pressedAt) / 1000;
+    pressedAt = 0;
+    removeEventListener('pointerup', release);
+    removeEventListener('pointercancel', release);
+    const tl = gsap.timeline();
+    if (held < duration.fast) {
+      tl.to(card, {
+        scale: PRESSED_SCALE,
+        duration: duration.fast - held,
+        ease: ease.productive,
+        overwrite: true,
+      });
+    }
+    tl.to(card, { scale: 1, duration: duration.moderate, ease: ease.productiveEntrance, overwrite: 'auto' });
+  };
+  const press = () => {
+    pressedAt = performance.now();
+    gsap.to(card, { scale: PRESSED_SCALE, duration: duration.fast, ease: ease.productive, overwrite: true });
+    // The release may land outside the card (or on the viewport during an edge swipe).
+    addEventListener('pointerup', release);
+    addEventListener('pointercancel', release);
+  };
+  control.addEventListener('pointerdown', (event) => {
+    if (event.isPrimary && event.button === 0) press();
+  });
+  control.addEventListener('pointerleave', release);
+  control.addEventListener('keydown', (event) => {
+    if ((event.key === ' ' || event.key === 'Enter') && !event.repeat) {
+      press();
+      release();
+    }
+  });
+}
+
+/** Space / Enter toggle a card control (click handles pointer and the rest); pressing it plays press feedback. */
 export function onActivate(control: HTMLElement, handler: () => void): void {
+  pressFeedback(control);
   control.addEventListener('click', handler);
   control.addEventListener('keydown', (event) => {
     if (event.key === ' ' || event.key === 'Enter') {

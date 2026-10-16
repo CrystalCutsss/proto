@@ -6,7 +6,8 @@
   --hub-title-size: clamp(48px, 9vw, 96px);
   --hub-title-line: calc(var(--hub-title-size) * 0.8333);
   --hub-card-radius: 40px;
-  --ds-stage-glow-top: 825px;
+  --hub-card-rim: 1.5px;
+  --ds-stage-glow-top: 657.5px;
 
   min-height: 100dvh;
   margin: 0;
@@ -38,10 +39,12 @@
   line-height: var(--hub-title-line);
   text-align: center;
   color: transparent;
-  background-image: linear-gradient(
-    to top,
-    var(--ds-text-primary-on-dark) 5.978%,
-    var(--ds-color-gradient-text-primary-on-dark-fade-point-2-night-value) 115.76%
+
+  /* Figma: a radial fade centred under the second line (258, 173 of the 516 × 184 text box), radii 629 × 237. */
+  background-image: radial-gradient(
+    121.96% 128.8% at 50% 94.02%,
+    var(--ds-text-primary-on-dark),
+    var(--ds-color-gradient-text-primary-on-dark-fade-point-2-night-value)
   );
   background-clip: text;
 }
@@ -76,13 +79,13 @@
   background: var(--ds-background-neutral-1-on-dark);
 }
 
-/* Figma Glass effect on the card (light from above): a 1 px rim, brightest on the top edge, a little
+/* Figma Glass effect on the card (light from above): a thin rim (--hub-card-rim), brightest on the top edge, a little
    weaker on the bottom edge, none on the sides. Figma's code export drops the effect, so it is drawn here:
    a gradient in the padding box of a pseudo-element, its content box masked out. */
 .hub-card::before {
   position: absolute;
   inset: 0;
-  padding: var(--ds-border-width-thin);
+  padding: var(--hub-card-rim);
   border-radius: inherit;
   background-image: linear-gradient(
     to bottom,
@@ -120,6 +123,9 @@
 
 .hub-card-meta {
   margin: 0;
+
+  /* tui-header SubheaderTextCont: 2 px under the subheader. */
+  padding-block-end: calc(var(--ds-space-1) / 2);
   font-family: var(--ds-typography-ui-l-font-family);
   font-size: var(--ds-typography-ui-l-font-size);
   font-weight: var(--ds-typography-ui-l-font-weight);
@@ -136,7 +142,7 @@
 
 /* Changelog: a full-screen modal over main with the same background. */
 .hub-dialog {
-  --ds-stage-glow-top: 825px;
+  --ds-stage-glow-top: 657.5px;
 
   width: 100%;
   max-width: none;
@@ -217,7 +223,7 @@
 @media (width <= 720px) {
   .hub {
     --hub-card-radius: var(--ds-radius-xl);
-    --ds-stage-glow-top: 640px;
+    --ds-stage-glow-top: 530px;
   }
 
   .hub-header {

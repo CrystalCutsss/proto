@@ -151,7 +151,9 @@
 
 /* Stage: the main page background (Figma main 22:842) — black with a warm blurred glow — shared by the hub,
    the changelog dialog and the mobile prototype viewer. The design's tui/background/accent-opposite (Day)
-   is pure black; in the night theme the same black is accent-on-light. */
+   is pure black; in the night theme the same black is accent-on-light. The glow is the design's own blurred
+   ellipse render (1203 px square, its 25 % layer opacity already in the alpha), stored as pixel-identical
+   lossless WebP. */
 .ds-stage {
   position: relative;
   overflow: clip;
@@ -167,7 +169,7 @@
   left: 50%;
   width: var(--ds-stage-glow-size, 1203px);
   height: var(--ds-stage-glow-size, 1203px);
-  background-image: url('./assets/stage-glow.svg');
+  background-image: url('./assets/stage-glow.webp');
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;

@@ -147,17 +147,24 @@ export const offer: Screen = {
       slider.step = String(AMOUNT.step);
     };
 
-    // A light haptic tick on every 100 000 ₽ step while a finger drags the thumb (not for mouse or keys: the
-    // iOS haptic toggles a hidden switch, which must not disturb keyboard focus).
-    let touching = false;
-    // Touch events, not pointer events: iOS cancels the pointer once the native range takes over the drag.
-    slider.addEventListener('touchstart', () => (touching = true), { passive: true });
-    for (const type of ['touchend', 'touchcancel'] as const)
-      slider.addEventListener(type, () => (touching = false), { passive: true });
+    // A light haptic tick on every 100 000 ₽ step a finger drags the thumb over. It runs in the touch handlers
+    // (iOS plays its haptic only inside a user gesture), one move behind the value the native range just set.
+    let ticked = state.slider;
+    slider.addEventListener('touchstart', () => (ticked = Number(slider.value)), { passive: true });
+    for (const type of ['touchmove', 'touchend'] as const)
+      slider.addEventListener(
+        type,
+        () => {
+          const value = Number(slider.value);
+          if (value === ticked) return;
+          ticked = value;
+          hapticTick();
+        },
+        { passive: true },
+      );
 
     slider.addEventListener('input', () => {
       stopTween();
-      if (touching && Number(slider.value) !== state.slider) hapticTick();
       state.slider = Number(slider.value);
       state.sliderBelow = rememberBelow(state.sliderBelow, state.slider);
       const on = pledgeOnAt(state.slider);

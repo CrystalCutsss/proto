@@ -37,15 +37,27 @@
   height: 100%;
 }
 
-/* Phone screen: no menu (menu.css); the prototype stops above the home indicator, because safe-area insets
-   do not reach into the iframe. */
+/* Phone screen: no menu (menu.css); the prototype fills the screen down to the bottom edge. Safe-area insets
+   do not reach into the iframe, so viewer.ts hands them over as --proto-safe-area-inset-* (loader.js). */
 .viewer[data-phone] .viewer-frame {
-  height: calc(100% - var(--viewer-menu-space, 0px) - env(safe-area-inset-bottom, 0px));
+  height: calc(100% - var(--viewer-menu-space, 0px));
   border-radius: 0;
 }
 
-/* Phone screen: the status bar and the home indicator area around the frame take the prototype's own page
-   background (viewer.ts sets it inline from the frame), not the black stage. */
+/* Measures the device's safe areas for the frame (viewer.ts). */
+.viewer-safe-area {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Phone screen: the browser's status bar area takes the prototype's own page background (viewer.ts sets it
+   inline from the frame), not the black stage. */
 .viewer[data-phone] {
   background: var(--ds-background-base);
 }

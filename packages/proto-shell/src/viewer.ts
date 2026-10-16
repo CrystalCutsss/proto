@@ -108,6 +108,7 @@ function layout() {
   const m = mode();
   body.toggleAttribute('data-phone', isPhone());
   syncPageBackground();
+  syncSafeArea();
   // No space for a menu that is hidden (Alt+Shift+H) or not shown at all (mobile browsers, menu.css).
   const menuSpace = menu.element.getClientRects().length ? menu.element.offsetHeight + 32 : 0;
   body.style.setProperty('--viewer-menu-space', `${menuSpace}px`);
@@ -172,9 +173,32 @@ function syncPageBackground() {
     themeColor.content = isPhone() ? (color ?? getComputedStyle(body).backgroundColor) : STAGE_THEME;
 }
 
+const safeArea = document.createElement('div');
+safeArea.className = 'viewer-safe-area';
+safeArea.setAttribute('aria-hidden', 'true');
+
+/** Hand the device's safe-area insets to the prototype in the frame (env() is 0 inside an iframe). */
+function syncSafeArea() {
+  try {
+    const root = frame.contentDocument?.documentElement;
+    if (!root) return;
+    if (!isPhone()) {
+      root.style.removeProperty('--proto-safe-area-inset-top');
+      root.style.removeProperty('--proto-safe-area-inset-bottom');
+      return;
+    }
+    const s = getComputedStyle(safeArea);
+    root.style.setProperty('--proto-safe-area-inset-top', s.paddingTop);
+    root.style.setProperty('--proto-safe-area-inset-bottom', s.paddingBottom);
+  } catch {
+    // cross-origin (should not happen)
+  }
+}
+
 function watchFrame() {
   frame.addEventListener('load', () => {
     syncPageBackground();
+    syncSafeArea();
     const win = frame.contentWindow;
     if (!win) return;
     try {
@@ -216,7 +240,7 @@ async function start() {
   frame.title = proto.title;
   frame.allow = 'clipboard-write; fullscreen';
   watchFrame();
-  document.body.append(menu.element, ...variants.elements);
+  document.body.append(menu.element, ...variants.elements, safeArea);
   hideShortcut(menu.element, [window]);
   stage.replaceChildren(frame);
   layout();

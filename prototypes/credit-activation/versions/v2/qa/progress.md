@@ -88,6 +88,11 @@ in screenshots (2 in Figma), as in v1.
   frame's page background), haptic tick on slider steps (Vibration API / iOS switch). Verified in Chromium iPhone
   13 emulation (white viewer background and theme-color, 2 ticks for 2 touched steps); real iOS haptics not
   verifiable here.
+- 2026-10-16, phone round 2: iOS haptic was silent (fired from `input`, outside a user gesture) → fired from
+  touch handlers; frame reaches the bottom, safe-area insets passed into the frame (`--proto-safe-area-inset-*`),
+  so the `#/options` panel continues under the home indicator; card gaps 12 px (title → description) and 8 px
+  (package title → list). Chromium iPhone 13 emulation: frame 664/664 px, 2 ticks for 2 touched steps. Real
+  iOS haptics not verifiable here.
 - Payment chip: КН green with the package, ОК green with a pledge, otherwise neutral.
 
 ## Open questions

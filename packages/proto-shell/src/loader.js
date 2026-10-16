@@ -4,7 +4,8 @@
 //   - marks <html> with data-proto-display = browser | standalone | embed and, where the device has its own
 //     bars (an installed web app, or the viewer's full-screen phone mode, ?bars=0), data-proto-bars="hidden":
 //     prototypes hide their drawn status bar / home indicator ([data-proto-system-bar]) and pad with
-//     env(safe-area-inset-*) instead;
+//     var(--proto-safe-area-inset-top / -bottom) instead (the device's env() insets, or the viewer's in its
+//     iframe);
 //   - a version opened directly in a browser tab moves to the viewer (/p/<slug>/), which adds the device
 //     mockup and the scenario/version menu; ?shell=0 keeps the bare page (screenshots, debugging);
 //   - an installed web app (display-mode: standalone) loads the menu into the page when the browser is idle.
@@ -21,7 +22,12 @@ if (embedded ? params.get('bars') === '0' : standalone) {
   html.dataset.protoBars = 'hidden';
   const style = document.createElement('style');
   style.dataset.protoShell = '';
-  style.textContent = '[data-proto-bars="hidden"] [data-proto-system-bar]{display:none!important}';
+  // Safe areas for prototypes: env() is 0 inside the viewer's iframe, so the viewer overrides these on <html>
+  // with its own insets (viewer.ts); elsewhere they are the device's.
+  style.textContent =
+    '[data-proto-bars="hidden"] [data-proto-system-bar]{display:none!important}' +
+    ':root{--proto-safe-area-inset-top:env(safe-area-inset-top,0px);' +
+    '--proto-safe-area-inset-bottom:env(safe-area-inset-bottom,0px)}';
   document.head.append(style);
 }
 

@@ -31,8 +31,8 @@ is a full 16 px icon used as a mask. Do not use `doc.svg`/`star` exports from Fi
   native push / pop (keep v1 `nav.ts` behaviour: parallax, dimming, edge swipe, no forward, «Закрыть» reset).
 - Offer slider: reaching 7 000 000 ₽ switches the pledge card on (radio checked, its chips turn green) and, in ОК,
   the fee shows «2,9% → 2,5%». Moving the slider back below switches it off again. Tapping a pledge card switches
-  it on and moves the slider to 4 000 000 ₽ + the card's chip amount (+3 000 000 ₽ → 7 000 000 ₽); tapping it again
-  switches it off and moves the slider back by the chip amount (not below the minimum).
+  it on and moves the slider to 7 000 000 ₽ (4 000 000 ₽ + the card's chip amount); tapping it again switches it
+  off and moves the slider back to the value it had below 7 000 000 ₽ before (owner, 2026-10-16; see Calculations).
 - «Доп. опции»: sticky bottom panel with chips and the button. Turning an option on recolours its chips (green, as
   the pledge card) and recalculates the panel chips. «Предоставить выписку» (до +10 000 000 ₽) only paints the
   amount chip green. Turning off the «Все включено» package (КН) raises the payment and recolours the payment
@@ -58,14 +58,17 @@ on phones; for now the URL parameters are the way.
 - Slider: 4 000 000 … 9 000 000 ₽, step 100 000, initial 4 000 000. Pledge threshold = min + pledge chip
   (3 000 000) = 7 000 000.
 - Total amount = slider + 2 000 000 if «Проверить данные» is on. «Предоставить выписку» changes no number.
-- Monthly payment: annuity over 60 months, scaled so that the reference state gives the design's number:
-  `payment = K × annuity(amount, rate)` where `annuity(A, r) = A·(r/12)/(1 − (1 + r/12)^−60)`, base annual rate
-  20 %, pledge on −0,5 pp (КН only), «Поддерживать оборот» on −0,5 pp (КН only), package «Все включено» on → rate
-  × 0,85 (КН only; «Ставка ниже на 15%»). `K` is chosen so that КН with 7 000 000 ₽, pledge on, package on, no
-  other options = 17 713,05 ₽, and ОК with 7 000 000 ₽ (any pledge) = 17 713,05 ₽ (ОК payment depends on the
-  amount only). Formats: panel chip «17 713 ₽ / мес» (rounded), review «17 713,05 ₽», offer card «Платеж в
-  месяц» rounded to rubles. (The design's 193 500 ₽ on the offer is inconsistent with 17 713; the owner chose
-  the formula.)
+- Slider memory (owner, 2026-10-16): the slider stays linear 4–9 млн. State keeps `sliderBelow`, the last slider
+  value below 7 000 000 ₽ (initially 4 000 000, reset on «Закрыть»): every drag updates it while the value is
+  below the threshold (`rememberBelow`); a pledge tapped on from below the threshold remembers the current value
+  first, then animates to 7 000 000 ₽. Tapping the pledge off animates back to `sliderBelow`
+  (`sliderAfterPledgeTap(on, remembered)`). If the pledge came on by dragging past 7 млн, tap-off returns to the
+  last value below 7 млн seen during that drag.
+- Monthly payment (owner, 2026-10-16): fixed 17 713,05 ₽ for any slider amount, pledge, «Проверить данные» and
+  «Поддерживать оборот». Only КН with the «Все включено» package off pays more: a fixed 18 858,08 ₽, computed once
+  from the earlier formula at its reference state (7 000 000 ₽, pledge on): 17 713,05 × annuity(19,5 %) /
+  annuity(19,5 % × 0,85) over 60 months. ОК ignores the package. Formats: offer card «Платеж в месяц» and panel
+  chip «17 713 ₽ / мес» rounded to rubles, review «17 713,05 ₽».
 - ОК fee: 2,9 %; with a pledge 2,5 % (as drawn, although the chip says −0,5%); «Поддерживать оборот» −0,5 pp more
   (2,4 % without pledge, 2,0 % with). Display «2,9%» when unchanged, else «<s>2,9%</s> → 2,5%» with the new value
   in `--ds-text-positive` (see `01c-fee-active.png`).
@@ -73,7 +76,8 @@ on phones; for now the URL parameters are the way.
   neutral = `--ds-background-base` bg, `--ds-text-primary` label and icon; positive = `--ds-status-positive-pale`
   bg, `--ds-text-positive` label and icon.
   - amount chip (₽ icon): positive when the total is above the slider amount or «Предоставить выписку» is on;
-  - payment chip (arrow icon): КН positive while the package is on, neutral when it is off; ОК neutral;
+  - payment chip (arrow icon): КН positive while the package is on; ОК positive while a pledge is selected;
+    otherwise neutral;
   - fee chip (% icon, ОК only): positive when the fee is below 2,9 %, else neutral, value = current fee.
 - Badges inside cards (`tui-badge`, 28 px tall, radius full, padding 0 6 px, icon 16 px + label ui-s-bold with 4 px
   padding): off = `--ds-background-neutral-2` bg, `--ds-text-primary` icon and label; on = `--ds-status-positive-pale`

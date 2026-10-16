@@ -22,7 +22,9 @@ paths:
   an installed web app) or `desktop` (default: the whole window, the design's own background, no frame).
 - Mobile designs keep the system status bar and home indicator from the mockup, marked with
   `data-proto-system-bar`. The loader hides them where the device has its own (installed web app, phone screen):
-  `:root[data-proto-bars='hidden']` is set, so pad the layout with `env(safe-area-inset-*)` there. Do not draw a
+  `:root[data-proto-bars='hidden']` is set, so pad the layout with `var(--proto-safe-area-inset-top)` /
+  `var(--proto-safe-area-inset-bottom)` there (the loader maps them to `env()`; inside the viewer's iframe, where
+  `env()` is 0, the viewer passes the phone's insets). Do not draw a
   device frame or centre a fixed-size "device" yourself: the viewer does it.
 - Routing is hash-based (`#/settings`); the site serves each version at `/p/<slug>/vN/` (ADR-0012), so use
   relative asset URLs or `import.meta.env.BASE_URL`, never absolute `/…` paths.

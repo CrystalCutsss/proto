@@ -27,6 +27,19 @@ const FALLBACK = {
   apple: ['-apple-system', 'BlinkMacSystemFont', 'Inter Variable', 'system-ui', 'sans-serif'],
 };
 
+/**
+ * Local names to try after an SF Pro family, before the system font: designers often have only the static «SF Pro
+ * Text» / «SF Pro Display» families installed (what Figma styles name), and Safari reaches SF Pro Rounded only
+ * through `ui-rounded`.
+ * @param {string} name @param {string[]} path
+ */
+function appleNames(name, path) {
+  if (/Rounded/.test(name)) return ['ui-rounded'];
+  if (name !== 'SF Pro') return [];
+  const role = path.find((p) => /^(Text|Display)$/i.test(p));
+  return role ? [`SF Pro ${role[0].toUpperCase()}${role.slice(1).toLowerCase()}`] : [];
+}
+
 /** @typedef {{ path: string[], collection: string, type: string, scopes: string[], description?: string, valuesByMode: Record<string, unknown> }} FigmaVariable */
 
 /**
@@ -147,11 +160,8 @@ export function convertValue(raw, type, v) {
       return v.scopes.includes('OPACITY') ? round(Number(raw) / 100) : Number(raw);
     case 'fontFamily': {
       const name = String(raw);
-      const fallback = /^SF Pro/.test(name)
-        ? FALLBACK.apple
-        : /mono|code/i.test(v.path.join('/') + name)
-          ? FALLBACK.mono
-          : FALLBACK.sans;
+      if (/^SF Pro/.test(name)) return [name, ...appleNames(name, v.path), ...FALLBACK.apple];
+      const fallback = /mono|code/i.test(v.path.join('/') + name) ? FALLBACK.mono : FALLBACK.sans;
       return [name, ...fallback];
     }
     case 'cubicBezier': {

@@ -4,9 +4,16 @@
 import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
 import tokensCss from 'virtual:shell-tokens';
 import menuCss from './menu.css?inline';
-import { collapsible, createMenu, hideShortcut, loadRegistryPrototype, pickScenario } from './menu.ts';
+import {
+  collapsible,
+  createMenu,
+  hideShortcut,
+  loadRegistryPrototype,
+  menuSummary,
+  pickScenario,
+} from './menu.ts';
 import shellCss from './shell.css?inline';
-import { currentContext, screenUrl, targetUrl } from './switch.ts';
+import { axisValues, currentContext, screenUrl, targetUrl } from './switch.ts';
 
 class ProtoShell extends HTMLElement {
   #root = this.attachShadow({ mode: 'open' });
@@ -29,6 +36,7 @@ class ProtoShell extends HTMLElement {
     const p = proto;
     const params = new URLSearchParams(location.search);
     const scenario = pickScenario(version, params.get('s'));
+    const axes = axisValues(version.axes, params);
     // Next pages keep the query (?proto-display=standalone in tests) and remember the scenario.
     const search = (s: string) => {
       const q = new URLSearchParams(location.search);
@@ -54,13 +62,20 @@ class ProtoShell extends HTMLElement {
           ),
         );
       },
+      axis(id, value) {
+        // Another choice restarts the version at its start screen, keeping the other query parameters.
+        const q = new URLSearchParams(location.search);
+        q.set(id, value);
+        location.assign(screenUrl(p.slug, version, null, `?${q}`));
+      },
     });
-    menu.update({ proto: p, version, scenario });
+    const state = { proto: p, version, scenario, axes };
+    menu.update(state);
     this.#root.innerHTML = `<style>${tokensCss.replaceAll(':root', ':host')}${shellCss}${menuCss}</style>`;
     const theme = document.createElement('div');
     theme.dataset.dsTheme = 'night';
     hideShortcut(menu.element, [window]);
-    theme.append(menu.element, collapsible(menu.element, `${scenario.title} · ${version.version}`));
+    theme.append(menu.element, collapsible(menu.element, menuSummary(state)));
     this.#root.append(theme);
   }
 }

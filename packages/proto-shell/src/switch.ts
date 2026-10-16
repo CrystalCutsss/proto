@@ -46,9 +46,42 @@ export function targetUrl(loc: LocationLike, slug: string, current: SwitchVersio
   return screenUrl(slug, target, keptScreen(key, current, target), loc.search);
 }
 
-/** Viewer URL (/p/<slug>/?v=…&s=…#screen); the screen goes into the hash for both routing modes. */
-export function viewerUrl(slug: string, version: string, scenario: string, key: string | null) {
-  const q = new URLSearchParams({ v: version, s: scenario });
+/** Menu axis as the switcher needs it: an id and its item ids, the first being the default. */
+export interface SwitchAxis {
+  id: string;
+  items: { id: string }[];
+}
+
+/** Chosen item of every axis: the query value when it names an item, else the axis's first item. */
+export function axisValues(axes: SwitchAxis[], params: URLSearchParams): Record<string, string> {
+  return Object.fromEntries(
+    axes.map((a) => {
+      const v = params.get(a.id);
+      return [a.id, a.items.some((i) => i.id === v) ? v! : (a.items[0]?.id ?? '')];
+    }),
+  );
+}
+
+/** Query string ("?a=1&b=2", or "") of axis values on top of `extra` parameters. */
+export function axisSearch(values: Record<string, string>, extra: Record<string, string> = {}) {
+  const q = new URLSearchParams({ ...extra, ...values });
+  return q.size ? `?${q}` : '';
+}
+
+/**
+ * Viewer URL (/p/<slug>/?v=…&s=…#screen); the screen goes into the hash for both routing modes. A version with
+ * menu axes carries their values instead of the scenario.
+ */
+export function viewerUrl(
+  slug: string,
+  version: string,
+  scenario: string,
+  key: string | null,
+  axes: Record<string, string> = {},
+) {
+  const q = new URLSearchParams(
+    Object.keys(axes).length ? { v: version, ...axes } : { v: version, s: scenario },
+  );
   const hash = key && key !== '#/' && key !== '/' ? `#${key.replace(/^#/, '')}` : '';
   return `/p/${slug}/?${q}${hash}`;
 }

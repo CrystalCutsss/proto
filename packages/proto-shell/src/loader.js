@@ -41,9 +41,10 @@ if (!embedded && params.get('shell') !== '0') {
       // Screen: the hash (hash routing) or the path after the version (history routing).
       const rest = m?.[3]?.replace(/index\.html$/, '') ?? '';
       const screen = location.hash.startsWith('#/') ? location.hash : rest ? `#/${rest}` : '';
+      // Keep the scenario and menu axis values (?s=, ?<axis>=); drop what only this page uses.
       const q = new URLSearchParams({ v: version });
-      const s = params.get('s');
-      if (s) q.set('s', s);
+      for (const [k, val] of params)
+        if (!['v', 'shell', 'bars', 'proto-display'].includes(k)) q.append(k, val);
       location.replace(`/p/${slug}/?${q}${screen}`);
     }
   }

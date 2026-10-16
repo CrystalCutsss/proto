@@ -1,5 +1,5 @@
 /* Bottom menu over every prototype (ADR-0020): two tui-segmented controls, "Сценарий" and "Версия", on black
-   glass. Used by the viewer page and, inside Shadow DOM, by the shell of an installed web app. */
+   glass, or one captioned control per menu axis of the version. Used by the viewer page and, inside Shadow DOM, by the shell of an installed web app. */
 .proto-menu {
   position: fixed;
   z-index: 2147483000;
@@ -28,6 +28,22 @@
 
 .proto-menu ds-segmented {
   min-width: 0;
+}
+
+/* Menu axes: a caption above each control, all groups in one panel. */
+.proto-menu-axis {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+  min-width: 0;
+}
+
+.proto-menu-caption {
+  padding-inline: var(--ds-space-2);
+  font-family: var(--ds-typography-ui-xs-font-family);
+  font-size: var(--ds-typography-ui-xs-font-size);
+  line-height: var(--ds-typography-ui-xs-line-height);
+  color: var(--ds-text-secondary);
 }
 
 /* The version control keeps its size; a long scenario list scrolls instead. */

@@ -1,10 +1,11 @@
 // Viewer /p/<slug>/?v=<vN>&s=<scenario>#<screen> (ADR-0020). Shows one version in an iframe:
 //   - desktop prototypes: the whole window, the prototype's own background, no frame;
-//   - mobile prototypes on a wide screen: a black iPhone Air mockup on the main page's stage, with the
-//     system bars drawn by the design;
+//   - mobile prototypes on a wide screen: a black iPhone Air mockup on the main page's black stage (no glow),
+//     with the system bars drawn by the design;
 //   - mobile prototypes on a phone screen (PHONE_MEDIA): the whole screen, the design's system bars hidden
 //     (?bars=0), and no menu.
-// Elsewhere the bottom menu switches scenario and version; the viewer URL follows the iframe's screen.
+// Elsewhere the bottom menu switches scenario and version (or the version's menu axes, passed to the iframe as
+// query parameters); the viewer URL follows the iframe's screen.
 import '@proto/ui/ui.css';
 import './menu.css';
 import './viewer.css';
@@ -12,7 +13,17 @@ import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
 import bezelUrl from '../assets/iphone-air-space-black/frame.png?url';
 import maskUrl from '../assets/iphone-air-space-black/mask.png?url';
 import { createMenu, hideShortcut, loadRegistryPrototype, PHONE_MEDIA, pickScenario } from './menu.ts';
-import { keptScreen, screenFromViewerHash, screenKey, screenUrl, versionBase, viewerUrl } from './switch.ts';
+import {
+  axisSearch,
+  axisValues,
+  keptScreen,
+  screenFromViewerHash,
+  screenKey,
+  screenUrl,
+  startScreen,
+  versionBase,
+  viewerUrl,
+} from './switch.ts';
 
 const body = document.body;
 const stage = document.querySelector<HTMLElement>('.viewer-stage')!;
@@ -21,6 +32,8 @@ const slug = /^\/p\/([a-z0-9-]+)\/?/.exec(location.pathname)?.[1] ?? '';
 let proto: RegistryPrototype;
 let version: RegistryVersion;
 let scenarioId: string;
+/** Chosen menu axis items of the version (empty without axes). */
+let axes: Record<string, string> = {};
 let frame: HTMLIFrameElement;
 
 const menu = createMenu({
@@ -36,7 +49,13 @@ const menu = createMenu({
     version = target;
     const s = pickScenario(version, scenarioId);
     scenarioId = s.id;
+    axes = axisValues(version.axes, new URLSearchParams(axes));
     navigate(kept ?? s.route);
+  },
+  axis(id, value) {
+    // Another choice is another set-up of the prototype: restart it at the start screen.
+    axes = { ...axes, [id]: value };
+    navigate(startScreen(version.routing));
   },
 });
 
@@ -56,15 +75,13 @@ function currentScreen(): string {
 }
 
 function frameSearch() {
-  const q = new URLSearchParams();
-  if (proto.platform === 'mobile' && mode() === 'full') q.set('bars', '0');
-  return q.size ? `?${q}` : '';
+  return axisSearch(axes, proto.platform === 'mobile' && mode() === 'full' ? { bars: '0' } : {});
 }
 
 function syncUrl(key = currentScreen()) {
-  history.replaceState(null, '', viewerUrl(slug, version.version, scenarioId, key));
+  history.replaceState(null, '', viewerUrl(slug, version.version, scenarioId, key, axes));
   document.title = `${proto.title} · ${version.version}`;
-  menu.update({ proto, version, scenario: pickScenario(version, scenarioId) });
+  menu.update({ proto, version, scenario: pickScenario(version, scenarioId), axes });
 }
 
 function navigate(key: string) {
@@ -145,6 +162,7 @@ async function start() {
     proto.versions.at(-1)!;
   const s = pickScenario(version, params.get('s'));
   scenarioId = s.id;
+  axes = axisValues(version.axes, params);
   const key = screenFromViewerHash(location.hash, version.routing) ?? s.route;
 
   frame = document.createElement('iframe');

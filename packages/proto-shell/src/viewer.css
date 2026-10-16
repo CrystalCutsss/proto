@@ -1,5 +1,5 @@
 /* Viewer /p/<slug>/ (ADR-0020). Desktop prototypes fill the window with their own background; mobile
-   prototypes sit in a black iPhone Air mockup on the main page's stage, or fill a phone's screen. */
+   prototypes sit in a black iPhone Air mockup on the main page's black stage (without its glow), or fill a phone's screen. */
 .viewer {
   --device-screen-width: 375px;
   --device-screen-height: 812px;
@@ -41,6 +41,11 @@
    do not reach into the iframe. */
 .viewer[data-phone] .viewer-frame {
   height: calc(100% - var(--viewer-menu-space, 0px) - env(safe-area-inset-bottom, 0px));
+}
+
+/* Mockup mode. The stage keeps the main page's black but not its glow: nothing competes with the prototype. */
+.viewer[data-mode='device'].ds-stage::before {
+  content: none;
 }
 
 /* Mockup mode. */

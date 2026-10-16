@@ -93,6 +93,9 @@ in screenshots (2 in Figma), as in v1.
   so the `#/options` panel continues under the home indicator; card gaps 12 px (title → description) and 8 px
   (package title → list). Chromium iPhone 13 emulation: frame 664/664 px, 2 ticks for 2 touched steps. Real
   iOS haptics not verifiable here.
+- 2026-10-16: «Пакет «Все включено»» wrapped on iPhone after the Figma tracking (PR #27): Safari already applies
+  the system font's tracking table, so the CSS tracking doubled it. `--tracking-*` are 0 under
+  `@supports (font: -apple-system-body)`. No WebKit browser in this environment: check on the device.
 - Payment chip: КН green with the package, ОК green with a pledge, otherwise neutral.
 
 ## Open questions

@@ -265,7 +265,10 @@ The TUI tokens round the tracking differently (Heading M -0.45, Heading L 0.4, 1
 0.35) and give Heading S the display family, so `style.css` keeps the Figma tracking in provisional local
 properties (`--tracking-*`) and points `.t-heading-s` at the text family. SF Pro is not embedded (Apple license):
 the stacks try `SF Pro`, then the static `SF Pro Text` / `SF Pro Display` (`ui-rounded` for Rounded), then the
-system font; without SF Pro installed the browser falls back to Inter.
+system font; without SF Pro installed the browser falls back to Inter. Safari (WebKit, `@supports (font: -apple-system-body)`) tracks the
+system font itself from the font's tracking table, which is what the Figma tracking encodes, so there the
+`--tracking-*` properties are 0 (otherwise the tracking doubles and «Пакет «Все включено»» wraps; owner,
+2026-10-16).
 
 ## Phone screen and haptics (owner, 2026-10-16)
 

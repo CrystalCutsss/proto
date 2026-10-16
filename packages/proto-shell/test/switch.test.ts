@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
+  axisSearch,
+  axisValues,
   currentContext,
   keptScreen,
   screenFromViewerHash,
@@ -77,5 +79,28 @@ describe('viewer URLs', () => {
     expect(keptScreen('#/cart', hash('v1'), hash('v2', ['#/cart']))).toBe('#/cart');
     expect(keptScreen('#/', hash('v1'), hash('v2', ['#/']))).toBeNull();
     expect(keptScreen('#/cart', hash('v1'), hist('v2', ['#/cart']))).toBeNull();
+  });
+});
+
+describe('menu axes', () => {
+  const axes = [
+    { id: 'product', items: [{ id: 'kn' }, { id: 'ok' }] },
+    { id: 'docs', items: [{ id: 'one' }, { id: 'two' }] },
+  ];
+
+  it('reads valid values and falls back to the first item', () => {
+    expect(axisValues(axes, new URLSearchParams('product=ok&docs=three'))).toEqual({
+      product: 'ok',
+      docs: 'one',
+    });
+    expect(axisValues([], new URLSearchParams('product=ok'))).toEqual({});
+  });
+
+  it('puts axis values into iframe and viewer URLs', () => {
+    expect(axisSearch({ product: 'ok' }, { bars: '0' })).toBe('?bars=0&product=ok');
+    expect(axisSearch({})).toBe('');
+    expect(viewerUrl('a', 'v2', 'main', '#/docs', { product: 'ok', docs: 'two' })).toBe(
+      '/p/a/?v=v2&product=ok&docs=two#/docs',
+    );
   });
 });

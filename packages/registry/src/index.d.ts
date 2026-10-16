@@ -18,6 +18,19 @@ export interface Scenario {
   route: string;
 }
 
+export interface AxisItem {
+  id: string;
+  title: string;
+}
+
+/** One independent choice of the viewer menu (opt-in); the chosen item id reaches the version as ?<id>=<item>. */
+export interface Axis {
+  id: string;
+  title: string;
+  /** The first item is the default. */
+  items: AxisItem[];
+}
+
 export interface RegistryVersion {
   version: string;
   title: string;
@@ -31,6 +44,8 @@ export interface RegistryVersion {
   routes: string[];
   /** Never empty: versions without scenarios get DEFAULT_SCENARIO at the start screen. */
   scenarios: Scenario[];
+  /** Menu axes; when not empty the menu shows them instead of the scenario and version controls. */
+  axes: Axis[];
   /** Site path, always /p/<slug>/<vN>/ */
   path: string;
 }
@@ -69,6 +84,7 @@ export interface RegistryIssue {
 }
 
 export declare const DEFAULT_SCENARIO: { id: string; title: string };
+export declare const RESERVED_AXES: Set<string>;
 export declare const SLUG_RE: RegExp;
 export declare const VERSION_RE: RegExp;
 export declare const RESERVED_SLUGS: Set<string>;

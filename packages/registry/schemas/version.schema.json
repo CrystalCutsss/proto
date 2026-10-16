@@ -51,6 +51,35 @@
       },
       "minItems": 1,
       "maxItems": 12
+    },
+    "axes": {
+      "description": "Independent choices shown instead of the \"Сценарий\" and \"Версия\" controls (opt-in): one segmented control per axis in one menu panel. The chosen item ids reach the version as query parameters (?<axis id>=<item id>); changing one restarts the version at its start screen. The first item is the default.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "items"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 40 },
+          "title": { "type": "string", "minLength": 1, "maxLength": 40 },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "title"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 40 },
+                "title": { "type": "string", "minLength": 1, "maxLength": 40 }
+              }
+            },
+            "minItems": 2,
+            "maxItems": 6
+          }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 4
     }
   },
   "$defs": {

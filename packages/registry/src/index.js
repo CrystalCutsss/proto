@@ -34,6 +34,9 @@ export class RegistryError extends Error {
   }
 }
 
+/** Query parameters the loader and the viewer use themselves: never axis ids. */
+export const RESERVED_AXES = new Set(['v', 's', 'bars', 'shell', 'proto-display']);
+
 /** Scenario listed for a version without `scenarios`: its start screen. */
 export const DEFAULT_SCENARIO = { id: 'main', title: 'Основной' };
 
@@ -207,6 +210,21 @@ export function buildRegistry(repoRoot) {
       const ids = (v.scenarios ?? []).map((/** @type {{ id: string }} */ s) => s.id);
       if (new Set(ids).size !== ids.length)
         issues.push({ file: rel(vfile), pointer: '/scenarios', message: 'scenario ids must be unique' });
+      const axes = v.axes ?? [];
+      const axisIds = axes.map((/** @type {{ id: string }} */ a) => a.id);
+      if (new Set(axisIds).size !== axisIds.length)
+        issues.push({ file: rel(vfile), pointer: '/axes', message: 'axis ids must be unique' });
+      axes.forEach((/** @type {{ id: string, items: { id: string }[] }} */ a, /** @type {number} */ i) => {
+        if (RESERVED_AXES.has(a.id))
+          issues.push({
+            file: rel(vfile),
+            pointer: `/axes/${i}/id`,
+            message: `"${a.id}" is a reserved query parameter`,
+          });
+        const itemIds = a.items.map((x) => x.id);
+        if (new Set(itemIds).size !== itemIds.length)
+          issues.push({ file: rel(vfile), pointer: `/axes/${i}/items`, message: 'item ids must be unique' });
+      });
       versions.push({
         version: name,
         title: v.title ?? '',
@@ -219,6 +237,7 @@ export function buildRegistry(repoRoot) {
         routing,
         routes,
         scenarios: v.scenarios ?? [{ id: DEFAULT_SCENARIO.id, title: DEFAULT_SCENARIO.title, route: start }],
+        axes,
         path: `/p/${slug}/${name}/`,
       });
     }

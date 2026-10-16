@@ -79,7 +79,9 @@ test('mobile prototypes sit in the iPhone mockup with their status bar on a wide
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto('/p/credit-activation/');
+  await page.goto('/p/credit-activation/?v=v1');
+  // The stage keeps its black but not the glow behind the mockup.
+  expect(await page.evaluate(() => getComputedStyle(document.body, '::before').content)).toBe('none');
   const bezel = page.locator('img.viewer-bezel');
   await expect(bezel).toBeVisible();
   await expect.poll(() => bezel.evaluate((el) => (el as HTMLImageElement).naturalWidth)).toBe(1490);
@@ -92,6 +94,40 @@ test('mobile prototypes sit in the iPhone mockup with their status bar on a wide
   const scenario = page.getByRole('radiogroup', { name: 'Сценарий' });
   await scenario.getByRole('radio', { name: 'Успех' }).click();
   await expect(page).toHaveURL(/\?v=v1&s=success#\/success$/);
+});
+
+test('a version with menu axes shows one captioned control per axis instead of scenario and version', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/p/credit-activation/?v=v2');
+  await expect(page).toHaveURL(/\?v=v2&product=kn&pledge=auto&docs=one$/);
+  const menu = page.getByRole('navigation', { name: 'Сценарий и версия' });
+  await expect(menu.locator('.proto-menu-caption')).toHaveText(['Сценарий', 'Залог', 'Документы']);
+  await expect(page.getByRole('radiogroup', { name: 'Версия' })).toHaveCount(0);
+  await expect(page.getByRole('radiogroup', { name: 'Залог' }).getByRole('radio')).toHaveText([
+    'Авто',
+    'Недвижимость',
+    '2 залога',
+  ]);
+
+  const historyLength = await page.evaluate(() => history.length);
+  await page.getByRole('radiogroup', { name: 'Сценарий' }).getByRole('radio', { name: 'ОК' }).click();
+  await expect(page).toHaveURL(/\?v=v2&product=ok&pledge=auto&docs=one$/);
+  const frameUrl = () =>
+    page.locator('iframe').evaluate((el) => (el as HTMLIFrameElement).contentWindow!.location.href);
+  await expect.poll(frameUrl).toMatch(/\/p\/credit-activation\/v2\/\?product=ok&pledge=auto&docs=one(#\/)?$/);
+  await page.getByRole('radiogroup', { name: 'Документы' }).getByRole('radio', { name: '2 дока' }).click();
+  await expect(page).toHaveURL(/product=ok&pledge=auto&docs=two$/);
+  // A choice replaces the iframe's document instead of adding history entries with the old axes.
+  expect(await page.evaluate(() => history.length)).toBe(historyLength);
+
+  // A version opened directly keeps its axis values on the way to the viewer.
+  await page.goto('/p/credit-activation/v2/?pledge=both#/options');
+  await expect(page).toHaveURL(/\?v=v2&product=kn&pledge=both&docs=one#\/options$/);
+  await expect(
+    page.getByRole('radiogroup', { name: 'Залог' }).getByRole('radio', { name: '2 залога' }),
+  ).toHaveAttribute('aria-checked', 'true');
 });
 
 test('on a phone screen the prototype fills it, without design bars or the menu', async ({ page }) => {

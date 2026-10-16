@@ -100,6 +100,57 @@ describe('buildRegistry', () => {
     expect(validateMetadata('prototype', proto({ platform: 'tablet' }))[0]?.pointer).toBe('/platform');
   });
 
+  it('keeps menu axes and checks their ids', () => {
+    put('prototypes/demo/prototype.json', proto());
+    const axes = [
+      {
+        id: 'product',
+        title: 'Сценарий',
+        items: [
+          { id: 'a', title: 'А' },
+          { id: 'b', title: 'Б' },
+        ],
+      },
+      {
+        id: 'docs',
+        title: 'Документы',
+        items: [
+          { id: 'one', title: '1' },
+          { id: 'two', title: '2' },
+        ],
+      },
+    ];
+    addVersion('demo', 'v1', { axes });
+    expect(buildRegistry(root).prototypes[0]?.versions[0]?.axes).toEqual(axes);
+
+    addVersion('demo', 'v2', {
+      axes: [
+        {
+          id: 's',
+          title: 'S',
+          items: [
+            { id: 'a', title: 'A' },
+            { id: 'a', title: 'B' },
+          ],
+        },
+        {
+          id: 's',
+          title: 'T',
+          items: [
+            { id: 'a', title: 'A' },
+            { id: 'b', title: 'B' },
+          ],
+        },
+      ],
+    });
+    const msgs = fail().issues.map((i) => `${i.pointer} ${i.message}`);
+    expect(msgs).toContain('/axes axis ids must be unique');
+    expect(msgs).toContain('/axes/0/id "s" is a reserved query parameter');
+    expect(msgs).toContain('/axes/0/items item ids must be unique');
+    const one = [{ id: 'x', title: 'X', items: [{ id: 'a', title: 'A' }] }];
+    expect(validateMetadata('version', { ...version('v1'), axes: one })[0]?.pointer).toBe('/axes/0/items');
+  });
+
   it('skips folders that hold only drive-inbox design input', () => {
     put('prototypes/early/versions/v1/design-input/01.png', 'png');
     put('prototypes/demo/prototype.json', proto());

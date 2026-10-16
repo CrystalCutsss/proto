@@ -14,6 +14,10 @@ paths:
   keeps the route when switching versions), `scenarios` names the entry points of the viewer's «Сценарий» menu
   (`{ id, title, route }`, each route in `routes`; without it the menu shows «Основной»), `status` moves
   draft → review → frozen.
+- Variants of one version (product, pledge, documents…) are menu `axes` in `version.json` (ADR-0022), not extra
+  versions or scenarios: `[{ id, title, items: [{ id, title }] }]`, first item is the default. The viewer shows one
+  captioned control per axis instead of «Сценарий / Версия» and passes the choice as `?<axis>=<item>`; read it
+  from `location.search` once and fall back to the default for unknown values.
 - `prototype.json` → `platform`: `mobile` (shown in the iPhone mockup on wide screens, full-screen on phones and as
   an installed web app) or `desktop` (default: the whole window, the design's own background, no frame).
 - Mobile designs keep the system status bar and home indicator from the mockup, marked with

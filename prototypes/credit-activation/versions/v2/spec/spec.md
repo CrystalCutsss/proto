@@ -262,14 +262,14 @@ Text styles of the file (`get_variable_defs` on 42:2765 / 42:2292 / 42:5516) and
 | iOS/Numbers 2XL              | SF Pro Rounded Bold            | 48 / normal (57) | 0.357    | `.t-number-2xl`                                 |
 | Desktop/Body M, Body S       | Neue Haas Unica W1G Regular    | 15 / 24, 13 / 20 | 0        | file input label and hint (`#/sts`, `#/upload`) |
 
-The TUI tokens round the tracking differently (Heading M -0.45, Heading L 0.4, 17 px -0.43, 15 px -0.23, Numbers
-0.35) and give Heading S the display family, so `style.css` keeps the Figma tracking in provisional local
-properties (`--tracking-*`) and points `.t-heading-s` at the text family. SF Pro is not embedded (Apple license):
-the stacks try `SF Pro`, then the static `SF Pro Text` / `SF Pro Display` (`ui-rounded` for Rounded), then the
-system font; without SF Pro installed the browser falls back to Inter. Safari (WebKit, `@supports (font: -apple-system-body)`) tracks the
-system font itself from the font's tracking table, which is what the Figma tracking encodes, so there the
-`--tracking-*` properties are 0 (otherwise the tracking doubles and «Пакет «Все включено»» wraps; owner,
-2026-10-16).
+Letter spacing (owner, 2026-10-16, after the device check): the browser draws iOS text with the system font, the
+variable SF Pro, whose Apple tracking table is what the TUI tokens hold (17 px -0.43, 15 px -0.23, 13 px -0.08,
+20 px -0.45, 30 px 0.4, 48 px 0.35). The Figma styles carry the older table of the static SF Pro Text / Display
+(-0.41, -0.24, 0.38, 0.36, 0.357), which only fits that font: with it (and with no tracking at all) the system
+font wraps «Пакет «Все включено»» on iPhone. So `style.css` uses the token tracking; sizes, weights, line heights
+and families stay as in the table above. `.t-heading-s` uses the text family. SF Pro is not embedded (Apple
+license): the stacks try `SF Pro`, then the static `SF Pro Text` / `SF Pro Display` (`ui-rounded` for Rounded),
+then the system font; without SF Pro installed the browser falls back to Inter.
 
 ## Phone screen and haptics (owner, 2026-10-16)
 

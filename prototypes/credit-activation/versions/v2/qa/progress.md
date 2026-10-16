@@ -99,6 +99,11 @@ in screenshots (2 in Figma), as in v1.
 - 2026-10-16 bug: alternating drags and pledge taps brought the slider back to the old point (from 4 млн: exactly
   7 млн) because tap-off returned to the remembered value. Now tap-off takes back what the tap-on added from
   the current value; replayed in Chromium: 4 → 7 → drag 8,5 → off 5,5 → on 8,5 → drag 7,6 → off 4,6.
+- 2026-10-16, «Пакет «Все включено»» still on two lines on iPhone after PR #29. Header layout equals Figma (title
+  box 231 px), so the text width changed. It fit with the token tracking (v1, v2 before PR #27: heading M
+  -0.45), wraps with the Figma value (+0.38) and with none (PR #29), so WebKit adds no tracking of its own. The
+  tokens are Apple's table for the variable SF Pro that iOS uses; the Figma values are the static fonts' table.
+  Back to the token tracking for all styles; the `@supports` override is gone.
 - Payment chip: КН green with the package, ОК green with a pledge, otherwise neutral.
 
 ## Open questions

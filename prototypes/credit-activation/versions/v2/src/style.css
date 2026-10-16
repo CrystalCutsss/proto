@@ -31,17 +31,6 @@ body.ds-root {
   /* provisional: no TUI shadow token (left edge of a pushed screen). */
   --shadow-edge: calc(var(--ds-space-2) * -1) 0 var(--ds-space-6) var(--ds-color-black-black-alpha-10);
   --side: var(--ds-space-4);
-
-  /*
-   * provisional: letter spacing of this file's iOS text styles (Figma 42:5516), which differ from the TUI tokens
-   * (owner, 2026-10-16: text exactly as in Figma). UI S / UI S Bold match the tokens (-0.08px).
-   */
-  --tracking-heading-l: 0.36px;
-  --tracking-heading-m: 0.38px;
-  --tracking-text-l: -0.41px;
-  --tracking-text-m: -0.24px;
-  --tracking-number-2xl: 0.357px;
-  --tracking-text-s: var(--ds-typography-ui-s-letter-spacing);
   --bar-height: 44px;
 
   position: relative;
@@ -52,22 +41,6 @@ body.ds-root {
   color: var(--ds-text-primary);
   background: var(--ds-background-base);
   -webkit-font-smoothing: antialiased;
-}
-
-/*
- * Safari (WebKit, iOS and macOS) already tracks Apple's system font by size from the font's own tracking table:
- * the tracking of the Figma iOS styles is exactly that table, so adding it again doubles it (titles such as
- * «Пакет «Все включено»» then wrap). There the text keeps the font's own tracking only.
- */
-@supports (font: -apple-system-body) {
-  .app {
-    --tracking-heading-l: 0;
-    --tracking-heading-m: 0;
-    --tracking-text-l: 0;
-    --tracking-text-m: 0;
-    --tracking-number-2xl: 0;
-    --tracking-text-s: 0;
-  }
 }
 
 .app *,
@@ -143,12 +116,19 @@ body.ds-root {
 
 /* ---------- typography ---------- */
 
+/*
+ * Letter spacing comes from the TUI tokens: they are Apple's tracking table of the variable SF Pro (17 px -0.43,
+ * 20 px -0.45…), the font iOS draws in the browser. The Figma file's styles carry the older table of the static
+ * SF Pro Text / Display (Figma does not apply tracking itself); with it the wider system font wraps titles such as
+ * «Пакет «Все включено»» (owner, 2026-10-16).
+ */
+
 .t-heading-l {
   font-family: var(--ds-typography-heading-mobile-l-font-family);
   font-size: var(--ds-typography-heading-mobile-l-font-size);
   font-weight: var(--ds-typography-heading-mobile-l-font-weight);
   line-height: var(--ds-typography-heading-mobile-l-line-height);
-  letter-spacing: var(--tracking-heading-l);
+  letter-spacing: var(--ds-typography-heading-mobile-l-letter-spacing);
 }
 
 .t-heading-m {
@@ -156,7 +136,7 @@ body.ds-root {
   font-size: var(--ds-typography-heading-mobile-m-font-size);
   font-weight: var(--ds-typography-heading-mobile-m-font-weight);
   line-height: var(--ds-typography-heading-mobile-m-line-height);
-  letter-spacing: var(--tracking-heading-m);
+  letter-spacing: var(--ds-typography-heading-mobile-m-letter-spacing);
 }
 
 /* iOS/Heading S is SF Pro Text Semibold in Figma; the TUI token points it at the display family. */
@@ -165,7 +145,7 @@ body.ds-root {
   font-size: var(--ds-typography-heading-mobile-s-font-size);
   font-weight: var(--ds-typography-heading-mobile-s-font-weight);
   line-height: var(--ds-typography-heading-mobile-s-line-height);
-  letter-spacing: var(--tracking-text-l);
+  letter-spacing: var(--ds-typography-heading-mobile-s-letter-spacing);
 }
 
 /* Figma uses SF Pro "normal" line heights: body-l 17/20 and body-m 15/18, i.e. the iOS ui-l / ui-m values. */
@@ -176,7 +156,7 @@ body.ds-root {
   font-size: var(--ds-typography-body-l-font-size);
   font-weight: var(--ds-typography-body-l-font-weight);
   line-height: var(--ds-typography-ui-l-line-height);
-  letter-spacing: var(--tracking-text-l);
+  letter-spacing: var(--ds-typography-body-l-letter-spacing);
 }
 
 .t-body-m,
@@ -185,7 +165,7 @@ body.ds-root {
   font-size: var(--ds-typography-body-m-font-size);
   font-weight: var(--ds-typography-body-m-font-weight);
   line-height: var(--ds-typography-ui-m-line-height);
-  letter-spacing: var(--tracking-text-m);
+  letter-spacing: var(--ds-typography-body-m-letter-spacing);
 }
 
 .t-ui-s {
@@ -193,7 +173,7 @@ body.ds-root {
   font-size: var(--ds-typography-ui-s-font-size);
   font-weight: var(--ds-typography-ui-s-font-weight);
   line-height: var(--ds-typography-ui-s-line-height);
-  letter-spacing: var(--tracking-text-s);
+  letter-spacing: var(--ds-typography-ui-s-letter-spacing);
 }
 
 .t-number-2xl {
@@ -201,7 +181,7 @@ body.ds-root {
   font-size: var(--ds-typography-numbers-2-xl-font-size);
   font-weight: var(--ds-typography-numbers-2-xl-font-weight);
   line-height: var(--ds-typography-numbers-2-xl-line-height);
-  letter-spacing: var(--tracking-number-2xl);
+  letter-spacing: var(--ds-typography-numbers-2-xl-letter-spacing);
 }
 
 .text-secondary {
@@ -468,7 +448,7 @@ body.ds-root {
   font-family: var(--ds-typography-ui-s-font-family);
   font-size: var(--ds-typography-ui-s-font-size);
   line-height: var(--ds-typography-ui-s-line-height);
-  letter-spacing: var(--tracking-text-s);
+  letter-spacing: var(--ds-typography-ui-s-letter-spacing);
   color: var(--ds-text-secondary);
   text-align: center;
 }
@@ -758,7 +738,7 @@ body.ds-root {
   font-size: var(--ds-typography-ui-s-bold-font-size);
   font-weight: var(--ds-typography-ui-s-bold-font-weight);
   line-height: var(--ds-typography-ui-s-bold-line-height);
-  letter-spacing: var(--tracking-text-s);
+  letter-spacing: var(--ds-typography-ui-s-bold-letter-spacing);
 }
 
 .card-large.is-on .badge,

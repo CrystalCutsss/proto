@@ -7,9 +7,10 @@ body {
   height: 100%;
 }
 
-body {
+/* White like the design's screens: on a phone it also colours the status bar and home indicator areas. */
+body.ds-root {
   overflow: hidden;
-  background: var(--ds-background-base-alt);
+  background: var(--ds-background-base);
 }
 
 /* The app always fills its window; the viewer draws the iPhone mockup on wide screens (ADR-0020). */
@@ -1161,4 +1162,16 @@ body {
   .app .button:active {
     transform: none;
   }
+}
+
+/* Hidden native switch that plays the iOS haptic (haptics.ts). */
+.haptic-switch {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
 }

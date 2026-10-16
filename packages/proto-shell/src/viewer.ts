@@ -107,6 +107,7 @@ function navigate(key: string) {
 function layout() {
   const m = mode();
   body.toggleAttribute('data-phone', isPhone());
+  syncPageBackground();
   // No space for a menu that is hidden (Alt+Shift+H) or not shown at all (mobile browsers, menu.css).
   const menuSpace = menu.element.getClientRects().length ? menu.element.offsetHeight + 32 : 0;
   body.style.setProperty('--viewer-menu-space', `${menuSpace}px`);
@@ -142,8 +143,38 @@ function layout() {
   }
 }
 
+const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+const STAGE_THEME = themeColor?.content ?? '';
+/** Page background of the prototype in the frame (its body, else its root), or null when it has none. */
+function framePageBackground(): string | null {
+  try {
+    const doc = frame.contentDocument;
+    if (!doc?.body) return null;
+    const transparent = (c: string) => c === 'transparent' || /^rgba\(.*,\s*0\)$/.test(c);
+    for (const el of [doc.body, doc.documentElement]) {
+      const color = getComputedStyle(el).backgroundColor;
+      if (!transparent(color)) return color;
+    }
+  } catch {
+    // cross-origin (should not happen)
+  }
+  return null;
+}
+
+/**
+ * On a phone screen the browser's status bar and the home indicator strip below the frame show the viewer's own
+ * background: make it (and theme-color) the prototype's page background instead of the black stage.
+ */
+function syncPageBackground() {
+  const color = isPhone() ? framePageBackground() : null;
+  body.style.background = color ?? '';
+  if (themeColor)
+    themeColor.content = isPhone() ? (color ?? getComputedStyle(body).backgroundColor) : STAGE_THEME;
+}
+
 function watchFrame() {
   frame.addEventListener('load', () => {
+    syncPageBackground();
     const win = frame.contentWindow;
     if (!win) return;
     try {

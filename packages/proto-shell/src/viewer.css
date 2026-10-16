@@ -41,6 +41,13 @@
    do not reach into the iframe. */
 .viewer[data-phone] .viewer-frame {
   height: calc(100% - var(--viewer-menu-space, 0px) - env(safe-area-inset-bottom, 0px));
+  border-radius: 0;
+}
+
+/* Phone screen: the status bar and the home indicator area around the frame take the prototype's own page
+   background (viewer.ts sets it inline from the frame), not the black stage. */
+.viewer[data-phone] {
+  background: var(--ds-background-base);
 }
 
 /* Mockup mode. The stage keeps the main page's black but not its glow: nothing competes with the prototype. */

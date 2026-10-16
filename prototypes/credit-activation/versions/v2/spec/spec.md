@@ -266,3 +266,13 @@ The TUI tokens round the tracking differently (Heading M -0.45, Heading L 0.4, 1
 properties (`--tracking-*`) and points `.t-heading-s` at the text family. SF Pro is not embedded (Apple license):
 the stacks try `SF Pro`, then the static `SF Pro Text` / `SF Pro Display` (`ui-rounded` for Rounded), then the
 system font; without SF Pro installed the browser falls back to Inter.
+
+## Phone screen and haptics (owner, 2026-10-16)
+
+- Phone screen (viewer full-screen mode): the page background is `--ds-background-base` (white, as in the design),
+  and the viewer paints the browser status bar and the home indicator strip below the frame with the prototype's
+  page background (and sets `theme-color` to it), not the black stage. No rounded corners.
+- Slider haptics: a light tick on every 100 000 ₽ step while a finger drags the thumb (`src/haptics.ts`).
+  `navigator.vibrate(8)` where the Vibration API exists (Android); on iOS 18+ Safari a hidden native switch
+  (`<input type="checkbox" switch>`) is toggled through its label, which plays the system selection haptic.
+  Mouse, keyboard and animated slider moves stay silent.

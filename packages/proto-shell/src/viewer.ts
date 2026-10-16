@@ -13,6 +13,7 @@ import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
 import bezelUrl from '../assets/iphone-air-space-black/frame.png?url';
 import maskUrl from '../assets/iphone-air-space-black/mask.png?url';
 import { createMenu, hideShortcut, loadRegistryPrototype, PHONE_MEDIA, pickScenario } from './menu.ts';
+import { createVariants } from './variants.ts';
 import {
   axisSearch,
   axisValues,
@@ -52,12 +53,16 @@ const menu = createMenu({
     axes = axisValues(version.axes, new URLSearchParams(axes));
     navigate(kept ?? s.route);
   },
-  axis(id, value) {
-    // Another choice is another set-up of the prototype: restart it at the start screen.
-    axes = { ...axes, [id]: value };
-    navigate(startScreen(version.routing));
-  },
+  axis: onAxis,
 });
+// Phones have no menu: versions with axes get the floating variants button there (ADR-0023).
+const variants = createVariants(onAxis);
+
+/** Another axis choice is another set-up of the prototype: restart it at the start screen. */
+function onAxis(id: string, value: string) {
+  axes = { ...axes, [id]: value };
+  navigate(startScreen(version.routing));
+}
 
 const isPhone = () => matchMedia(PHONE_MEDIA).matches;
 const mode = () => (proto.platform === 'mobile' && !isPhone() ? 'device' : 'full');
@@ -81,7 +86,9 @@ function frameSearch() {
 function syncUrl(key = currentScreen()) {
   history.replaceState(null, '', viewerUrl(slug, version.version, scenarioId, key, axes));
   document.title = `${proto.title} · ${version.version}`;
-  menu.update({ proto, version, scenario: pickScenario(version, scenarioId), axes });
+  const state = { proto, version, scenario: pickScenario(version, scenarioId), axes };
+  menu.update(state);
+  variants.update(state);
 }
 
 function navigate(key: string) {
@@ -178,7 +185,7 @@ async function start() {
   frame.title = proto.title;
   frame.allow = 'clipboard-write; fullscreen';
   watchFrame();
-  document.body.append(menu.element);
+  document.body.append(menu.element, ...variants.elements);
   hideShortcut(menu.element, [window]);
   stage.replaceChildren(frame);
   layout();

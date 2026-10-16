@@ -144,6 +144,33 @@ test('on a phone screen the prototype fills it, without design bars or the menu'
   expect(await page.locator('iframe').boundingBox()).toEqual({ x: 0, y: 0, width: 390, height: 844 });
 });
 
+test('on a phone a version with menu axes gets a floating variants button and sheet', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/p/credit-activation/?v=v2');
+  const fab = page.getByRole('button', { name: 'Варианты прототипа' });
+  await expect(fab).toBeVisible();
+  const box = (await fab.boundingBox())!;
+  expect(box.x + box.width).toBeGreaterThan(390 - 32);
+  expect(box.y + box.height).toBeGreaterThan(844 / 2);
+  await fab.click();
+  const sheet = page.getByRole('dialog', { name: 'Варианты' });
+  await expect(sheet).toBeVisible();
+  await expect(sheet.locator('.proto-menu-caption')).toHaveText(['Сценарий', 'Залог', 'Документы']);
+  await sheet.getByRole('radiogroup', { name: 'Сценарий' }).getByRole('radio', { name: 'ОК' }).click();
+  await expect(page).toHaveURL(/\?v=v2&product=ok&pledge=auto&docs=one$/);
+  await sheet.getByRole('button', { name: 'Готово' }).click();
+  await expect(sheet).toBeHidden();
+
+  // Versions without axes keep no button; wide screens keep the bottom menu instead.
+  await page.goto('/p/credit-activation/?v=v1');
+  await expect(page.locator('iframe')).toBeVisible();
+  await expect(fab).toBeHidden();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/p/credit-activation/?v=v2');
+  await expect(page.getByRole('radiogroup', { name: 'Залог' })).toBeVisible();
+  await expect(fab).toBeHidden();
+});
+
 test.describe('a phone in landscape', () => {
   test.use({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true });
 

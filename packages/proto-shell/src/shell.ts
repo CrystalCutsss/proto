@@ -13,6 +13,7 @@ import {
   pickScenario,
 } from './menu.ts';
 import shellCss from './shell.css?inline';
+import { createVariants } from './variants.ts';
 import { axisValues, currentContext, screenUrl, targetUrl } from './switch.ts';
 
 class ProtoShell extends HTMLElement {
@@ -44,6 +45,13 @@ class ProtoShell extends HTMLElement {
       return `?${q}`;
     };
 
+    /** Another choice restarts the version at its start screen, keeping the other query parameters. */
+    const onAxis = (id: string, value: string) => {
+      const q = new URLSearchParams(location.search);
+      q.set(id, value);
+      location.assign(screenUrl(p.slug, version, null, `?${q}`));
+    };
+
     const menu = createMenu({
       scenario(id) {
         const s = pickScenario(version, id);
@@ -62,20 +70,18 @@ class ProtoShell extends HTMLElement {
           ),
         );
       },
-      axis(id, value) {
-        // Another choice restarts the version at its start screen, keeping the other query parameters.
-        const q = new URLSearchParams(location.search);
-        q.set(id, value);
-        location.assign(screenUrl(p.slug, version, null, `?${q}`));
-      },
+      axis: onAxis,
     });
+    // Phones have no menu: versions with axes get the floating variants button there (ADR-0023).
+    const variants = createVariants(onAxis);
     const state = { proto: p, version, scenario, axes };
     menu.update(state);
+    variants.update(state);
     this.#root.innerHTML = `<style>${tokensCss.replaceAll(':root', ':host')}${shellCss}${menuCss}</style>`;
     const theme = document.createElement('div');
     theme.dataset.dsTheme = 'night';
     hideShortcut(menu.element, [window]);
-    theme.append(menu.element, collapsible(menu.element, menuSummary(state)));
+    theme.append(menu.element, collapsible(menu.element, menuSummary(state)), ...variants.elements);
     this.#root.append(theme);
   }
 }

@@ -106,10 +106,111 @@
   .proto-menu-pill {
     display: none;
   }
+
+  /* …except the variants sheet, opened by the floating button (ADR-0023). */
+  .proto-menu.proto-menu--sheet {
+    display: flex;
+  }
+
+  .proto-variants-fab:not([hidden]) {
+    display: inline-flex;
+  }
+}
+
+/* Floating variants button: phones only (see the media query above), above the prototype's bottom button. */
+.proto-variants-fab {
+  position: fixed;
+  z-index: 2147483000;
+  right: calc(env(safe-area-inset-right, 0) + var(--ds-space-4));
+  bottom: calc(env(safe-area-inset-bottom, 0) + var(--ds-space-12) + var(--ds-space-12));
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-space-12);
+  height: var(--ds-space-12);
+  padding: 0;
+  border: 0;
+  border-radius: var(--ds-radius-full);
+  color: var(--ds-text-primary);
+  background: var(--ds-background-overlay-glass-on-light);
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
+}
+
+.proto-variants-fab:hover {
+  background: var(--ds-state-background-overlay-glass-on-light-hover);
+}
+
+.proto-variants-fab:active {
+  transform: scale(0.94);
+}
+
+/* Variants sheet: a modal dialog docked to the bottom of the screen. */
+.proto-variants {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  margin: auto 0 0;
+  padding: var(--ds-space-4) var(--ds-space-4) calc(env(safe-area-inset-bottom, 0) + var(--ds-space-4));
+  border: 0;
+  border-radius: var(--ds-radius-xl) var(--ds-radius-xl) 0 0;
+  color: var(--ds-text-primary);
+  background: var(--ds-background-elevation-1);
+}
+
+.proto-variants::backdrop {
+  background: var(--ds-color-black-black-alpha-40);
+}
+
+.proto-variants-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ds-space-3);
+}
+
+.proto-variants-title {
+  margin: 0;
+  font-family: var(--ds-typography-heading-mobile-m-font-family);
+  font-size: var(--ds-typography-heading-mobile-m-font-size);
+  font-weight: var(--ds-typography-heading-mobile-m-font-weight);
+  line-height: var(--ds-typography-heading-mobile-m-line-height);
+}
+
+.proto-variants-done {
+  min-height: var(--ds-space-10);
+  padding: 0 var(--ds-space-2);
+  border: 0;
+  font-family: var(--ds-typography-ui-m-font-family);
+  font-size: var(--ds-typography-ui-m-font-size);
+  line-height: var(--ds-typography-ui-m-line-height);
+  color: var(--ds-text-action);
+  background: transparent;
+  cursor: pointer;
+}
+
+.proto-variants-fab:focus-visible,
+.proto-variants-done:focus-visible {
+  outline: var(--ds-border-width-focus) solid var(--ds-border-focus);
+}
+
+.proto-menu.proto-menu--sheet {
+  position: static;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--ds-space-3);
+  max-width: none;
+  padding: 0;
+  background: none;
+  backdrop-filter: none;
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .proto-menu {
+  .proto-menu,
+  .proto-variants-fab {
     transition: none;
   }
 }

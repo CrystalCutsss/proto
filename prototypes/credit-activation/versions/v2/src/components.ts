@@ -80,8 +80,8 @@ export function bottomBlock({ button, legalAbove, legalBelow, chips }: BottomBlo
         ${chips ? `<div class="chips" aria-live="polite">${chips}</div>` : ''}
         ${legalAbove ? `<p class="legal">${legalAbove}</p>` : ''}
         ${button}
-        ${legalBelow ? `<p class="legal legal--below"><span>${legalBelow}</span></p>` : ''}
-      </div>`
+      </div>
+      ${legalBelow ? `<p class="legal legal--below"><span>${legalBelow}</span></p>` : ''}`
     : '';
   const modifier = chips ? ' bottom-block--panel' : button ? ' bottom-block--fade' : '';
   return `<footer class="bottom-block${modifier}">${actions}${homeIndicator()}</footer>`;

@@ -116,7 +116,7 @@ test('a version with menu axes shows one captioned control per axis instead of s
   await expect(page).toHaveURL(/\?v=v2&product=ok&pledge=auto&docs=one$/);
   const frameUrl = () =>
     page.locator('iframe').evaluate((el) => (el as HTMLIFrameElement).contentWindow!.location.href);
-  await expect.poll(frameUrl).toMatch(/\/p\/credit-activation\/v2\/\?product=ok&pledge=auto&docs=one$/);
+  await expect.poll(frameUrl).toMatch(/\/p\/credit-activation\/v2\/\?product=ok&pledge=auto&docs=one(#\/)?$/);
   await page.getByRole('radiogroup', { name: 'Документы' }).getByRole('radio', { name: '2 дока' }).click();
   await expect(page).toHaveURL(/product=ok&pledge=auto&docs=two$/);
   // A choice replaces the iframe's document instead of adding history entries with the old axes.

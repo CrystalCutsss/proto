@@ -17,21 +17,21 @@
 
 ## Diff ratios (pointer only, fallback font)
 
-| reference | route / state | diff |
-| --- | --- | --- |
-| 01-kn-offer-auto | kn, auto, `#/` | 2.64 % |
-| 01-kn-offer-realty | kn, realty, `#/` | 2.62 % |
-| 01-ok-offer-two-pledges | ok, both, tap the realty card | 3.23 % |
-| 02-kn-options | kn, pledge on → `#/options` | 8.94 % |
-| 02c-ok-options | ok, pledge on → `#/options` | 5.56 % |
-| 03-kn-review | kn, pledge auto + package → `#/review` | 3.86 % |
-| 03-ok-review | ok, pledge auto → `#/review` | 5.69 % |
-| 03b-review-no-options | ok, nothing on, `#/review` | 7.91 % |
-| 04a-documents-one | `#/sts` | 10.00 % |
-| 04b-documents-two | docs=two `#/documents` | 6.88 % |
-| 04c-upload | docs=two `#/upload` | 9.91 % |
-| 05-documents-ready | upload → «Загрузить» → documents | 6.89 % |
-| 06-success | `#/success` | 0.76 % |
+| reference               | route / state                          | diff    |
+| ----------------------- | -------------------------------------- | ------- |
+| 01-kn-offer-auto        | kn, auto, `#/`                         | 2.64 %  |
+| 01-kn-offer-realty      | kn, realty, `#/`                       | 2.62 %  |
+| 01-ok-offer-two-pledges | ok, both, tap the realty card          | 3.23 %  |
+| 02-kn-options           | kn, pledge on → `#/options`            | 8.94 %  |
+| 02c-ok-options          | ok, pledge on → `#/options`            | 5.56 %  |
+| 03-kn-review            | kn, pledge auto + package → `#/review` | 3.86 %  |
+| 03-ok-review            | ok, pledge auto → `#/review`           | 5.69 %  |
+| 03b-review-no-options   | ok, nothing on, `#/review`             | 7.91 %  |
+| 04a-documents-one       | `#/sts`                                | 10.00 % |
+| 04b-documents-two       | docs=two `#/documents`                 | 6.88 %  |
+| 04c-upload              | docs=two `#/upload`                    | 9.91 %  |
+| 05-documents-ready      | upload → «Загрузить» → documents       | 6.89 %  |
+| 06-success              | `#/success`                            | 0.76 %  |
 
 ## Findings (ranked)
 
@@ -51,7 +51,7 @@
      now 8 px too large (ref 185→242, actual 177→242).
    - `#/options`: the first card is 16 px too high (radio ref 221, actual 205 in `02c`). After padding-top
      16 it still needs 8 px more gap between the title and the first card.
-   Evidence: `cmp-02c-ok-options.png`, `cmp-03-kn-review.png`.
+     Evidence: `cmp-02c-ok-options.png`, `cmp-03-kn-review.png`.
 3. **Card-large (pledge cards on `#/`, option cards on `#/options`): the description sits 4 px low, so each card
    is 4 px too tall.** Description ink ref 456–469, actual 460–473. Badges ref 485–512, actual 489–516. With two
    pledges (`01-ok`) this adds up to +8 px: the content is 923 px tall in a 915 px frame. `02c`: card 2 is −12
@@ -74,17 +74,17 @@
      The design text box ends at about x 300–320 px; the actual one ends at x 339.
    - Gaps are about 5–7 px smaller: title row to first check row 46 → 41, last row to «Изменить пакет» 58 → 51
      (reference rescaled ×1.14, ±1 px).
-   Fix: centre the check vertically (`align-items: center`) and check the 16 px icon box/glyph size. Add
-   right padding (about 24–40 px) to `.check-rows` and re-read the row geometry in Figma
-   (42:2979). Evidence: `cmp-02-kn-options.png`, `02-kn-options-812.png`.
+     Fix: centre the check vertically (`align-items: center`) and check the 16 px icon box/glyph size. Add
+     right padding (about 24–40 px) to `.check-rows` and re-read the row geometry in Figma
+     (42:2979). Evidence: `cmp-02-kn-options.png`, `02-kn-options-812.png`.
 7. **`#/review`: rows are 4–5 px shorter than in the design.**
    - «Сумма и платеж» rows: pitch ref 61 px (caption 285 → 346), actual 56 (287 → 343). Caption-to-value
      spacing (ink top to ink top): ref 20, actual 16.
    - «Залог и условия» avatar rows: pitch ref 60 (542/602/662), actual 56 (542/598).
    - Computed `.row` is `min-height: 56px`, caption 13/16, value 17/20. In the design rows are about 60 px (value
      line height 24, or 10 px vertical padding).
-   Fix: value line height `--ds-typography-body-l-line-height` (24) or `.row` min-height 60.
-   Evidence: `cmp-03-kn-review.png`, `cmp-03-ok-review.png`.
+     Fix: value line height `--ds-typography-body-l-line-height` (24) or `.row` min-height 60.
+     Evidence: `cmp-03-kn-review.png`, `cmp-03-ok-review.png`.
 8. **`#/options` panel: 3 px taller and chips 2 px taller.** Divider ref y 680, actual 677. Chips ref ≈30 px
    (696–725), actual 32 (694–725, as the spec says). The button position matches (742–797). Minor. Evidence:
    `cmp-02c-ok-options.png`.
@@ -124,7 +124,7 @@
 ## Viewer, 1440×1000 (`/p/credit-activation/?v=v2`)
 
 - iPhone mockup on a black stage. The glow is gone: `.viewer[data-mode='device'].ds-stage::before { content:
-  none }`, so the pseudo-element with `stage-glow.webp` is not generated.
+none }`, so the pseudo-element with `stage-glow.webp` is not generated.
 - The menu has three captioned segmented controls «Сценарий / Залог / Документы» (КН|ОК, Авто|Недвижимость|2
   залога, 1 док|2 дока). There are no version or screen menus.
 - Switching to ОК / 2 залога / 2 дока reloads the iframe with `?product=ok&pledge=both&docs=two`.
@@ -135,3 +135,28 @@
 
 **minor differences.** Nothing is structurally wrong, but four systematic spacing issues are worth fixing before
 review: items 1–3 and 7, which are 4–16 px offsets. Items 4 and 5 are design or spec conflicts for the owner.
+
+## Round 1 fixes (prototype-builder, 2026-10-16)
+
+Re-captured with the same script and settings (fresh `pnpm site:build`, `createSiteServer`, reduced motion, 1x),
+same file names in `qa/visual/` (`*.png`, `*-812.png`, `cmp-*.png`, `results.json`) and `qa/diff/`. After
+values are DOM box positions (y px) at the same states; "before" values are the ones measured above.
+
+| #   | Item                                                                                            | Before                                                                                       | After                                                                                                                                                                           |
+| --- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Bottom block with legal below (`#/review` без опций, `#/sts`, `#/documents`, `#/upload`, ready) | button 674–729; legal pitch 18; button → home indicator 49                                   | button 658–714; legal pitch 16 (ui-s line height); legal block 714–778 = 64 px, text centred; indicator 778                                                                     |
+| 2   | Large title `#/options`, `#/review`                                                             | padding-top 8 (title ink 102–103 vs ref 111)                                                 | padding-top 16 (+8: review `h1` box 96 → 104); review bottom padding 28 → 20, card stays (card top 222); options: first radio 205 → 221 (ref 221), radios 221 / 369 / 537       |
+| 3   | Card-large header                                                                               | bottom padding 12, header 52 px; two-pledge offer 923 px tall in 915                         | bottom padding 8, header 48 px; offer content 915 px (= frame)                                                                                                                  |
+| 4   | КН package card                                                                                 | check 9 px ink, top-aligned; text column to x 339; title → rows / rows → button 5–7 px tight | glyph box 17 px (11 px ink), centred on the row (row 261–317, glyph centre 289.5); text column ends at x 311 (`check-rows` padding-right 32); +9 px above the rows, +8 px below |
+| 5   | Review rows                                                                                     | pitch 56                                                                                     | pitch 60 (`.row` min-height 60, value line height body-l 24): rows 274 / 334, 542 / 602                                                                                         |
+| 6   | Offer two pledges at 812: fade                                                                  | —                                                                                            | Already present: `bottom-block--fade::before` 24 px gradient, y 698–722, the badges of the second card fade under it; the sharp edge at 722 is the button's top. No change      |
+| 7   | Options panel / chips; documents badges                                                         | divider 677, chips 32 (694–725); doc badges 28, cards 128 / 145                              | divider 679 (ref 680), chips 30 (696–726); doc badges 30 (`.badge--doc`), cards 130 / 148 (ref 130 / 148)                                                                       |
+| 8   | 2 залога radiogroup (a11y)                                                                      | both radios tabindex 0                                                                       | roving: checked 0, other −1; none checked → both 0                                                                                                                              |
+
+Diff ratios after the fixes (before → after): 01-kn-offer-auto 2.64 → 2.36, 01-kn-offer-realty
+2.62 → 2.24, 01-ok-offer-two-pledges 3.23 → 2.50, 02-kn-options 8.94 → 6.64, 02c-ok-options 5.56 → 3.07,
+03-kn-review 3.86 → 3.58, 03-ok-review 5.69 → 5.39, 03b-review-no-options 7.91 → 2.90, 04a-documents-one
+10.00 → 5.83, 04b-documents-two 6.88 → 2.56, 04c-upload 9.91 → 5.84, 05-documents-ready 6.89 → 2.57,
+06-success 0.76 → 0.76. No console errors or external requests.
+
+Unchanged by request: slider linear mapping (item 4), payment chip colour rule (item 5), hover colour (item 11).

@@ -6,14 +6,14 @@ query parameters), live slider / pledge / options / fee logic, two document flow
 
 ## Steps
 
-| Step         | Status  | Notes                                                                                           |
-| ------------ | ------- | ----------------------------------------------------------------------------------------------- |
-| 0. Prepare   | done    | `pnpm proto:version credit-activation` (base v1); references in `design-input/figma`, new icons |
-| 1. Spec      | done    | `spec/spec.md`                                                                                  |
-| 2. Build     | pending | prototype-builder                                                                               |
-| 3. Review    | pending | code-reviewer                                                                                   |
-| 4. Visual QA | pending | visual-qa                                                                                       |
-| 5. Finish    | pending |                                                                                                 |
+| Step         | Status       | Notes                                                                                           |
+| ------------ | ------------ | ----------------------------------------------------------------------------------------------- |
+| 0. Prepare   | done         | `pnpm proto:version credit-activation` (base v1); references in `design-input/figma`, new icons |
+| 1. Spec      | done         | `spec/spec.md`                                                                                  |
+| 2. Build     | done         | prototype-builder: config/calc/state, route-based nav, 7 screens, tests; fix round 1 applied    |
+| 3. Review    | done         | code-reviewer; a11y nit (roving tabindex for 2 залога) fixed in round 1                         |
+| 4. Visual QA | round 1 done | `qa/visual-qa.md`; round 1 fixes and re-capture in «Round 1 fixes»                              |
+| 5. Finish    | pending      |                                                                                                 |
 
 ## Build (step 2)
 

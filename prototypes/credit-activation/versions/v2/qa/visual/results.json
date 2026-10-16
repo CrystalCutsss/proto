@@ -8,7 +8,7 @@
       "scrollH": 812,
       "clientH": 812,
       "fonts": [],
-      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 8026 (2.64%)\n  y 160–192: 11.26%\n  y 192–224: 10.88%\n  y 800–812: 9.36%\n  y 448–480: 6.68%\n  y 480–512: 5.98%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/01-kn-offer-auto.png"
+      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 7190 (2.36%)\n  y 160–192: 11.26%\n  y 192–224: 10.88%\n  y 800–812: 9.36%\n  y 128–160: 5.43%\n  y 0–32: 5.13%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/01-kn-offer-auto.png"
     },
     {
       "name": "01-kn-offer-realty",
@@ -18,37 +18,37 @@
       "scrollH": 812,
       "clientH": 812,
       "fonts": [],
-      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 7981 (2.62%)\n  y 160–192: 11.26%\n  y 192–224: 10.88%\n  y 800–812: 9.36%\n  y 480–512: 7.45%\n  y 512–544: 5.99%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/01-kn-offer-realty.png"
+      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 6821 (2.24%)\n  y 160–192: 11.26%\n  y 192–224: 10.88%\n  y 800–812: 9.36%\n  y 128–160: 5.43%\n  y 0–32: 5.13%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/01-kn-offer-realty.png"
     },
     {
       "name": "01-ok-offer-two-pledges",
       "scale": "1.0000",
       "refH": 915,
       "route": "#/",
-      "scrollH": 923,
+      "scrollH": 915,
       "clientH": 915,
       "fonts": [],
-      "diff": "compared 375×915 (reference 375×915, actual 375×915)\ndifferent pixels: 11093 (3.23%)\n  y 160–192: 11.49%\n  y 192–224: 10.57%\n  y 896–915: 7.20%\n  y 704–736: 6.99%\n  y 672–704: 6.52%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/01-ok-offer-two-pledges.png"
+      "diff": "compared 375×915 (reference 375×915, actual 375×915)\ndifferent pixels: 8584 (2.50%)\n  y 160–192: 11.49%\n  y 192–224: 10.57%\n  y 896–915: 7.20%\n  y 128–160: 5.43%\n  y 0–32: 5.13%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/01-ok-offer-two-pledges.png"
     },
     {
       "name": "02-kn-options",
       "scale": "1.1399",
       "refH": 1159,
       "route": "#/options",
-      "scrollH": 1159,
+      "scrollH": 1162,
       "clientH": 1159,
       "fonts": [],
-      "diff": "compared 375×1159 (reference 375×1159, actual 375×1159)\ndifferent pixels: 38866 (8.94%)\n  y 1024–1056: 27.22%\n  y 96–128: 22.57%\n  y 1152–1159: 21.22%\n  y 704–736: 20.79%\n  y 864–896: 18.01%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/02-kn-options.png"
+      "diff": "compared 375×1159 (reference 375×1159, actual 375×1159)\ndifferent pixels: 28857 (6.64%)\n  y 1024–1056: 26.72%\n  y 1152–1159: 21.22%\n  y 704–736: 15.85%\n  y 736–768: 15.01%\n  y 384–416: 14.22%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/02-kn-options.png"
     },
     {
       "name": "02c-ok-options",
       "scale": "1.0000",
       "refH": 832,
       "route": "#/options",
-      "scrollH": 832,
+      "scrollH": 833,
       "clientH": 832,
       "fonts": [],
-      "diff": "compared 375×832 (reference 375×832, actual 375×832)\ndifferent pixels: 17342 (5.56%)\n  y 96–128: 20.28%\n  y 352–384: 13.31%\n  y 128–160: 12.39%\n  y 224–256: 12.28%\n  y 384–416: 11.38%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/02c-ok-options.png"
+      "diff": "compared 375×832 (reference 375×832, actual 375×832)\ndifferent pixels: 9592 (3.07%)\n  y 96–128: 10.45%\n  y 256–288: 8.70%\n  y 128–160: 8.37%\n  y 544–576: 5.89%\n  y 384–416: 5.32%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/02c-ok-options.png"
     },
     {
       "name": "03-kn-review",
@@ -58,7 +58,7 @@
       "scrollH": 1014,
       "clientH": 1014,
       "fonts": [],
-      "diff": "compared 375×1014 (reference 375×1014, actual 375×1014)\ndifferent pixels: 14663 (3.86%)\n  y 608–640: 14.39%\n  y 160–192: 12.86%\n  y 128–160: 11.55%\n  y 96–128: 10.08%\n  y 544–576: 9.53%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/03-kn-review.png"
+      "diff": "compared 375×1014 (reference 375×1014, actual 375×1014)\ndifferent pixels: 13605 (3.58%)\n  y 608–640: 13.03%\n  y 544–576: 11.05%\n  y 672–704: 9.05%\n  y 768–800: 8.08%\n  y 992–1014: 6.46%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/03-kn-review.png"
     },
     {
       "name": "03-ok-review",
@@ -68,17 +68,17 @@
       "scrollH": 1069,
       "clientH": 1069,
       "fonts": [],
-      "diff": "compared 375×1069 (reference 375×1069, actual 375×1069)\ndifferent pixels: 22808 (5.69%)\n  y 160–192: 15.53%\n  y 1056–1069: 13.60%\n  y 672–704: 13.27%\n  y 608–640: 12.98%\n  y 128–160: 11.38%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/03-ok-review.png"
+      "diff": "compared 375×1069 (reference 375×1069, actual 375×1069)\ndifferent pixels: 21605 (5.39%)\n  y 608–640: 17.31%\n  y 1056–1069: 13.60%\n  y 672–704: 12.74%\n  y 160–192: 9.01%\n  y 864–896: 8.89%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/03-ok-review.png"
     },
     {
       "name": "03b-review-no-options",
       "scale": "1.0000",
       "refH": 812,
       "route": "#/review",
-      "scrollH": 812,
+      "scrollH": 820,
       "clientH": 812,
       "fonts": [],
-      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 24078 (7.91%)\n  y 704–736: 46.48%\n  y 640–672: 38.83%\n  y 736–768: 17.59%\n  y 160–192: 12.86%\n  y 128–160: 11.55%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/03b-review-no-options.png"
+      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 8834 (2.90%)\n  y 800–812: 9.36%\n  y 576–608: 7.44%\n  y 736–768: 7.01%\n  y 480–512: 6.37%\n  y 160–192: 5.83%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/03b-review-no-options.png"
     },
     {
       "name": "04a-documents-one",
@@ -88,7 +88,7 @@
       "scrollH": 812,
       "clientH": 812,
       "fonts": [],
-      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 30460 (10.00%)\n  y 704–736: 46.48%\n  y 640–672: 38.83%\n  y 320–352: 17.71%\n  y 736–768: 17.59%\n  y 352–384: 15.18%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/04a-documents-one.png"
+      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 17748 (5.83%)\n  y 320–352: 17.71%\n  y 352–384: 15.18%\n  y 128–160: 12.47%\n  y 256–288: 12.01%\n  y 96–128: 10.77%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/04a-documents-one.png"
     },
     {
       "name": "04b-documents-two",
@@ -98,7 +98,7 @@
       "scrollH": 812,
       "clientH": 812,
       "fonts": [],
-      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 20955 (6.88%)\n  y 704–736: 46.48%\n  y 640–672: 38.83%\n  y 736–768: 17.59%\n  y 96–128: 12.97%\n  y 352–384: 10.88%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/04b-documents-two.png"
+      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 7785 (2.56%)\n  y 96–128: 12.97%\n  y 352–384: 10.55%\n  y 800–812: 9.36%\n  y 192–224: 7.21%\n  y 736–768: 7.01%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/04b-documents-two.png"
     },
     {
       "name": "04c-upload",
@@ -108,7 +108,7 @@
       "scrollH": 812,
       "clientH": 812,
       "fonts": [],
-      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 30189 (9.91%)\n  y 704–736: 46.01%\n  y 640–672: 38.83%\n  y 320–352: 17.71%\n  y 736–768: 17.59%\n  y 352–384: 15.18%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/04c-upload.png"
+      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 17768 (5.84%)\n  y 320–352: 17.71%\n  y 352–384: 15.18%\n  y 128–160: 12.47%\n  y 256–288: 12.01%\n  y 96–128: 10.77%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/04c-upload.png"
     },
     {
       "name": "05-documents-ready",
@@ -118,7 +118,7 @@
       "scrollH": 812,
       "clientH": 812,
       "fonts": [],
-      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 20984 (6.89%)\n  y 704–736: 46.48%\n  y 640–672: 38.83%\n  y 736–768: 17.59%\n  y 96–128: 12.97%\n  y 352–384: 10.88%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/05-documents-ready.png"
+      "diff": "compared 375×812 (reference 375×812, actual 375×812)\ndifferent pixels: 7839 (2.57%)\n  y 96–128: 12.97%\n  y 352–384: 10.55%\n  y 800–812: 9.36%\n  y 192–224: 7.21%\n  y 736–768: 7.01%\ndiff image: /home/user/proto/prototypes/credit-activation/versions/v2/qa/diff/05-documents-ready.png"
     },
     {
       "name": "06-success",

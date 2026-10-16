@@ -15,8 +15,8 @@ const DOCS = [
 
 const status = (id: string) =>
   state.docsUploaded
-    ? `<span class="badge badge--positive"><span class="badge__label">Загружено</span></span>`
-    : `<button type="button" class="badge badge--action" data-action="next" aria-describedby="${id}-title"><span class="badge__label">Загрузить</span></button>`;
+    ? `<span class="badge badge--doc badge--positive"><span class="badge__label">Загружено</span></span>`
+    : `<button type="button" class="badge badge--doc badge--action" data-action="next" aria-describedby="${id}-title"><span class="badge__label">Загрузить</span></button>`;
 
 const docCard = (doc: (typeof DOCS)[number]) => `
   <section class="doc-card" aria-labelledby="${doc.id}-title">

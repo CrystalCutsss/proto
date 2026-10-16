@@ -11,7 +11,7 @@ const valueRow = (caption: string, value: string) => `
   <div class="row">
     <div class="row__text">
       <span class="t-ui-s text-secondary">${caption}</span>
-      <span class="t-body-l">${value}</span>
+      <span class="row__value t-body-l">${value}</span>
     </div>
   </div>`;
 

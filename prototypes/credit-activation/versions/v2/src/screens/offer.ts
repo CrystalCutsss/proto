@@ -79,8 +79,12 @@ function render(root: HTMLElement, withSlider = true): void {
     root.querySelector<HTMLInputElement>('.slider__input')!.value = String(state.slider);
     drawSlider(root, state.slider);
   }
-  root.querySelectorAll<HTMLElement>('.card-large__control').forEach((control) => {
-    setCardChecked(control, control.dataset.choice === state.pledge);
+  const controls = root.querySelectorAll<HTMLElement>('.card-large__control');
+  controls.forEach((control) => {
+    const checked = control.dataset.choice === state.pledge;
+    setCardChecked(control, checked);
+    // Radiogroup (2 залога): roving tabindex — only the checked radio is in the tab order, both when none is.
+    if (controls.length > 1) control.tabIndex = checked || state.pledge === null ? 0 : -1;
   });
   const c = choice();
   const payment = root.querySelector('[data-value="payment"]');

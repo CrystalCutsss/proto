@@ -438,17 +438,18 @@ body {
   margin: 0;
   font-family: var(--ds-typography-ui-s-font-family);
   font-size: var(--ds-typography-ui-s-font-size);
-  line-height: var(--ds-font-line-height-x4-5);
+  line-height: var(--ds-typography-ui-s-line-height);
   letter-spacing: var(--ds-typography-ui-s-letter-spacing);
   color: var(--ds-text-secondary);
   text-align: center;
 }
 
 .legal--below {
+  /* 64 px between the button and the home indicator, the text centred in it (design: 65). */
   display: grid;
   place-items: center;
-  min-height: var(--ds-space-12);
-  margin-top: calc(var(--ds-space-3) * -1);
+  min-height: calc(var(--ds-space-12) + var(--ds-space-4));
+  padding: 0 var(--side);
 }
 
 .home-indicator {
@@ -709,8 +710,13 @@ body {
   background: var(--ds-background-neutral-2);
 }
 
+/* Badges on #/documents are 30 px tall in the design. */
+.badge--doc {
+  height: 30px;
+}
+
 .chip {
-  height: 32px;
+  height: 30px;
   padding: 0 calc(var(--ds-space-2) + var(--ds-border-width-thin) * -1);
   color: var(--ds-text-primary);
   background: var(--ds-background-base);
@@ -790,7 +796,7 @@ body {
   display: flex;
   gap: var(--ds-space-4);
   align-items: flex-start;
-  padding: var(--ds-space-4) var(--ds-space-4) var(--ds-space-3) var(--ds-space-5);
+  padding: var(--ds-space-4) var(--ds-space-4) var(--ds-space-2) var(--ds-space-5);
 }
 
 .card-large__title {
@@ -832,13 +838,15 @@ body {
 }
 
 .check-rows {
+  /* Narrower text column and the gaps of the design (42:2979): 9 px more above, 8 px below, 32 px right. */
   display: block;
-  padding-right: var(--ds-space-1);
+  padding: calc(var(--ds-space-2) + var(--ds-border-width-thin)) var(--ds-space-8) var(--ds-space-2) 0;
 }
 
 .check-row {
   display: flex;
   gap: var(--ds-space-4);
+  align-items: center;
   padding: var(--ds-space-2) var(--ds-space-4);
 }
 
@@ -847,12 +855,12 @@ body {
   flex: none;
   place-items: center;
   width: 24px;
-  height: 20px; /* one text line */
 }
 
+/* check-medium.svg draws a 9 px tall glyph in its 14 px box; 17 px makes it 11 px, as in the design. */
 .check-row__glyph {
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
   color: var(--ds-text-positive);
 }
 
@@ -885,7 +893,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: calc(var(--ds-space-1) * 1.5);
-  padding-bottom: calc(var(--ds-space-4) + var(--ds-space-3));
+  padding-top: var(--ds-space-4);
+  padding-bottom: var(--ds-space-5);
 }
 
 .large-title--documents {
@@ -893,7 +902,8 @@ body {
 }
 
 .large-title--options {
-  padding-bottom: 0;
+  padding-top: var(--ds-space-4);
+  padding-bottom: var(--ds-space-2);
 }
 
 .large-title--docs {
@@ -923,7 +933,7 @@ body {
   display: flex;
   gap: var(--ds-space-4);
   align-items: center;
-  min-height: 56px;
+  min-height: 60px;
   padding: 0 var(--ds-space-5);
 }
 
@@ -932,6 +942,11 @@ body {
   flex: 1;
   flex-direction: column;
   padding: var(--ds-space-2) 0;
+}
+
+/* Value rows of «Сумма и платеж»: body-l on its own 24 px line, as in the design (rows 60 px apart). */
+.row__value {
+  line-height: var(--ds-typography-body-l-line-height);
 }
 
 .avatar {

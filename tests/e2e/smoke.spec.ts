@@ -275,6 +275,34 @@ test('pilot flow pushes screens with the yellow button and pops them back', asyn
   await expect(top.getByRole('heading', { name: /Одобрили кредит/ })).toBeVisible();
 });
 
+test('credit-activation v3: the heavy path through documents and the direct path to light conditions', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/p/credit-activation/v3/?shell=0#/');
+  const top = page.locator('section:not([inert])');
+  await top.getByRole('button', { name: /Увеличить лимит/ }).click();
+  await expect(page).toHaveURL(/#\/heavy$/);
+  await expect(top.getByRole('heading', { name: 'Как хотите увеличить лимит' })).toBeVisible();
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/review$/);
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/documents$/);
+  await top.getByRole('button', { name: 'Получить деньги' }).click();
+  await expect(page).toHaveURL(/#\/light$/);
+  await expect(top.getByRole('heading', { name: 'Выберите улучшения условий' })).toBeVisible();
+  await top.getByRole('button', { name: 'Получить деньги' }).click();
+  await expect(page).toHaveURL(/#\/success$/);
+  await expect(top.getByRole('heading', { name: /Зачисляем/ })).toBeVisible();
+  await top.getByRole('button', { name: 'К счету' }).click();
+  await expect(page).toHaveURL(/#\/$/);
+
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/light$/);
+  await top.getByRole('button', { name: 'Назад' }).click();
+  await expect(page).toHaveURL(/#\/$/);
+});
+
 test('versions ship a web app manifest and home-screen icons (ADR-0019)', async ({ page }) => {
   await page.goto('/p/credit-activation/v1/?shell=0#/');
   const href = await page.locator('link[rel="manifest"]').getAttribute('href');

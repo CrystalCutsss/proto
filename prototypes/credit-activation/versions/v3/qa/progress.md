@@ -145,3 +145,10 @@ Defaults the builder follows until answered are in `spec/spec.md`.
   uploaded and pop back». Which label?
 - Totals: the design's success amount 8 000 000 ₽ and the `#/light` chip 4 000 000 ₽ are mock values; v3 shows
   the computed total (e.g. 7 000 000 ₽ with the pledge only).
+
+## Owner review after merge (PR #31, 2026-10-20)
+
+- Accepted as built: the formula payment on `#/` (Q1), green badges on checked cards (Q5), the two «Снизим комиссию»
+  cards exclusive (Q3), one upload marks both documents, 8 px title → description in the option cards.
+- Change: `#/documents` yellow button «Дальше» (not «Получить деньги»); «Получить деньги» only on `#/light`. The
+  legal line «Нажимая «Получить деньги»…» moved from `#/documents` and `#/upload` to `#/light` (owner's choice).

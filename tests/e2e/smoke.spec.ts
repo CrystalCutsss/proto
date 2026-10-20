@@ -297,7 +297,9 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await expect(page).toHaveURL(/#\/documents$/);
   // As in v2, the upload screen sends both documents at once.
   await expect(page.locator('[data-route="#/documents"]').getByText('Загружено')).toHaveCount(2);
-  await top.getByRole('button', { name: 'Получить деньги' }).click();
+  // «Получить деньги» lives only on the light conditions screen.
+  await expect(top.getByRole('button', { name: 'Получить деньги' })).toHaveCount(0);
+  await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/light$/);
   await expect(top.getByRole('heading', { name: 'Выберите улучшения условий' })).toBeVisible();
   await top.getByRole('button', { name: 'Получить деньги' }).click();

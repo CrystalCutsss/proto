@@ -1,6 +1,7 @@
 // #/documents — «Загрузите документы»: always the two documents (owner, Q10). The «Загрузить» badges push
-// #/upload; after «Загрузить» there both show «Загружено». «Получить деньги» always pushes #/light (owner, Q11).
-import { LEGAL, bottomBlock, primaryButton, pushRoute, topBars } from '../components';
+// #/upload; after «Загрузить» there both show «Загружено». «Дальше» always pushes #/light (owner, Q11);
+// «Получить деньги» and its legal line live only on #/light (owner, 2026-10-20).
+import { bottomBlock, primaryButton, pushRoute, topBars } from '../components';
 import { state } from '../state';
 import type { Screen } from './types';
 
@@ -35,7 +36,7 @@ export const documents: Screen = {
       <h1 class="large-title large-title--docs t-heading-l">Загрузите документы</h1>
       <div class="cards">${DOCS.map(docCard).join('')}</div>
     </div>
-    ${bottomBlock({ button: primaryButton('Получить деньги', 'next'), legalBelow: LEGAL })}`,
+    ${bottomBlock({ button: primaryButton('Дальше', 'next') })}`,
 
   next: () => '#/light',
 

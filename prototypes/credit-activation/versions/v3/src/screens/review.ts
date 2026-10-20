@@ -1,4 +1,5 @@
-// #/review — check the amount, the conditions that are on and the account; «Дальше» → #/documents.
+// #/review — check the amount, the conditions that are on and the account; «Дальше» → #/documents on the heavy
+// path, → #/success on the direct path (#/ → #/light → #/review, owner 2026-10-20).
 // No «Комиссия» row (owner, Q8). «Залог и условия» lists what is on; it is left out only when nothing is.
 import { formatRub, formatRubKopecks, monthlyPayment, totalAmount } from '../calc';
 import { bottomBlock, primaryButton, secondaryButton, topBars } from '../components';
@@ -78,5 +79,5 @@ export const review: Screen = {
     ${bottomBlock({ button: primaryButton('Дальше', 'next') })}`;
   },
 
-  next: () => '#/documents',
+  next: () => (state.direct ? '#/success' : '#/documents'),
 };

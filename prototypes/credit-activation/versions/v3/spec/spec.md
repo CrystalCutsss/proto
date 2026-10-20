@@ -57,7 +57,9 @@ Navigation (owner, authoritative):
 | `#/documents` | «Загрузить» badge (either card) | push `#/upload`                                         |
 | `#/upload`    | yellow button                   | mark both documents uploaded, pop to `#/documents` (v2) |
 | `#/documents` | «Дальше»                        | push `#/light`                                          |
-| `#/light`     | «Получить деньги»               | push `#/success`                                        |
+| `#/light`     | «Получить деньги» (heavy path)  | push `#/success`                                        |
+| `#/light`     | «Дальше» (direct path)          | push `#/review`                                         |
+| `#/review`    | «Дальше» (direct path)          | push `#/success`                                        |
 | `#/success`   | «К счету»                       | reset to `#/` (same as «Закрыть»)                       |
 
 Default paths for deep links (`defaultPath()` in `screens/index.ts`):
@@ -259,7 +261,9 @@ label is **«Получить деньги»** in v3 (v2: «Загрузить»
 - Sticky chips panel (152 px): «₽ 4 000 000 ₽» (neutral) · «→ 17 713 ₽ / мес» (positive) · «% 2,5%» (positive),
   live; «Получить деньги» → `#/success`. Under the button the legal line «Нажимая «Получить деньги», вы соглашаетесь
   <u>с условиями</u>. Они доступны до 16 сентября» (not drawn here; moved from the documents screens, owner
-  2026-10-20). «Получить деньги» appears only on this screen.
+  2026-10-20). «Получить деньги» appears only on this screen, and only on the heavy path. On the direct path
+  (`#/` «Дальше» → `#/light`, `state.direct`) the button is «Дальше» → `#/review` → «Дальше» → `#/success`, with
+  no legal line (owner, 2026-10-20).
 
 ### `#/success` (`07-success.png`, `60:4038`) — v2 `success.ts`, identical layout
 

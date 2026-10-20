@@ -17,9 +17,11 @@ export interface FlowState {
   docsUploaded: boolean;
   /** Names of the files chosen in the file field. */
   files: string[];
+  /** Direct path: «Дальше» on #/ went straight to #/light (→ #/review → #/success, no «Получить деньги»). */
+  direct: boolean;
 }
 
-const initial = (): FlowState => ({ ...BASE_CHOICE, docsUploaded: false, files: [] });
+const initial = (): FlowState => ({ ...BASE_CHOICE, docsUploaded: false, files: [], direct: false });
 
 export const state: FlowState = initial();
 

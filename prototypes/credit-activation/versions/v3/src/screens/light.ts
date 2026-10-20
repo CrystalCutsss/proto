@@ -1,6 +1,7 @@
 // #/light — «Выберите улучшения условий»: the package (on by default) and two «Снизим комиссию» cards, which
 // are mutually exclusive (owner, Q3: selecting one clears the other; tapping the selected one clears it). The
-// sticky panel's chips are recalculated on every toggle; «Получить деньги» pushes #/success.
+// sticky panel's chips are recalculated on every toggle; «Получить деньги» (heavy path, with the legal line) pushes #/success;
+// on the direct path (state.direct) the button is «Дальше» without the legal line and pushes #/review.
 import type { FeeCut } from '../calc';
 import {
   LEGAL,
@@ -80,13 +81,14 @@ export const light: Screen = {
         ${feeCard('half', 'До −0,5%')}
       </div>
     </div>
-    ${bottomBlock({
-      chips: chips('light'),
-      button: primaryButton('Получить деньги', 'next'),
-      legalBelow: LEGAL,
-    })}`,
+    ${bottomBlock(
+      state.direct
+        ? { chips: chips('light'), button: primaryButton('Дальше', 'next') }
+        : { chips: chips('light'), button: primaryButton('Получить деньги', 'next'), legalBelow: LEGAL },
+    )}`,
 
-  next: () => '#/success',
+  // Heavy path: «Получить деньги» (with the legal line) → #/success; direct path: «Дальше» → #/review.
+  next: () => (state.direct ? '#/review' : '#/success'),
 
   refresh(root) {
     renderCards(root, isOn);

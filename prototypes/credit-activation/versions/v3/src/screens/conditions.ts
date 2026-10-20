@@ -1,9 +1,11 @@
 // #/ — «Условия»: the approved offer (static amount and terms) and two ways forward: the card «Увеличить
-// лимит» pushes #/heavy, «Дальше» pushes #/light. The terms are the calc values of the offer before any choice
+// лимит» pushes #/heavy (heavy path), «Дальше» pushes #/light (direct path: #/light → #/review → #/success with
+// «Дальше» everywhere, owner 2026-10-20). The terms are the calc values of the offer before any choice
 // (owner, Q1), so «Платеж в месяц» is the formula value at 4 000 000 ₽, not the drawn 193 500 ₽.
 import { AMOUNT, BASE_CHOICE, BASE_FEE, formatPercent, formatRub, monthlyPayment } from '../calc';
 import { bottomBlock, infoCard, primaryButton, pushRoute, topBars } from '../components';
 import { icon } from '../icons';
+import { state } from '../state';
 import type { Screen } from './types';
 
 const limitCard = () => `
@@ -38,4 +40,8 @@ export const conditions: Screen = {
     ${bottomBlock({ button: primaryButton('Дальше', 'next') })}`,
 
   next: () => '#/light',
+
+  beforeAction(control) {
+    state.direct = control.dataset.action === 'next';
+  },
 };

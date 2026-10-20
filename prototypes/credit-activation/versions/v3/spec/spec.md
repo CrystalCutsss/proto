@@ -11,10 +11,10 @@ border with a 40 px corner radius that is NOT part of the UI (crop 4 px on every
 | `00-flow.png`       | section «V4» `60:3874` (2048 px wide) | 3033 × 1196     | —             |
 | `01-conditions.png` | «Условия» `60:3875`                   | 375 × 812       | `#/`          |
 | `02-heavy.png`      | «Тяжелые» `60:3905`                   | 375 × 812       | `#/heavy`     |
-| `03-review.png`     | «Проверка условий» `60:4042`          | 375 × 1012      | `#/review`    |
+| `03-review.png`     | «Проверка условий» `65:5511`          | 375 × 1012      | `#/review`    |
 | `04-documents.png`  | «Несколько документов» `60:4010`      | 375 × 812       | `#/documents` |
 | `05-upload.png`     | «Загрузка документов» `60:4022`       | 375 × 812       | `#/upload`    |
-| `06-light.png`      | «Легкие» `60:3965`                    | 375 × 1028      | `#/light`     |
+| `06-light.png`      | «Легкие» `63:5252`                    | 375 × 1028      | `#/light`     |
 | `07-success.png`    | «Успех» `60:4038`                     | 375 × 812       | `#/success`   |
 
 `get_design_context` returns instance overrides as defaults («Title», «Header», «Label», «Replace me»): every text
@@ -52,23 +52,24 @@ Navigation (owner, authoritative):
 | ------------- | ------------------------------- | ------------------------------------------------------- |
 | `#/`          | card «Увеличить лимит»          | push `#/heavy`                                          |
 | `#/`          | «Дальше»                        | push `#/light`                                          |
-| `#/heavy`     | «Дальше»                        | push `#/review`                                         |
-| `#/review`    | «Дальше»                        | push `#/documents`                                      |
+| `#/heavy`     | «Дальше»                        | push `#/documents`                                      |
 | `#/documents` | «Загрузить» badge (either card) | push `#/upload`                                         |
 | `#/upload`    | yellow button                   | mark both documents uploaded, pop to `#/documents` (v2) |
 | `#/documents` | «Дальше»                        | push `#/light`                                          |
-| `#/light`     | «Получить деньги» (heavy path)  | push `#/success`                                        |
-| `#/light`     | «Дальше» (direct path)          | push `#/review`                                         |
-| `#/review`    | «Получить деньги» (direct path) | push `#/success`; legal line under the button           |
+| `#/light`     | «Дальше» (both paths)           | push `#/review`                                         |
+| `#/review`    | «Получить деньги» (both paths)  | push `#/success`; legal line under the button           |
 | `#/success`   | «К счету»                       | reset to `#/` (same as «Закрыть»)                       |
 
 Default paths for deep links (`defaultPath()` in `screens/index.ts`):
 
-- `#/` → `[conditions]`; `#/heavy` → `[conditions, heavy]`; `#/review` → `[…, heavy, review]`;
-  `#/documents` → `[…, review, documents]`; `#/upload` → `[…, documents, upload]`;
-- `#/light` → `[conditions, heavy, review, documents, light]` (the long path, so back from light returns to the
+- `#/` → `[conditions]`; `#/heavy` → `[conditions, heavy]`; `#/documents` → `[…, heavy, documents]`;
+  `#/upload` → `[…, documents, upload]`;
+- `#/light` → `[conditions, heavy, documents, light]` (the long path, so back from light returns to the
   documents as in the main scenario; see question Q4);
-- `#/success` → `[…, documents, light, success]`.
+- `#/review` → `[…, documents, light, review]`; `#/success` → `[…, light, review, success]`.
+
+Paths (owner, 2026-10-20): heavy `#/ → #/heavy → #/documents (+ #/upload) → #/light → #/review → #/success`;
+direct `#/ → #/light → #/review → #/success`. «Получить деньги» with the legal line is only on `#/review`.
 
 Viewer scenarios (`version.json` → `scenarios`, «Сценарий» menu on wide screens): «Тяжелые условия» → `#/`
 (the full flow) and «Сразу легкие» → `#/light` are suggested; every state is also reachable inside the prototype
@@ -211,7 +212,7 @@ SF Pro is never embedded. Line height "normal" means 17 → 20, 15 → 18, 13 �
   `#/review`.
 - `refresh(root)` re-renders cards and chips before it is uncovered (v2 pattern).
 
-### `#/review` «Проверьте, все ли верно» (`03-review.png`, `60:4042`) — maps to v2 `review.ts`
+### `#/review` «Проверьте, все ли верно» (`03-review.png`, `65:5511`, was `60:4042`) — maps to v2 `review.ts`
 
 - Top bars: back + «Закрыть». Header (`tui-header [large]` 375 × 114, px 16, py 8, 6 px gap): «Проверьте,<br />все
   ли верно» heading-l + «Условия доступны до 16 декабря 2026» body-l. Cards start 12 px below (y 222).
@@ -219,13 +220,13 @@ SF Pro is never embedded. Line height "normal" means 17 → 20, 15 → 18, 13 �
   secondary, value body-l), no «Комиссия» row (see Q8), footer secondary «График платежей». Background
   `--ds-background-base` (`tui-card-large`, radius 24, drop shadow medium).
 - Card «Залог и условия» (304 px with 3 rows), 20 px gap: avatar rows in this order, each only when on —
-  pledge → `transport-auto.svg` «Mercedes-Benz W214» / «Понадобится фото СТС»; check → `doc.svg` «Проверка данных» /
+  pledge → `transport-auto.svg` «Mercedes-Benz W214» / «Понадобится проверка» (Figma updated 2026-10-20); check → `doc.svg` «Проверка данных» /
   «Обычно занимает до&nbsp;1 рабочего дня» (not drawn, v2 text); statement → `doc.svg` «Выписка из другого банка» /
   «Обычно проверяем за 2 минуты»; package → `briefcase.svg` «Пакет «Все включено»» / «Документы не потребуются».
   Footer secondary «Как это работает». Drawn: pledge + statement + package.
 - Card «Рублевый счет» (84 px), 20 px gap: «Рублевый счет» heading-m + «Изменить» text button (action) /
   «Куда поступят деньги» body-m secondary.
-- Bottom: «Дальше» → `#/documents` (no legal text). Always this variant (no «Проверка без опций» in v3; Q9).
+- Bottom: «Получить деньги» → `#/success` with the legal line below (owner, 2026-10-20). Always this variant (no «Проверка без опций» in v3; Q9).
 
 ### `#/documents` «Загрузите документы» (`04-documents.png`, `60:4010`) — v2 `documents.ts`, identical layout
 
@@ -247,7 +248,7 @@ Same as v2 `04c-upload.png` (bullets, «Образцы обеих сторон �
 label is **«Получить деньги»** in v3 (v2: «Загрузить»). Behaviour stays v2 (marks `docsUploaded`, pops back to
 `#/documents`), per the brief; the label is Q12.
 
-### `#/light` «Выберите улучшения условий» (`06-light.png`, `60:3965`) — maps to v2 `options.ts`
+### `#/light` «Выберите улучшения условий» (`06-light.png`, `63:5252`, was `60:3965`) — maps to v2 `options.ts`
 
 - Top bars: back + «Закрыть». Large title (px 16, py 8): «Выберите улучшения условий» heading-l (2 lines).
 - Content pt 16, cards 20 px apart:
@@ -255,15 +256,12 @@ label is **«Получить деньги»** in v3 (v2: «Загрузить»
      сэкономите 10&nbsp;541&nbsp;₽», «Бесплатное обслуживание счета для бизнеса», «Без комиссии за досрочное
      погашение»; footer secondary «Изменить пакет» (visual only). No badges. Header pb 16 (v2: 8 px title → list).
      Drawn checked (default on).
-  2. «Снизим комиссию» (148 px) / «При обороте по счету для бизнеса в&nbsp;Т‑Банке от&nbsp;46&nbsp;789&nbsp;₽/мес»
-     (2 lines) / badge «% −1%». Drawn off.
-  3. «Снизим комиссию» (148 px) / same description / badge «% До −0,5%». Drawn checked.
+  2. «Снизим комиссию» (148 px) / «−1% за&nbsp;каждые 100&nbsp;000&nbsp;₽, выплаченных сотрудникам в&nbsp;месяц»
+     (2 lines, Figma updated 2026-10-20) / badge «% −1%». Drawn off.
+  3. «Снизим комиссию» (148 px) / «При обороте по счету для бизнеса в&nbsp;Т‑Банке от&nbsp;46&nbsp;789&nbsp;₽/мес»
+     / badge «% До −0,5%». Drawn checked.
 - Sticky chips panel (152 px): «₽ 4 000 000 ₽» (neutral) · «→ 17 713 ₽ / мес» (positive) · «% 2,5%» (positive),
-  live; «Получить деньги» → `#/success`. Under the button the legal line «Нажимая «Получить деньги», вы соглашаетесь
-  <u>с условиями</u>. Они доступны до 16 сентября» (not drawn here; moved from the documents screens, owner
-  2026-10-20). On the heavy path «Получить деньги» appears only on this screen. On the direct path
-  (`#/` «Дальше» → `#/light`, `state.direct`) the button is «Дальше» → `#/review`, with no legal line; there
-  «Получить деньги» with the legal line → `#/success` (owner, 2026-10-20).
+  live; «Дальше» → `#/review` on both paths, no legal line (Figma updated 2026-10-20).
 
 ### `#/success` (`07-success.png`, `60:4038`) — v2 `success.ts`, identical layout
 

@@ -1,6 +1,6 @@
 // #/heavy — «Как хотите увеличить лимит»: three independent option cards (checkbox semantics, radio look) and
 // the sticky panel whose chips (amount, payment, fee) are recalculated on every toggle. «Дальше» is always
-// enabled (owner, Q9).
+// enabled (owner, Q9) and pushes #/documents (owner, 2026-10-20).
 import { CHECK_BONUS, formatRub, PLEDGE_BONUS, STATEMENT_LIMIT } from '../calc';
 import {
   badge,
@@ -63,7 +63,7 @@ export const heavy: Screen = {
     </div>
     ${bottomBlock({ chips: chips('heavy'), button: primaryButton('Дальше', 'next') })}`,
 
-  next: () => '#/review',
+  next: () => '#/documents',
 
   refresh(root) {
     renderCards(root, (key) => state[key as Option]);

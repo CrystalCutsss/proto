@@ -1,5 +1,5 @@
-// #/review — check the amount, the conditions that are on and the account. Heavy path: «Дальше» → #/documents;
-// direct path (#/ → #/light → #/review): «Получить деньги» with the legal line → #/success (owner, 2026-10-20).
+// #/review — check the amount, the conditions that are on and the account; the last step of both paths:
+// «Получить деньги» with the legal line → #/success (owner, 2026-10-20).
 // No «Комиссия» row (owner, Q8). «Залог и условия» lists what is on; it is left out only when nothing is.
 import { formatRub, formatRubKopecks, monthlyPayment, totalAmount } from '../calc';
 import { LEGAL, bottomBlock, primaryButton, secondaryButton, topBars } from '../components';
@@ -27,7 +27,7 @@ const avatarRow = (iconName: string, title: string, text: string) => `
 /** Rows of «Залог и условия» in the spec order: pledge, check, statement, package. */
 function conditionRows(): string[] {
   const rows: string[] = [];
-  if (state.pledge) rows.push(avatarRow('transport-auto.svg', 'Mercedes-Benz W214', 'Понадобится фото СТС'));
+  if (state.pledge) rows.push(avatarRow('transport-auto.svg', 'Mercedes-Benz W214', 'Понадобится проверка'));
   if (state.check)
     rows.push(avatarRow('doc.svg', 'Проверка данных', 'Обычно занимает до&nbsp;1 рабочего дня'));
   if (state.statement)
@@ -76,12 +76,8 @@ export const review: Screen = {
         </section>
       </div>
     </div>
-    ${bottomBlock(
-      state.direct
-        ? { button: primaryButton('Получить деньги', 'next'), legalBelow: LEGAL }
-        : { button: primaryButton('Дальше', 'next') },
-    )}`;
+    ${bottomBlock({ button: primaryButton('Получить деньги', 'next'), legalBelow: LEGAL })}`;
   },
 
-  next: () => (state.direct ? '#/success' : '#/documents'),
+  next: () => '#/success',
 };

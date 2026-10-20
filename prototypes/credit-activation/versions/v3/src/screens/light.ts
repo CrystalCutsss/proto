@@ -1,11 +1,9 @@
 // #/light — «Выберите улучшения условий»: the package (on by default) and two «Снизим комиссию» cards, which
 // are mutually exclusive (owner, Q3: selecting one clears the other; tapping the selected one clears it). The
-// sticky panel's chips are recalculated on every toggle; «Получить деньги» (heavy path, with the legal line) pushes #/success;
-// on the direct path (state.direct) the button is «Дальше» without the legal line and pushes #/review, where
-// «Получить деньги» and the legal line are.
+// sticky panel's chips are recalculated on every toggle; «Дальше» (no legal line) pushes #/review on both
+// paths (owner, 2026-10-20).
 import type { FeeCut } from '../calc';
 import {
-  LEGAL,
   badge,
   badges,
   bottomBlock,
@@ -37,7 +35,10 @@ const packageRows = () => `
     ).join('')}
   </span>`;
 
-const FEE_TEXT = 'При обороте по счету для бизнеса в&nbsp;Т‑Банке от&nbsp;46&nbsp;789&nbsp;₽/мес';
+const FEE_TEXT: Record<FeeCut, string> = {
+  one: '−1% за&nbsp;каждые 100&nbsp;000&nbsp;₽, выплаченных сотрудникам в&nbsp;месяц',
+  half: 'При обороте по счету для бизнеса в&nbsp;Т‑Банке от&nbsp;46&nbsp;789&nbsp;₽/мес',
+};
 
 type Key = 'package' | FeeCut;
 
@@ -54,7 +55,7 @@ const feeCard = (key: FeeCut, label: string) =>
     choice: key,
     title: 'Снизим комиссию',
     titleText: `Снизим комиссию ${label}`,
-    description: FEE_TEXT,
+    description: FEE_TEXT[key],
     checked: isOn(key),
     body: badges(badge('percent', label)),
   });
@@ -82,14 +83,9 @@ export const light: Screen = {
         ${feeCard('half', 'До −0,5%')}
       </div>
     </div>
-    ${bottomBlock(
-      state.direct
-        ? { chips: chips('light'), button: primaryButton('Дальше', 'next') }
-        : { chips: chips('light'), button: primaryButton('Получить деньги', 'next'), legalBelow: LEGAL },
-    )}`,
+    ${bottomBlock({ chips: chips('light'), button: primaryButton('Дальше', 'next') })}`,
 
-  // Heavy path: «Получить деньги» (with the legal line) → #/success; direct path: «Дальше» → #/review.
-  next: () => (state.direct ? '#/review' : '#/success'),
+  next: () => '#/review',
 
   refresh(root) {
     renderCards(root, isOn);

@@ -17,7 +17,7 @@ export interface FlowState {
   docsUploaded: boolean;
   /** Names of the files chosen in the file field. */
   files: string[];
-  /** Direct path: «Дальше» on #/ went straight to #/light (→ #/review → #/success, no «Получить деньги»). */
+  /** Direct path: «Дальше» on #/ went straight to #/light (→ #/review «Получить деньги» → #/success). */
   direct: boolean;
 }
 

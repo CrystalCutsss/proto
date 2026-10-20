@@ -152,3 +152,6 @@ Defaults the builder follows until answered are in `spec/spec.md`.
   cards exclusive (Q3), one upload marks both documents, 8 px title → description in the option cards.
 - Change: `#/documents` yellow button «Дальше» (not «Получить деньги»); «Получить деньги» only on `#/light`. The
   legal line «Нажимая «Получить деньги»…» moved from `#/documents` and `#/upload` to `#/light` (owner's choice).
+- Change (2026-10-20): direct path `#/` «Дальше» → `#/light` «Дальше» (no legal line) → `#/review` «Дальше» →
+  `#/success`. The heavy path is unchanged. `state.direct` is set by the control pressed on `#/`; deep links take
+  the heavy path.

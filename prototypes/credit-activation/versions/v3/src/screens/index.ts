@@ -22,8 +22,8 @@ export function screenFor(hash: string): Screen {
   return SCREENS.find((screen) => screen.route === route) ?? ROOT;
 }
 
-/** The main scenario: #/ → #/heavy → #/review → #/documents → #/light → #/success. */
-const MAIN: readonly Screen[] = [conditions, heavy, review, documents, light, success];
+/** The main scenario: #/ → #/heavy → #/documents → #/light → #/review → #/success. */
+const MAIN: readonly Screen[] = [conditions, heavy, documents, light, review, success];
 
 /**
  * Default path to a screen along the main scenario; #/upload sits on top of #/documents. #/light takes the long

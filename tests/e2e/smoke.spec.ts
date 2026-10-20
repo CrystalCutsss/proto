@@ -284,11 +284,13 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/p/credit-activation/v3/?shell=0#/');
   const top = page.locator('section:not([inert])');
+  const legal = top.getByText(/Нажимая «Получить деньги»/);
+
+  // Heavy path: heavy → documents (+ upload) → light → review («Получить деньги») → success.
   await top.getByRole('button', { name: /Увеличить лимит/ }).click();
   await expect(page).toHaveURL(/#\/heavy$/);
   await expect(top.getByRole('heading', { name: 'Как хотите увеличить лимит' })).toBeVisible();
-  await top.getByRole('button', { name: 'Дальше' }).click();
-  await expect(page).toHaveURL(/#\/review$/);
+  await top.getByRole('checkbox', { name: /Оставить в залог авто/ }).click();
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/documents$/);
   await page.locator('[data-route="#/documents"]').getByRole('button', { name: 'Загрузить' }).first().click();
@@ -297,30 +299,32 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await expect(page).toHaveURL(/#\/documents$/);
   // As in v2, the upload screen sends both documents at once.
   await expect(page.locator('[data-route="#/documents"]').getByText('Загружено')).toHaveCount(2);
-  // «Получить деньги» lives only on the light conditions screen.
-  await expect(top.getByRole('button', { name: 'Получить деньги' })).toHaveCount(0);
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/light$/);
   await expect(top.getByRole('heading', { name: 'Выберите улучшения условий' })).toBeVisible();
-  await expect(top.getByText(/Нажимая «Получить деньги»/)).toBeVisible();
+  // «Получить деньги» and its legal line are only on the review screen.
+  await expect(top.getByRole('button', { name: 'Получить деньги' })).toHaveCount(0);
+  await expect(legal).toHaveCount(0);
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/review$/);
+  await expect(top.getByText('Понадобится проверка')).toBeVisible();
+  await expect(legal).toBeVisible();
   await top.getByRole('button', { name: 'Получить деньги' }).click();
   await expect(page).toHaveURL(/#\/success$/);
   await expect(top.getByRole('heading', { name: /Зачисляем/ })).toBeVisible();
   await top.getByRole('button', { name: 'К счету' }).click();
   await expect(page).toHaveURL(/#\/$/);
 
-  // Direct path: «Дальше» on light conditions (no «Получить деньги», no legal line) → review, where «Получить
-  // деньги» with the legal line → success.
+  // Direct path: light → review → success.
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/light$/);
-  await expect(top.getByRole('button', { name: 'Получить деньги' })).toHaveCount(0);
-  await expect(top.getByText(/Нажимая «Получить деньги»/)).toHaveCount(0);
+  await expect(legal).toHaveCount(0);
   await top.getByRole('button', { name: 'Назад' }).click();
   await expect(page).toHaveURL(/#\/$/);
   await top.getByRole('button', { name: 'Дальше' }).click();
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/review$/);
-  await expect(top.getByText(/Нажимая «Получить деньги»/)).toBeVisible();
+  await expect(legal).toBeVisible();
   await top.getByRole('button', { name: 'Получить деньги' }).click();
   await expect(page).toHaveURL(/#\/success$/);
   await top.getByRole('button', { name: 'К счету' }).click();

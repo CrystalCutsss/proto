@@ -156,3 +156,10 @@ Defaults the builder follows until answered are in `spec/spec.md`.
   `#/success`. The heavy path is unchanged. `state.direct` is set by the control pressed on `#/`; deep links take
   the heavy path.
 - Change (2026-10-20): on the direct path `#/review` shows «Получить деньги» with the legal line (was «Дальше»).
+- Change (2026-10-20, Figma V4 updated): heavy path reordered to `#/heavy → #/documents → #/light → #/review →
+#/success`; `#/light` «Дальше» → `#/review` on both paths; `#/review` «Получить деньги» with the legal line on both
+  paths; `state.direct` removed. Texts from the updated frames: `#/review` pledge row «Понадобится проверка»
+  (was «Понадобится фото СТС»); `#/light` −1% card «−1% за каждые 100 000 ₽, выплаченных сотрудникам в месяц».
+- Figma calls for this change (2026-10-20): `get_screenshot` 60:3874 (section diff against the intake render: only
+  «Проверка условий» and «Легкие» changed; their frames are now `65:5511` and `63:5252`), `get_metadata` 60:3874,
+  `get_screenshot` 65:5511 → `03-review.png`, 63:5252 → `06-light.png`; `00-flow.png` re-saved.

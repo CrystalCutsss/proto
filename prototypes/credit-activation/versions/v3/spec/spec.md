@@ -56,7 +56,7 @@ Navigation (owner, authoritative):
 | `#/review`    | «Дальше»                        | push `#/documents`                                      |
 | `#/documents` | «Загрузить» badge (either card) | push `#/upload`                                         |
 | `#/upload`    | yellow button                   | mark both documents uploaded, pop to `#/documents` (v2) |
-| `#/documents` | «Получить деньги»               | push `#/light`                                          |
+| `#/documents` | «Дальше»                        | push `#/light`                                          |
 | `#/light`     | «Получить деньги»               | push `#/success`                                        |
 | `#/success`   | «К счету»                       | reset to `#/` (same as «Закрыть»)                       |
 
@@ -229,18 +229,19 @@ SF Pro is never embedded. Line height "normal" means 17 → 20, 15 → 18, 13 �
 
 Compared with v2 `04b-documents-two.png`: same layout and texts (large title pt 12 pb 24; cards «Фото СТС авто» /
 «Mercedes-Benz W214, О&nbsp;7&nbsp;***&nbsp;Р» and «Гарантийное письмо» / «Загрузите бухгалтерские карточки,
-сформированные в&nbsp;1С», 20 px gap, «Загрузить» badge buttons; legal «Нажимая «Получить деньги», вы соглашаетесь
-<u>с условиями</u>. Они доступны до 16 сентября»). Differences:
+сформированные в&nbsp;1С», 20 px gap, «Загрузить» badge buttons). Differences:
 
 - always two documents (no `docs` axis); the cards never depend on what was chosen on `#/heavy` (Q10);
-- `next()`: «Загрузить» badges → `#/upload` (as v2); the yellow «Получить деньги» → `#/light` (v2: → `#/upload`
-  when not ready, `#/success` when ready). Whether it should wait for the upload is Q11;
+- `next()`: «Загрузить» badges → `#/upload` (as v2); the yellow button is **«Дальше»** → `#/light` (owner,
+  2026-10-20; the design draws «Получить деньги»), it does not wait for the upload (Q11). No legal line here: it
+  moved to `#/light` with «Получить деньги»;
 - after the upload both badges show «Загружено» (positive), as v2.
 
 ### `#/upload` «Нужны фото СТС, чтобы получить деньги» (`05-upload.png`, `60:4022`) — v2 `upload.ts` + `sts-content.ts`
 
 Same as v2 `04c-upload.png` (bullets, «Образцы обеих сторон СТС» disclosure with `sts-sample.jpg`, file field
-«Выберите файлы» / «Файлы jpg, png, heif, heic не больше 10 МБ», legal text). Only difference: the yellow button
+«Выберите файлы» / «Файлы jpg, png, heif, heic не больше 10 МБ»; the drawn legal line is not built, owner
+2026-10-20). Only difference: the yellow button
 label is **«Получить деньги»** in v3 (v2: «Загрузить»). Behaviour stays v2 (marks `docsUploaded`, pops back to
 `#/documents`), per the brief; the label is Q12.
 
@@ -256,7 +257,9 @@ label is **«Получить деньги»** in v3 (v2: «Загрузить»
      (2 lines) / badge «% −1%». Drawn off.
   3. «Снизим комиссию» (148 px) / same description / badge «% До −0,5%». Drawn checked.
 - Sticky chips panel (152 px): «₽ 4 000 000 ₽» (neutral) · «→ 17 713 ₽ / мес» (positive) · «% 2,5%» (positive),
-  live; «Получить деньги» → `#/success`. No legal text drawn.
+  live; «Получить деньги» → `#/success`. Under the button the legal line «Нажимая «Получить деньги», вы соглашаетесь
+  <u>с условиями</u>. Они доступны до 16 сентября» (not drawn here; moved from the documents screens, owner
+  2026-10-20). «Получить деньги» appears only on this screen.
 
 ### `#/success` (`07-success.png`, `60:4038`) — v2 `success.ts`, identical layout
 

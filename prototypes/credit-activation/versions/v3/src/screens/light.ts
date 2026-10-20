@@ -3,6 +3,7 @@
 // sticky panel's chips are recalculated on every toggle; «Получить деньги» pushes #/success.
 import type { FeeCut } from '../calc';
 import {
+  LEGAL,
   badge,
   badges,
   bottomBlock,
@@ -79,7 +80,11 @@ export const light: Screen = {
         ${feeCard('half', 'До −0,5%')}
       </div>
     </div>
-    ${bottomBlock({ chips: chips('light'), button: primaryButton('Получить деньги', 'next') })}`,
+    ${bottomBlock({
+      chips: chips('light'),
+      button: primaryButton('Получить деньги', 'next'),
+      legalBelow: LEGAL,
+    })}`,
 
   next: () => '#/success',
 

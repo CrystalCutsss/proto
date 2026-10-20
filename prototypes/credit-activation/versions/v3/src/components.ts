@@ -3,7 +3,7 @@ import { duration, ease, gsap, prefersReducedMotion } from '@proto/motion';
 import type { Tone } from './calc';
 import { icon, maskStyle } from './icons';
 
-/** Legal line under «Получить деньги» (and under «Загрузить», as drawn). */
+/** Legal line under «Получить деньги» on #/light, the only screen with that button (owner, 2026-10-20). */
 export const LEGAL =
   'Нажимая «Получить деньги», вы соглашаетесь <u>с&nbsp;условиями</u>. Они доступны до 16&nbsp;сентября';
 

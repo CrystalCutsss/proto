@@ -165,3 +165,6 @@ Defaults the builder follows until answered are in `spec/spec.md`.
   `get_screenshot` 65:5511 → `03-review.png`, 63:5252 → `06-light.png`; `00-flow.png` re-saved.
 - Change (2026-10-20): the two «Снизим комиссию» cards on `#/light` are independent checkboxes and add up (−1 and
   −0,5 pp → −1,5 pp); replaces Q3. `Choice.feeCut` → `feeCuts` (list).
+- Change (2026-10-20, Figma V4 updated): `#/` card «Увеличить лимит» subtitle «До 9 млн ₽ с условиями» (was «При
+  выполнении условий»); the frame is now `68:5777`. Figma calls: `get_screenshot` 60:3875 (not found),
+  `get_metadata` 60:3874, `get_screenshot` 68:5777 → `01-conditions.png`; nothing else on the screen changed.

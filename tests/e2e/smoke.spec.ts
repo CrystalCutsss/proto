@@ -287,6 +287,9 @@ test('credit-activation v3: the heavy path through documents and the direct path
   const legal = top.getByText(/Нажимая «Получить деньги»/);
 
   // Heavy path: heavy → documents (+ upload) → light → review («Получить деньги») → success.
+  await expect(top.getByRole('button', { name: /Увеличить лимит/ })).toContainText(
+    'До 9\u00a0млн\u00a0₽ с\u00a0условиями',
+  );
   await top.getByRole('button', { name: /Увеличить лимит/ }).click();
   await expect(page).toHaveURL(/#\/heavy$/);
   await expect(top.getByRole('heading', { name: 'Как хотите увеличить лимит' })).toBeVisible();

@@ -9,6 +9,7 @@ import {
   createMenu,
   hideShortcut,
   loadRegistryPrototype,
+  menuAxes,
   menuSummary,
   pickScenario,
 } from './menu.ts';
@@ -38,6 +39,8 @@ class ProtoShell extends HTMLElement {
     const params = new URLSearchParams(location.search);
     const scenario = pickScenario(version, params.get('s'));
     const axes = axisValues(version.axes, params);
+    // Axis choices stay in the query across versions, so a version without axes shows them greyed out.
+    const keptAxes = axisValues(menuAxes(p, version).axes, params);
     // Next pages keep the query (?proto-display=standalone in tests) and remember the scenario.
     const search = (s: string) => {
       const q = new URLSearchParams(location.search);
@@ -52,29 +55,32 @@ class ProtoShell extends HTMLElement {
       location.assign(screenUrl(p.slug, version, null, `?${q}`));
     };
 
-    const menu = createMenu({
-      scenario(id) {
+    const onVersion = (v: string) => {
+      const target = p.versions.find((x) => x.version === v);
+      if (!target) return;
+      const s = pickScenario(target, scenario.id);
+      location.assign(
+        targetUrl(
+          { pathname: location.pathname, hash: location.hash, search: search(s.id) },
+          p.slug,
+          version,
+          target,
+        ),
+      );
+    };
+
+    const handlers = {
+      scenario(id: string) {
         const s = pickScenario(version, id);
         location.assign(screenUrl(p.slug, version, s.route, search(s.id)));
       },
-      version(v) {
-        const target = p.versions.find((x) => x.version === v);
-        if (!target) return;
-        const s = pickScenario(target, scenario.id);
-        location.assign(
-          targetUrl(
-            { pathname: location.pathname, hash: location.hash, search: search(s.id) },
-            p.slug,
-            version,
-            target,
-          ),
-        );
-      },
+      version: onVersion,
       axis: onAxis,
-    });
-    // Phones have no menu: versions with axes get the floating variants button there (ADR-0023).
-    const variants = createVariants(onAxis);
-    const state = { proto: p, version, scenario, axes };
+    };
+    const menu = createMenu(handlers);
+    // Phones have no menu: they get the floating variants button with the same controls (ADR-0023).
+    const variants = createVariants(handlers);
+    const state = { proto: p, version, scenario, axes, keptAxes };
     menu.update(state);
     variants.update(state);
     this.#root.innerHTML = `<style>${tokensCss.replaceAll(':root', ':host')}${shellCss}${menuCss}</style>`;

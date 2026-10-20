@@ -1,6 +1,7 @@
 // <ds-segmented label="Версия" value="v2"><option value="v1">v1</option>…</ds-segmented>
 // TUI tui-segmented as a single-choice radio group. Options come from child <option> elements or the
-// `items` property; choosing one updates `value` and fires a bubbling, composed `change` event.
+// `items` property; choosing one updates `value` and fires a bubbling, composed `change` event. The `disabled`
+// attribute keeps the current choice visible but greyed out and ignores clicks and keys.
 import style from './segmented.css?inline';
 
 export interface SegmentedItem {
@@ -15,7 +16,7 @@ const esc = (s: string) =>
   );
 
 export class DsSegmented extends HTMLElement {
-  static observedAttributes = ['value', 'label'];
+  static observedAttributes = ['value', 'label', 'disabled'];
 
   #root: ShadowRoot;
   #items: SegmentedItem[] = [];
@@ -44,6 +45,14 @@ export class DsSegmented extends HTMLElement {
     this.setAttribute('value', v);
   }
 
+  get disabled(): boolean {
+    return this.hasAttribute('disabled');
+  }
+
+  set disabled(v: boolean) {
+    this.toggleAttribute('disabled', v);
+  }
+
   connectedCallback() {
     if (!this.#items.length) {
       this.#items = [...this.querySelectorAll('option')].map((o) => ({
@@ -66,12 +75,16 @@ export class DsSegmented extends HTMLElement {
   #render() {
     const selected = this.#selected();
     const label = this.getAttribute('label') ?? '';
+    const disabled = this.disabled;
     this.#root.innerHTML = `<style>${style}</style>
-      <div class="track" role="radiogroup"${label ? ` aria-label="${esc(label)}"` : ''}>${this.#items
+      <div class="track" role="radiogroup"${label ? ` aria-label="${esc(label)}"` : ''}${
+        disabled ? ' aria-disabled="true"' : ''
+      }>${this.#items
         .map(
           (i) =>
             `<button type="button" class="item" role="radio" data-value="${esc(i.value)}"` +
-            ` aria-checked="${i.value === selected}" tabindex="${i.value === selected ? 0 : -1}">${esc(i.label)}</button>`,
+            ` aria-checked="${i.value === selected}" tabindex="${i.value === selected ? 0 : -1}"` +
+            `${disabled ? ' disabled' : ''}>${esc(i.label)}</button>`,
         )
         .join('')}</div>`;
     this.#root.querySelector<HTMLElement>('[aria-checked="true"]')?.scrollIntoView?.({
@@ -81,6 +94,7 @@ export class DsSegmented extends HTMLElement {
   }
 
   #choose(value: string, focus = false) {
+    if (this.disabled) return;
     if (value !== this.value) {
       this.value = value;
       this.dispatchEvent(new CustomEvent('change', { detail: { value }, bubbles: true, composed: true }));
@@ -95,7 +109,7 @@ export class DsSegmented extends HTMLElement {
 
   #onKey = (e: KeyboardEvent) => {
     const keys: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
-    if (!(e.key in keys) && e.key !== 'Home' && e.key !== 'End') return;
+    if (this.disabled || (!(e.key in keys) && e.key !== 'Home' && e.key !== 'End')) return;
     e.preventDefault();
     const n = this.#items.length;
     if (!n) return;

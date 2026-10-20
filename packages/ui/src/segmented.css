@@ -102,6 +102,18 @@
   outline-offset: calc(var(--seg-inset) * -1);
 }
 
+/* Disabled (the `disabled` attribute): the choice stays visible, everything is greyed out and inert. */
+.item:disabled {
+  color: var(--ds-text-tertiary);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+.item:disabled[aria-checked='true'] {
+  background: var(--ds-background-neutral-2);
+  box-shadow: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .item {
     transition: none;

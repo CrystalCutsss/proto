@@ -102,7 +102,8 @@ Rules (v3):
   `#/` «Платеж в месяц»: see Q1 (the drawn 193 500 ₽ does not fit the formula, which gives 10 121,74 ₽ at 4 млн).
 - Fee (v2 ОК fee, in tenths of a percent): base 2,9 %; pledge on → 2,5 % (as drawn on `#/heavy`, although the badge
   says −0,5%); «Снизим комиссию» −1% card → −1,0 pp; «Снизим комиссию» «До −0,5%» card → −0,5 pp (v2 turnover step).
-  Both «Снизим комиссию» cards are mutually exclusive (see Q3). `#/` «Комиссия» shows the base «2,9%».
+  Both «Снизим комиссию» cards are independent checkboxes and their cuts add up: both on → −1,5 pp (2,9 % → 1,4 %,
+  with the pledge 2,5 % → 1,0 %; owner, 2026-10-20, replaces Q3). `#/` «Комиссия» shows the base «2,9%».
 - So `Choice` loses `product` (v3 combines the КН package with the ОК fee): `package` affects the payment, `pledge`
   and the fee cards affect the fee, `check` the amount. Keep pure functions and extend `test/calc.test.ts`.
 - Chip tones (panel on `#/heavy` and `#/light`, same chip component as v2):

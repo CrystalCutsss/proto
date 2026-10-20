@@ -5,6 +5,7 @@ import {
   BASE_CHOICE,
   BASE_FEE,
   type Choice,
+  type FeeCut,
   fee,
   feeTone,
   formatPaymentChip,
@@ -26,7 +27,7 @@ describe('defaults', () => {
       check: false,
       statement: false,
       package: true,
-      feeCut: null,
+      feeCuts: [],
     });
   });
 
@@ -51,9 +52,9 @@ describe('total amount', () => {
   });
 
   it('options on #/light change no amount', () => {
-    for (const feeCut of [null, 'one', 'half'] as const) {
+    for (const feeCuts of [[], ['one'], ['half'], ['one', 'half']] as FeeCut[][]) {
       for (const pkg of [true, false]) {
-        expect(totalAmount(choice({ pledge: true, feeCut, package: pkg }))).toBe(7_000_000);
+        expect(totalAmount(choice({ pledge: true, feeCuts, package: pkg }))).toBe(7_000_000);
       }
     }
   });
@@ -62,8 +63,8 @@ describe('total amount', () => {
 describe('monthly payment', () => {
   it('is 17 713,05 ₽ at 7 000 000 ₽ (pledge only), whatever the statement and the fee cards', () => {
     for (const statement of [true, false]) {
-      for (const feeCut of [null, 'one', 'half'] as const) {
-        expect(monthlyPayment(choice({ pledge: true, statement, feeCut }))).toBe(17_713.05);
+      for (const feeCuts of [[], ['one'], ['half'], ['one', 'half']] as FeeCut[][]) {
+        expect(monthlyPayment(choice({ pledge: true, statement, feeCuts }))).toBe(17_713.05);
       }
     }
     const c = choice({ pledge: true });
@@ -86,15 +87,21 @@ describe('monthly payment', () => {
 });
 
 describe('fee', () => {
-  it('base 2,9 %, pledge 2,5 %, «Снизим комиссию» −1 or −0,5 pp', () => {
+  it('base 2,9 %, pledge 2,5 %, «Снизим комиссию» −1 and/or −0,5 pp', () => {
     expect(fee(choice())).toBe(2.9);
     expect(fee(choice({ pledge: true }))).toBe(2.5);
-    expect(fee(choice({ feeCut: 'one' }))).toBe(1.9);
-    expect(fee(choice({ feeCut: 'half' }))).toBe(2.4);
-    expect(fee(choice({ pledge: true, feeCut: 'one' }))).toBe(1.5);
-    expect(fee(choice({ pledge: true, feeCut: 'half' }))).toBe(2.0);
-    expect(formatPercent(fee(choice({ pledge: true, feeCut: 'half' })))).toBe('2,0%');
+    expect(fee(choice({ feeCuts: ['one'] }))).toBe(1.9);
+    expect(fee(choice({ feeCuts: ['half'] }))).toBe(2.4);
+    expect(fee(choice({ pledge: true, feeCuts: ['one'] }))).toBe(1.5);
+    expect(fee(choice({ pledge: true, feeCuts: ['half'] }))).toBe(2.0);
+    expect(formatPercent(fee(choice({ pledge: true, feeCuts: ['half'] })))).toBe('2,0%');
     expect(formatPercent(fee(choice({ pledge: true })))).toBe('2,5%');
+  });
+
+  it('both «Снизим комиссию» cards add up: −1,5 pp (owner, 2026-10-20)', () => {
+    expect(fee(choice({ feeCuts: ['one', 'half'] }))).toBe(1.4);
+    expect(fee(choice({ pledge: true, feeCuts: ['half', 'one'] }))).toBe(1.0);
+    expect(formatPercent(fee(choice({ pledge: true, feeCuts: ['one', 'half'] })))).toBe('1,0%');
   });
 
   it('the other options change no fee', () => {
@@ -108,7 +115,7 @@ describe('chip tones', () => {
     expect(amountTone(choice({ pledge: true }))).toBe('positive');
     expect(amountTone(choice({ check: true }))).toBe('positive');
     expect(amountTone(choice({ statement: true }))).toBe('positive');
-    expect(amountTone(choice({ feeCut: 'one', package: false }))).toBe('neutral');
+    expect(amountTone(choice({ feeCuts: ['one'], package: false }))).toBe('neutral');
   });
 
   it('payment: positive only on #/light while the package is on (owner, Q2)', () => {
@@ -121,7 +128,7 @@ describe('chip tones', () => {
   it('fee: positive below 2,9 %', () => {
     expect(feeTone(choice())).toBe('neutral');
     expect(feeTone(choice({ pledge: true }))).toBe('positive');
-    expect(feeTone(choice({ feeCut: 'half' }))).toBe('positive');
+    expect(feeTone(choice({ feeCuts: ['half'] }))).toBe('positive');
     expect(feeTone(choice({ check: true, statement: true }))).toBe('neutral');
   });
 
@@ -132,7 +139,7 @@ describe('chip tones', () => {
       'neutral',
       'positive',
     ]);
-    const lightDrawn = choice({ feeCut: 'half' });
+    const lightDrawn = choice({ feeCuts: ['half'] });
     expect([amountTone(lightDrawn), paymentTone(lightDrawn, 'light'), feeTone(lightDrawn)]).toEqual([
       'neutral',
       'positive',

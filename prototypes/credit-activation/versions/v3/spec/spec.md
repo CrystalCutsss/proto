@@ -9,7 +9,7 @@ border with a 40 px corner radius that is NOT part of the UI (crop 4 px on every
 | File                | Frame (node)                          | Size (metadata) | Route         |
 | ------------------- | ------------------------------------- | --------------- | ------------- |
 | `00-flow.png`       | section «V4» `60:3874` (2048 px wide) | 3033 × 1196     | —             |
-| `01-conditions.png` | «Условия» `60:3875`                   | 375 × 812       | `#/`          |
+| `01-conditions.png` | «Условия» `68:5777`                   | 375 × 812       | `#/`          |
 | `02-heavy.png`      | «Тяжелые» `60:3905`                   | 375 × 812       | `#/heavy`     |
 | `03-review.png`     | «Проверка условий» `65:5511`          | 375 × 1012      | `#/review`    |
 | `04-documents.png`  | «Несколько документов» `60:4010`      | 375 × 812       | `#/documents` |
@@ -181,7 +181,7 @@ SF Pro is never embedded. Line height "normal" means 17 → 20, 15 → 18, 13 �
 
 ## Screens
 
-### `#/` «Условия» (`01-conditions.png`, `60:3875`) — maps to v2 `offer.ts` (ОК info-card layout, no slider)
+### `#/` «Условия» (`01-conditions.png`, `68:5777`, was `60:3875`) — maps to v2 `offer.ts` (ОК info-card layout, no slider)
 
 - Top bars: status bar + app bar with only «Закрыть» on the left (no back, no right action). Edge swipe off.
 - Header (`tui-header`, pt 12, px 16): «Одобрили кредит» / «ИП Константинопольский К.&nbsp;К.» heading-s centred
@@ -193,7 +193,7 @@ SF Pro is never embedded. Line height "normal" means 17 → 20, 15 → 18, 13 �
 - Card «Увеличить лимит» (`60:3897`, pt 24, px 16; card 343 × 88): card-large white, radius 24, shadow medium,
   py 12, content px 4; `tui-cell` min-height 56, px 16: 40 px avatar `--ds-background-accent-2` with
   `plus-circle.svg` (24 px at inset 20 %), 16 px gap, text column (py 8, 4 px gap): title «Увеличить лимит»
-  heading-m, description «При выполнении условий» body-l. The whole card is a button (`data-action` push
+  heading-m, description «До 9 млн ₽ с условиями» body-l (Figma updated 2026-10-20). The whole card is a button (`data-action` push
   `#/heavy`), focus ring + pressed state (scale 0.98 as the buttons, or the neutral pressed overlay).
 - Bottom: «Дальше» → `#/light`; no fade needed (content is short), home indicator. Bottom block is 90 px
   (button 56 + bar 34), content pb 20.

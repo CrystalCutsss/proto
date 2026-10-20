@@ -15,7 +15,7 @@ const limitCard = () => `
       </span>
       <span class="limit-card__text">
         <span class="t-heading-m">Увеличить лимит</span>
-        <span class="t-body-l">При выполнении условий</span>
+        <span class="t-body-l">До 9&nbsp;млн&nbsp;₽ с&nbsp;условиями</span>
       </span>
     </button>
   </div>`;

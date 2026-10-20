@@ -67,6 +67,7 @@ describe('viewer URLs', () => {
     expect(viewerUrl('a', 'v2', 'main', '#/cart')).toBe('/p/a/?v=v2&s=main#/cart');
     expect(viewerUrl('a', 'v2', 'main', '/cart')).toBe('/p/a/?v=v2&s=main#/cart');
     expect(viewerUrl('a', 'v1', 'main', '#/')).toBe('/p/a/?v=v1&s=main');
+    expect(viewerUrl('a', 'v3', 'main', '#/', {}, { docs: 'two' })).toBe('/p/a/?v=v3&s=main&docs=two');
   });
 
   it('reads the screen back from the viewer hash', () => {

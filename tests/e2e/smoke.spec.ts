@@ -128,12 +128,15 @@ test('a version with menu axes shows one captioned control per axis and the vers
 
   // A later version without axes shows them greyed out with the last choice; going back restores it (ADR-0024).
   await page.getByRole('radiogroup', { name: 'Версия' }).getByRole('radio', { name: 'v3' }).click();
-  await expect(page).toHaveURL(/\?v=v3&s=main$/);
+  await expect(page).toHaveURL(/\?v=v3&s=main&product=ok&pledge=auto&docs=two$/);
   await expect.poll(frameUrl).toMatch(/\/p\/credit-activation\/v3\/(#\/)?$/);
   const product = page.getByRole('radiogroup', { name: 'Сценарий' });
   await expect(product).toHaveAttribute('aria-disabled', 'true');
   await expect(product.getByRole('radio', { name: 'ОК' })).toHaveAttribute('aria-checked', 'true');
   await expect(product.getByRole('radio', { name: 'КН' })).toBeDisabled();
+  // A reload keeps the greyed-out choice.
+  await page.reload();
+  await expect(product.getByRole('radio', { name: 'ОК' })).toHaveAttribute('aria-checked', 'true');
   await page.getByRole('radiogroup', { name: 'Версия' }).getByRole('radio', { name: 'v2' }).click();
   await expect(page).toHaveURL(/\?v=v2&product=ok&pledge=auto&docs=two$/);
   await expect(product).not.toHaveAttribute('aria-disabled');
@@ -176,7 +179,7 @@ test('on a phone a version with menu axes gets a floating variants button and sh
   await expect(page).toHaveURL(/\?v=v2&product=ok&pledge=auto&docs=one$/);
   // The sheet switches versions too; on v3 the axes stay greyed out there.
   await sheet.getByRole('radiogroup', { name: 'Версия' }).getByRole('radio', { name: 'v3' }).click();
-  await expect(page).toHaveURL(/\?v=v3&s=main$/);
+  await expect(page).toHaveURL(/\?v=v3&s=main&product=ok&pledge=auto&docs=one$/);
   await expect(sheet.getByRole('radiogroup', { name: 'Сценарий' })).toHaveAttribute('aria-disabled', 'true');
   await sheet.getByRole('button', { name: 'Готово' }).click();
   await expect(sheet).toBeHidden();
@@ -288,6 +291,12 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await expect(page).toHaveURL(/#\/review$/);
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/documents$/);
+  await page.locator('[data-route="#/documents"]').getByRole('button', { name: 'Загрузить' }).first().click();
+  await expect(page).toHaveURL(/#\/upload$/);
+  await page.locator('[data-route="#/upload"]').getByRole('button', { name: 'Загрузить' }).click();
+  await expect(page).toHaveURL(/#\/documents$/);
+  // As in v2, the upload screen sends both documents at once.
+  await expect(page.locator('[data-route="#/documents"]').getByText('Загружено')).toHaveCount(2);
   await top.getByRole('button', { name: 'Получить деньги' }).click();
   await expect(page).toHaveURL(/#\/light$/);
   await expect(top.getByRole('heading', { name: 'Выберите улучшения условий' })).toBeVisible();
@@ -301,6 +310,11 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await expect(page).toHaveURL(/#\/light$/);
   await top.getByRole('button', { name: 'Назад' }).click();
   await expect(page).toHaveURL(/#\/$/);
+
+  // A deep link to the light conditions builds the long path: back goes to the documents.
+  await page.goto('/p/credit-activation/v3/?shell=0#/light');
+  await top.getByRole('button', { name: 'Назад' }).click();
+  await expect(page).toHaveURL(/#\/documents$/);
 });
 
 test('versions ship a web app manifest and home-screen icons (ADR-0019)', async ({ page }) => {

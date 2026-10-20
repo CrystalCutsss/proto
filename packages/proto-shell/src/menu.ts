@@ -41,14 +41,14 @@ export function pickScenario(version: RegistryVersion, id: string | null): Scena
 export function menuAxes(
   proto: RegistryPrototype,
   version: RegistryVersion,
-): { axes: Axis[]; disabled: boolean } {
+): { axes: Axis[]; disabled: boolean; from?: string } {
   if (version.axes.length) return { axes: version.axes, disabled: false };
   const at = proto.versions.findIndex((v) => v.version === version.version);
   const donor = proto.versions
     .slice(0, Math.max(at, 0))
     .reverse()
     .find((v) => v.axes.length);
-  return { axes: donor?.axes ?? [], disabled: true };
+  return donor ? { axes: donor.axes, disabled: true, from: donor.version } : { axes: [], disabled: true };
 }
 
 /** Short label of the current choice: axis item titles and the version, or the scenario and the version. */
@@ -90,8 +90,12 @@ export function createMenu(handlers: MenuHandlers) {
   let axisControls = new Map<string, DsSegmented>();
 
   /** Rebuild the controls when the shown axes change (appear, disappear or become disabled). */
-  function build(axes: Axis[], disabled: boolean, versions: boolean) {
-    const key = JSON.stringify({ axes, disabled, versions });
+  function build(
+    { axes, disabled, from }: ReturnType<typeof menuAxes>,
+    versions: boolean,
+    scenarios: boolean,
+  ) {
+    const key = JSON.stringify({ axes, disabled, from, versions, scenarios });
     if (key === layoutKey) return;
     layoutKey = key;
     axisControls = new Map();
@@ -108,25 +112,28 @@ export function createMenu(handlers: MenuHandlers) {
       axisControls.set(a.id, control);
       const group = captioned(a.title, control);
       group.classList.toggle('proto-menu-axis--disabled', disabled);
+      if (disabled && from) {
+        group.title = `Работает только в ${from}`;
+        control.setAttribute('aria-description', group.title);
+      }
       return group;
     });
-    nav.replaceChildren(...groups, ...(versions ? [captioned('Версия', version)] : []), ...keep);
+    // A later version's own scenarios stay selectable next to the greyed-out axes.
+    const own = disabled && scenarios ? [captioned('Сценарий', scenario)] : [];
+    nav.replaceChildren(...groups, ...own, ...(versions ? [captioned('Версия', version)] : []), ...keep);
   }
 
   return {
     element: nav,
     update({ proto, version: v, scenario: s, axes, keptAxes = {} }: MenuState) {
       const shown = menuAxes(proto, v);
-      build(shown.axes, shown.disabled, proto.versions.length > 1);
+      build(shown, proto.versions.length > 1, v.scenarios.length > 1);
       version.items = proto.versions.map((x) => ({ value: x.version, label: x.version }));
       version.value = v.version;
-      if (shown.axes.length) {
-        const values = shown.disabled ? keptAxes : axes;
-        for (const [id, control] of axisControls) control.value = values[id] ?? '';
-        return;
-      }
       scenario.items = v.scenarios.map((x) => ({ value: x.id, label: x.title }));
       scenario.value = s.id;
+      const values = shown.disabled ? keptAxes : axes;
+      for (const [id, control] of axisControls) control.value = values[id] ?? '';
     },
   };
 }

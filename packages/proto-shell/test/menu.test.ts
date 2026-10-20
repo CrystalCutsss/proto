@@ -26,7 +26,7 @@ describe('menuAxes', () => {
 
   it('greys out the axes of the nearest earlier version on a later version without them', () => {
     const p = proto(v('v1'), v('v2', [axis]), v('v3'));
-    expect(menuAxes(p, p.versions[2]!)).toEqual({ axes: [axis], disabled: true });
+    expect(menuAxes(p, p.versions[2]!)).toEqual({ axes: [axis], disabled: true, from: 'v2' });
     // A version before any axes keeps its scenario and version controls.
     expect(menuAxes(p, p.versions[0]!).axes).toEqual([]);
   });

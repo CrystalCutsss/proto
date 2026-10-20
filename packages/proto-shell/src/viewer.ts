@@ -97,7 +97,8 @@ function frameSearch() {
 }
 
 function syncUrl(key = currentScreen()) {
-  history.replaceState(null, '', viewerUrl(slug, version.version, scenarioId, key, axes));
+  const kept = menuAxes(proto, version).disabled ? keptAxes : {};
+  history.replaceState(null, '', viewerUrl(slug, version.version, scenarioId, key, axes, kept));
   document.title = `${proto.title} · ${version.version}`;
   const state = { proto, version, scenario: pickScenario(version, scenarioId), axes, keptAxes };
   menu.update(state);

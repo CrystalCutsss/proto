@@ -1,0 +1,25 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="tui-ic-small / currency-rub">
+<mask id="mask0_0_3648" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="1" y="1" width="14" height="14">
+<g id="Mask">
+<g id="Mask_2">
+<path d="M9.64854 6.36252C9.64854 5.33653 8.65756 5.33653 8.65756 5.33653L7.66658 5.33664V7.31848H8.65756C8.65756 7.31848 9.64854 7.38851 9.64854 6.36252Z" fill="url(#paint0_linear_0_3648)"/>
+<path d="M15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8ZM5.96508 7.31859V4.01544L8.6922 4.01552C9.32396 4.01553 9.97553 4.11283 10.4497 4.53028C10.8707 4.90087 11.3002 5.48536 11.3002 6.3276C11.3002 7.16969 10.8708 7.75418 10.4499 8.12483C9.97566 8.54252 9.32383 8.63988 8.69184 8.63988H7.66658V9.48008H9.97886V9.60427C9.97886 10.2902 9.42283 10.8462 8.73693 10.8462H7.66658C7.66658 11.4748 7.157 11.9845 6.52836 11.9845L5.96508 11.9846V10.8463L5.02397 10.8462V10.4212C5.02397 9.90144 5.44534 9.48013 5.96508 9.4802V8.64001L5.02397 8.6374V8.25791C5.02397 7.73844 5.44561 7.3176 5.96508 7.31859Z" fill-rule="evenodd" clip-rule="evenodd" fill="url(#paint1_linear_0_3648)"/>
+</g>
+</g>
+</mask>
+<g mask="url(#mask0_0_3648)">
+<path id="Color" d="M0 0H16V16H0V0Z" fill="#00B92D"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_3648" x1="3.8" y1="3.8" x2="12.2" y2="12.2" gradientUnits="userSpaceOnUse">
+<stop/>
+<stop offset="1" stop-opacity="0.7"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_3648" x1="3.8" y1="3.8" x2="12.2" y2="12.2" gradientUnits="userSpaceOnUse">
+<stop/>
+<stop offset="1" stop-opacity="0.7"/>
+</linearGradient>
+</defs>
+</svg>

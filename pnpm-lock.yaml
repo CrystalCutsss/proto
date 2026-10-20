@@ -340,6 +340,31 @@ importers:
         specifier: 5.0.4
         version: 5.0.4(@types/node@22.20.5)(happy-dom@21.0.1)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.1))
 
+  prototypes/credit-activation/versions/v3:
+    dependencies:
+      '@proto/motion':
+        specifier: workspace:*
+        version: link:../../../../packages/motion
+      '@proto/tokens':
+        specifier: workspace:*
+        version: link:../../../../packages/tokens
+      '@proto/ui':
+        specifier: workspace:*
+        version: link:../../../../packages/ui
+    devDependencies:
+      '@proto/build-kit':
+        specifier: workspace:*
+        version: link:../../../../packages/build-kit
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@22.20.5)(esbuild@0.28.1)
+      vitest:
+        specifier: 5.0.4
+        version: 5.0.4(@types/node@22.20.5)(happy-dom@21.0.1)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.1))
+
   prototypes/demo-basic/versions/v1:
     dependencies:
       '@proto/tokens':

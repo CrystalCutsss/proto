@@ -70,7 +70,8 @@ export function axisSearch(values: Record<string, string>, extra: Record<string,
 
 /**
  * Viewer URL (/p/<slug>/?v=…&s=…#screen); the screen goes into the hash for both routing modes. A version with
- * menu axes carries their values instead of the scenario.
+ * menu axes carries their values instead of the scenario; a version that shows another version's axes greyed out
+ * carries the kept choice (`kept`) after the scenario, so a reload or a shared link keeps it (ADR-0024).
  */
 export function viewerUrl(
   slug: string,
@@ -78,9 +79,10 @@ export function viewerUrl(
   scenario: string,
   key: string | null,
   axes: Record<string, string> = {},
+  kept: Record<string, string> = {},
 ) {
   const q = new URLSearchParams(
-    Object.keys(axes).length ? { v: version, ...axes } : { v: version, s: scenario },
+    Object.keys(axes).length ? { v: version, ...axes } : { v: version, s: scenario, ...kept },
   );
   const hash = key && key !== '#/' && key !== '/' ? `#${key.replace(/^#/, '')}` : '';
   return `/p/${slug}/?${q}${hash}`;

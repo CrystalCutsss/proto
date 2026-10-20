@@ -46,6 +46,11 @@
   color: var(--ds-text-secondary);
 }
 
+/* Axes of another version, shown on a version without them: greyed out, they work only there. */
+.proto-menu-axis--disabled .proto-menu-caption {
+  color: var(--ds-text-tertiary);
+}
+
 /* The version control keeps its size; a long scenario list scrolls instead. */
 .proto-menu ds-segmented[data-menu='version'] {
   flex: none;

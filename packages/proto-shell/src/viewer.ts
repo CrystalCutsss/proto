@@ -12,7 +12,14 @@ import './viewer.css';
 import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
 import bezelUrl from '../assets/iphone-air-space-black/frame.png?url';
 import maskUrl from '../assets/iphone-air-space-black/mask.png?url';
-import { createMenu, hideShortcut, loadRegistryPrototype, PHONE_MEDIA, pickScenario } from './menu.ts';
+import {
+  createMenu,
+  hideShortcut,
+  loadRegistryPrototype,
+  menuAxes,
+  PHONE_MEDIA,
+  pickScenario,
+} from './menu.ts';
 import { createVariants } from './variants.ts';
 import {
   axisSearch,
@@ -35,32 +42,38 @@ let version: RegistryVersion;
 let scenarioId: string;
 /** Chosen menu axis items of the version (empty without axes). */
 let axes: Record<string, string> = {};
+/** Last axis choice, kept while a version without axes shows them greyed out and restored on return. */
+let keptAxes: Record<string, string> = {};
 let frame: HTMLIFrameElement;
 
-const menu = createMenu({
-  scenario(id) {
+const handlers = {
+  scenario(id: string) {
     const s = pickScenario(version, id);
     scenarioId = s.id;
     navigate(s.route);
   },
-  version(v) {
-    const target = proto.versions.find((x) => x.version === v);
-    if (!target) return;
-    const kept = keptScreen(currentScreen(), version, target);
-    version = target;
-    const s = pickScenario(version, scenarioId);
-    scenarioId = s.id;
-    axes = axisValues(version.axes, new URLSearchParams(axes));
-    navigate(kept ?? s.route);
-  },
+  version: onVersion,
   axis: onAxis,
-});
-// Phones have no menu: versions with axes get the floating variants button there (ADR-0023).
-const variants = createVariants(onAxis);
+};
+const menu = createMenu(handlers);
+// Phones have no menu: they get the floating variants button with the same controls instead (ADR-0023).
+const variants = createVariants(handlers);
+
+function onVersion(v: string) {
+  const target = proto.versions.find((x) => x.version === v);
+  if (!target) return;
+  const kept = keptScreen(currentScreen(), version, target);
+  version = target;
+  const s = pickScenario(version, scenarioId);
+  scenarioId = s.id;
+  axes = axisValues(version.axes, new URLSearchParams(keptAxes));
+  navigate(kept ?? s.route);
+}
 
 /** Another axis choice is another set-up of the prototype: restart it at the start screen. */
 function onAxis(id: string, value: string) {
   axes = { ...axes, [id]: value };
+  keptAxes = { ...keptAxes, ...axes };
   navigate(startScreen(version.routing));
 }
 
@@ -84,9 +97,10 @@ function frameSearch() {
 }
 
 function syncUrl(key = currentScreen()) {
-  history.replaceState(null, '', viewerUrl(slug, version.version, scenarioId, key, axes));
+  const kept = menuAxes(proto, version).disabled ? keptAxes : {};
+  history.replaceState(null, '', viewerUrl(slug, version.version, scenarioId, key, axes, kept));
   document.title = `${proto.title} · ${version.version}`;
-  const state = { proto, version, scenario: pickScenario(version, scenarioId), axes };
+  const state = { proto, version, scenario: pickScenario(version, scenarioId), axes, keptAxes };
   menu.update(state);
   variants.update(state);
 }
@@ -233,6 +247,7 @@ async function start() {
   const s = pickScenario(version, params.get('s'));
   scenarioId = s.id;
   axes = axisValues(version.axes, params);
+  keptAxes = axisValues(menuAxes(proto, version).axes, params);
   const key = screenFromViewerHash(location.hash, version.routing) ?? s.route;
 
   frame = document.createElement('iframe');

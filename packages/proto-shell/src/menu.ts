@@ -1,6 +1,8 @@
 // Scenario/version menu shared by the viewer and the installed-app shell: two <ds-segmented> controls. A version
-// with menu axes (version.json → axes) gets one captioned control per axis instead.
-import type { RegistryPrototype, RegistryVersion, Scenario } from '@proto/registry';
+// with menu axes (version.json → axes) gets one captioned control per axis instead, plus the captioned version
+// control when the prototype has several versions. A version without axes that follows a version with them shows
+// that version's axes greyed out (disabled): they work only there (ADR-0024).
+import type { Axis, RegistryPrototype, RegistryVersion, Scenario } from '@proto/registry';
 import { defineElements, type DsSegmented } from '@proto/ui';
 
 export const HIDDEN_KEY = 'proto-shell:hidden';
@@ -23,6 +25,8 @@ export interface MenuState {
   scenario: Scenario;
   /** Chosen item per axis of `version` (see axisValues). */
   axes: Record<string, string>;
+  /** Items to show on greyed-out axes of another version (the last choice there); default: first items. */
+  keptAxes?: Record<string, string>;
 }
 
 /** Scenario to select in `version`: the one with the same id, else the version's first. */
@@ -30,10 +34,28 @@ export function pickScenario(version: RegistryVersion, id: string | null): Scena
   return version.scenarios.find((s) => s.id === id) ?? version.scenarios[0]!;
 }
 
-/** Short label of the current choice: axis item titles, or the scenario and the version. */
-export function menuSummary({ version, scenario, axes }: MenuState): string {
+/**
+ * Axes the menu shows for `version`: its own, or, when it has none, those of the nearest earlier version that has
+ * them, disabled (a later version that dropped the axes). Versions before any axes keep scenario and version.
+ */
+export function menuAxes(
+  proto: RegistryPrototype,
+  version: RegistryVersion,
+): { axes: Axis[]; disabled: boolean; from?: string } {
+  if (version.axes.length) return { axes: version.axes, disabled: false };
+  const at = proto.versions.findIndex((v) => v.version === version.version);
+  const donor = proto.versions
+    .slice(0, Math.max(at, 0))
+    .reverse()
+    .find((v) => v.axes.length);
+  return donor ? { axes: donor.axes, disabled: true, from: donor.version } : { axes: [], disabled: true };
+}
+
+/** Short label of the current choice: axis item titles and the version, or the scenario and the version. */
+export function menuSummary({ proto, version, scenario, axes }: MenuState): string {
   if (!version.axes.length) return `${scenario.title} · ${version.version}`;
-  return version.axes.map((a) => a.items.find((i) => i.id === axes[a.id])?.title ?? '').join(' · ');
+  const titles = version.axes.map((a) => a.items.find((i) => i.id === axes[a.id])?.title ?? '');
+  return [...titles, ...(proto.versions.length > 1 ? [version.version] : [])].join(' · ');
 }
 
 function segmented(label: string, key: string) {
@@ -41,6 +63,18 @@ function segmented(label: string, key: string) {
   el.setAttribute('label', label);
   el.dataset.menu = key;
   return el;
+}
+
+/** A control with a caption above it (menu axes and the version next to them). */
+function captioned(title: string, control: DsSegmented) {
+  const group = document.createElement('div');
+  group.className = 'proto-menu-axis';
+  const caption = document.createElement('span');
+  caption.className = 'proto-menu-caption';
+  caption.textContent = title;
+  caption.setAttribute('aria-hidden', 'true');
+  group.append(caption, control);
+  return group;
 }
 
 export function createMenu(handlers: MenuHandlers) {
@@ -52,49 +86,54 @@ export function createMenu(handlers: MenuHandlers) {
   const version = segmented('Версия', 'version');
   scenario.addEventListener('change', () => handlers.scenario(scenario.value));
   version.addEventListener('change', () => handlers.version(version.value));
-  let axesKey: string | null = null;
+  let layoutKey: string | null = null;
   let axisControls = new Map<string, DsSegmented>();
 
-  /** Rebuild the controls when the version's axes change (or appear / disappear). */
-  function build(v: RegistryVersion) {
-    const key = JSON.stringify(v.axes);
-    if (key === axesKey) return;
-    axesKey = key;
+  /** Rebuild the controls when the shown axes change (appear, disappear or become disabled). */
+  function build(
+    { axes, disabled, from }: ReturnType<typeof menuAxes>,
+    versions: boolean,
+    scenarios: boolean,
+  ) {
+    const key = JSON.stringify({ axes, disabled, from, versions, scenarios });
+    if (key === layoutKey) return;
+    layoutKey = key;
     axisControls = new Map();
     const keep = [...nav.children].filter((c) => c.matches('.proto-menu-collapse'));
-    if (!v.axes.length) {
+    if (!axes.length) {
       nav.replaceChildren(scenario, version, ...keep);
       return;
     }
-    const groups = v.axes.map((a) => {
-      const group = document.createElement('div');
-      group.className = 'proto-menu-axis';
-      const caption = document.createElement('span');
-      caption.className = 'proto-menu-caption';
-      caption.textContent = a.title;
-      caption.setAttribute('aria-hidden', 'true');
+    const groups = axes.map((a) => {
       const control = segmented(a.title, `axis-${a.id}`);
       control.items = a.items.map((i) => ({ value: i.id, label: i.title }));
+      control.disabled = disabled;
       control.addEventListener('change', () => handlers.axis(a.id, control.value));
       axisControls.set(a.id, control);
-      group.append(caption, control);
+      const group = captioned(a.title, control);
+      group.classList.toggle('proto-menu-axis--disabled', disabled);
+      if (disabled && from) {
+        group.title = `Работает только в ${from}`;
+        control.setAttribute('aria-description', group.title);
+      }
       return group;
     });
-    nav.replaceChildren(...groups, ...keep);
+    // A later version's own scenarios stay selectable next to the greyed-out axes.
+    const own = disabled && scenarios ? [captioned('Сценарий', scenario)] : [];
+    nav.replaceChildren(...groups, ...own, ...(versions ? [captioned('Версия', version)] : []), ...keep);
   }
 
   return {
     element: nav,
-    update({ proto, version: v, scenario: s, axes }: MenuState) {
-      build(v);
-      if (v.axes.length) {
-        for (const [id, control] of axisControls) control.value = axes[id] ?? '';
-        return;
-      }
-      scenario.items = v.scenarios.map((x) => ({ value: x.id, label: x.title }));
-      scenario.value = s.id;
+    update({ proto, version: v, scenario: s, axes, keptAxes = {} }: MenuState) {
+      const shown = menuAxes(proto, v);
+      build(shown, proto.versions.length > 1, v.scenarios.length > 1);
       version.items = proto.versions.map((x) => ({ value: x.version, label: x.version }));
       version.value = v.version;
+      scenario.items = v.scenarios.map((x) => ({ value: x.id, label: x.title }));
+      scenario.value = s.id;
+      const values = shown.disabled ? keptAxes : axes;
+      for (const [id, control] of axisControls) control.value = values[id] ?? '';
     },
   };
 }

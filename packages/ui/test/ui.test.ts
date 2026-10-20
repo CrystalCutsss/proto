@@ -49,6 +49,23 @@ describe('ds-segmented', () => {
     expect(el.value).toBe('v1');
   });
 
+  it('ignores clicks and keys while disabled, keeping the choice visible', () => {
+    const el = make() as ReturnType<typeof make> & { disabled: boolean };
+    const seen: string[] = [];
+    el.addEventListener('change', (e) => seen.push((e as CustomEvent<{ value: string }>).detail.value));
+    el.disabled = true;
+    expect(el.shadowRoot!.querySelector('[role=radiogroup]')?.getAttribute('aria-disabled')).toBe('true');
+    expect(radios(el).every((r) => r.disabled)).toBe(true);
+    radios(el)[0]!.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    radios(el)[1]!.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(seen).toEqual([]);
+    expect(el.value).toBe('v2');
+    expect(radios(el)[1]!.getAttribute('aria-checked')).toBe('true');
+    el.disabled = false;
+    radios(el)[0]!.click();
+    expect(seen).toEqual(['v1']);
+  });
+
   it('accepts items as a property and falls back to the first item for an unknown value', () => {
     const el = make();
     el.items = [

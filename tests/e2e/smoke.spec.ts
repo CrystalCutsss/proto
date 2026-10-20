@@ -96,15 +96,19 @@ test('mobile prototypes sit in the iPhone mockup with their status bar on a wide
   await expect(page).toHaveURL(/\?v=v1&s=success#\/success$/);
 });
 
-test('a version with menu axes shows one captioned control per axis instead of scenario and version', async ({
+test('a version with menu axes shows one captioned control per axis and the version instead of scenario', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/p/credit-activation/?v=v2');
   await expect(page).toHaveURL(/\?v=v2&product=kn&pledge=auto&docs=one$/);
   const menu = page.getByRole('navigation', { name: 'Сценарий и версия' });
-  await expect(menu.locator('.proto-menu-caption')).toHaveText(['Сценарий', 'Залог', 'Документы']);
-  await expect(page.getByRole('radiogroup', { name: 'Версия' })).toHaveCount(0);
+  await expect(menu.locator('.proto-menu-caption')).toHaveText(['Сценарий', 'Залог', 'Документы', 'Версия']);
+  await expect(page.getByRole('radiogroup', { name: 'Версия' }).getByRole('radio')).toHaveText([
+    'v1',
+    'v2',
+    'v3',
+  ]);
   await expect(page.getByRole('radiogroup', { name: 'Залог' }).getByRole('radio')).toHaveText([
     'Авто',
     'Недвижимость',
@@ -121,6 +125,21 @@ test('a version with menu axes shows one captioned control per axis instead of s
   await expect(page).toHaveURL(/product=ok&pledge=auto&docs=two$/);
   // A choice replaces the iframe's document instead of adding history entries with the old axes.
   expect(await page.evaluate(() => history.length)).toBe(historyLength);
+
+  // A later version without axes shows them greyed out with the last choice; going back restores it (ADR-0024).
+  await page.getByRole('radiogroup', { name: 'Версия' }).getByRole('radio', { name: 'v3' }).click();
+  await expect(page).toHaveURL(/\?v=v3&s=main&product=ok&pledge=auto&docs=two$/);
+  await expect.poll(frameUrl).toMatch(/\/p\/credit-activation\/v3\/(#\/)?$/);
+  const product = page.getByRole('radiogroup', { name: 'Сценарий' });
+  await expect(product).toHaveAttribute('aria-disabled', 'true');
+  await expect(product.getByRole('radio', { name: 'ОК' })).toHaveAttribute('aria-checked', 'true');
+  await expect(product.getByRole('radio', { name: 'КН' })).toBeDisabled();
+  // A reload keeps the greyed-out choice.
+  await page.reload();
+  await expect(product.getByRole('radio', { name: 'ОК' })).toHaveAttribute('aria-checked', 'true');
+  await page.getByRole('radiogroup', { name: 'Версия' }).getByRole('radio', { name: 'v2' }).click();
+  await expect(page).toHaveURL(/\?v=v2&product=ok&pledge=auto&docs=two$/);
+  await expect(product).not.toHaveAttribute('aria-disabled');
 
   // A version opened directly keeps its axis values on the way to the viewer.
   await page.goto('/p/credit-activation/v2/?pledge=both#/options');
@@ -155,13 +174,17 @@ test('on a phone a version with menu axes gets a floating variants button and sh
   await fab.click();
   const sheet = page.getByRole('dialog', { name: 'Варианты' });
   await expect(sheet).toBeVisible();
-  await expect(sheet.locator('.proto-menu-caption')).toHaveText(['Сценарий', 'Залог', 'Документы']);
+  await expect(sheet.locator('.proto-menu-caption')).toHaveText(['Сценарий', 'Залог', 'Документы', 'Версия']);
   await sheet.getByRole('radiogroup', { name: 'Сценарий' }).getByRole('radio', { name: 'ОК' }).click();
   await expect(page).toHaveURL(/\?v=v2&product=ok&pledge=auto&docs=one$/);
+  // The sheet switches versions too; on v3 the axes stay greyed out there.
+  await sheet.getByRole('radiogroup', { name: 'Версия' }).getByRole('radio', { name: 'v3' }).click();
+  await expect(page).toHaveURL(/\?v=v3&s=main&product=ok&pledge=auto&docs=one$/);
+  await expect(sheet.getByRole('radiogroup', { name: 'Сценарий' })).toHaveAttribute('aria-disabled', 'true');
   await sheet.getByRole('button', { name: 'Готово' }).click();
   await expect(sheet).toBeHidden();
 
-  // Versions without axes keep no button; wide screens keep the bottom menu instead.
+  // Versions before any axes keep no button; wide screens keep the bottom menu instead.
   await page.goto('/p/credit-activation/?v=v1');
   await expect(page.locator('iframe')).toBeVisible();
   await expect(fab).toBeHidden();
@@ -253,6 +276,45 @@ test('pilot flow pushes screens with the yellow button and pops them back', asyn
   await page.goBack();
   await expect(page).toHaveURL(/#\/$/);
   await expect(top.getByRole('heading', { name: /Одобрили кредит/ })).toBeVisible();
+});
+
+test('credit-activation v3: the heavy path through documents and the direct path to light conditions', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/p/credit-activation/v3/?shell=0#/');
+  const top = page.locator('section:not([inert])');
+  await top.getByRole('button', { name: /Увеличить лимит/ }).click();
+  await expect(page).toHaveURL(/#\/heavy$/);
+  await expect(top.getByRole('heading', { name: 'Как хотите увеличить лимит' })).toBeVisible();
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/review$/);
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/documents$/);
+  await page.locator('[data-route="#/documents"]').getByRole('button', { name: 'Загрузить' }).first().click();
+  await expect(page).toHaveURL(/#\/upload$/);
+  await page.locator('[data-route="#/upload"]').getByRole('button', { name: 'Загрузить' }).click();
+  await expect(page).toHaveURL(/#\/documents$/);
+  // As in v2, the upload screen sends both documents at once.
+  await expect(page.locator('[data-route="#/documents"]').getByText('Загружено')).toHaveCount(2);
+  await top.getByRole('button', { name: 'Получить деньги' }).click();
+  await expect(page).toHaveURL(/#\/light$/);
+  await expect(top.getByRole('heading', { name: 'Выберите улучшения условий' })).toBeVisible();
+  await top.getByRole('button', { name: 'Получить деньги' }).click();
+  await expect(page).toHaveURL(/#\/success$/);
+  await expect(top.getByRole('heading', { name: /Зачисляем/ })).toBeVisible();
+  await top.getByRole('button', { name: 'К счету' }).click();
+  await expect(page).toHaveURL(/#\/$/);
+
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/light$/);
+  await top.getByRole('button', { name: 'Назад' }).click();
+  await expect(page).toHaveURL(/#\/$/);
+
+  // A deep link to the light conditions builds the long path: back goes to the documents.
+  await page.goto('/p/credit-activation/v3/?shell=0#/light');
+  await top.getByRole('button', { name: 'Назад' }).click();
+  await expect(page).toHaveURL(/#\/documents$/);
 });
 
 test('versions ship a web app manifest and home-screen icons (ADR-0019)', async ({ page }) => {

@@ -16,8 +16,9 @@ paths:
   draft → review → frozen.
 - Variants of one version (product, pledge, documents…) are menu `axes` in `version.json` (ADR-0022), not extra
   versions or scenarios: `[{ id, title, items: [{ id, title }] }]`, first item is the default. The viewer shows one
-  captioned control per axis instead of «Сценарий / Версия» and passes the choice as `?<axis>=<item>`; read it
-  from `location.search` once and fall back to the default for unknown values.
+  captioned control per axis (instead of «Сценарий») next to «Версия» and passes the choice as `?<axis>=<item>`;
+  read it from `location.search` once and fall back to the default for unknown values. A later version without
+  axes shows the earlier version's axes greyed out (ADR-0024).
 - `prototype.json` → `platform`: `mobile` (shown in the iPhone mockup on wide screens, full-screen on phones and as
   an installed web app) or `desktop` (default: the whole window, the design's own background, no frame).
 - Mobile designs keep the system status bar and home indicator from the mockup, marked with
@@ -32,7 +33,8 @@ paths:
   Output checks: `qa/` (screenshots, diffs, notes).
 - The «Сценарий / Версия» menu is never shown on phone screens (ADR-0021): every state of a mobile prototype
   must be reachable inside the prototype itself. Menu axes are the exception: on phones the viewer shows a
-  floating «Варианты» button that opens them in a sheet (ADR-0023).
+  floating «Варианты» button that opens them in a sheet with the version switch (ADR-0023, ADR-0024); versions
+  that show greyed-out axes get the button too.
 - Do not import the menu or the viewer: the build-kit plugin injects the shell loader, which opens a version
   inside the viewer (`/p/<slug>/`); `?shell=0` shows the bare page (screenshots, debugging).
 - Accessibility basics are part of done: semantic elements, focus states (`--ds-border-focus`), labels, and

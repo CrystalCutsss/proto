@@ -1,6 +1,7 @@
-// Phone screens get no bottom menu (ADR-0021). A version with menu axes gets a small floating button in the
-// bottom-right corner there instead; it opens a modal sheet with the same captioned axis controls (ADR-0023).
-import { createMenu, type MenuState } from './menu.ts';
+// Phone screens get no bottom menu (ADR-0021). A version with menu axes, or a later version that shows them greyed
+// out, gets a small floating button in the bottom-right corner there instead; it opens a modal sheet with the same
+// captioned axis controls and the version control (ADR-0023, ADR-0024).
+import { createMenu, menuAxes, type MenuHandlers, type MenuState } from './menu.ts';
 
 /** Sliders glyph drawn with currentColor (no asset, no CDN). */
 const ICON = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
@@ -9,9 +10,9 @@ const ICON = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke
 
 let count = 0;
 
-export function createVariants(onAxis: (id: string, value: string) => void) {
+export function createVariants(handlers: MenuHandlers) {
   const id = `proto-variants-title-${++count}`;
-  const menu = createMenu({ scenario() {}, version() {}, axis: onAxis });
+  const menu = createMenu(handlers);
   menu.element.classList.add('proto-menu--sheet');
   menu.element.setAttribute('aria-label', 'Варианты прототипа');
 
@@ -48,8 +49,10 @@ export function createVariants(onAxis: (id: string, value: string) => void) {
   return {
     elements: [fab, dialog] as const,
     update(state: MenuState) {
-      fab.hidden = !state.version.axes.length;
-      if (state.version.axes.length) menu.update(state);
+      // Own axes, or the greyed-out axes of an earlier version (then the sheet is how to switch back to it).
+      const shown = menuAxes(state.proto, state.version).axes.length > 0;
+      fab.hidden = !shown;
+      if (shown) menu.update(state);
       else if (dialog.open) dialog.close();
     },
   };

@@ -55,7 +55,6 @@ export const heavy: Screen = {
             title: card.title,
             titleText: card.title,
             description: card.description,
-            role: 'checkbox',
             checked: state[card.key],
             body: card.badges,
           }),

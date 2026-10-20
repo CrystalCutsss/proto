@@ -74,18 +74,16 @@ export const homeIndicator = () =>
 
 interface BottomBlock {
   button?: string;
-  legalAbove?: string;
   legalBelow?: string;
   /** Chips row: the block becomes the translucent sticky panel of #/heavy and #/light (no fade). */
   chips?: string;
 }
 
 /** Sticky bottom block: fade (or the chips panel), optional legal text, the yellow button, home indicator. */
-export function bottomBlock({ button, legalAbove, legalBelow, chips }: BottomBlock): string {
+export function bottomBlock({ button, legalBelow, chips }: BottomBlock): string {
   const actions = button
     ? `<div class="bottom-block__actions">
         ${chips ? `<div class="chips" aria-live="polite">${chips}</div>` : ''}
-        ${legalAbove ? `<p class="legal">${legalAbove}</p>` : ''}
         ${button}
       </div>
       ${legalBelow ? `<p class="legal legal--below"><span>${legalBelow}</span></p>` : ''}`
@@ -153,7 +151,6 @@ interface CardLarge {
   /** Plain-text title for the tooltip label. */
   titleText: string;
   description: string;
-  role: 'checkbox' | 'radio';
   checked: boolean;
   /** Badges or rows, part of the control. */
   body?: string;
@@ -162,13 +159,13 @@ interface CardLarge {
 }
 
 /**
- * `tui-card-large` whose content is one control (checkbox, or radio in a radiogroup). The «?» tooltip and
+ * `tui-card-large` whose content is one checkbox control (radio look). The «?» tooltip and
  * an optional footer button are siblings of the control, so no interactive element is nested in another.
  */
 export function cardLarge(c: CardLarge): string {
   return `
     <div class="card-large${c.checked ? ' is-on' : ''}" data-card="${c.choice}">
-      <div class="card-large__control" role="${c.role}" tabindex="0" aria-checked="${c.checked}"
+      <div class="card-large__control" role="checkbox" tabindex="0" aria-checked="${c.checked}"
         data-choice="${c.choice}" aria-labelledby="${c.id}-title" aria-describedby="${c.id}-body">
         <span class="card-large__header">
           <span class="card-large__title t-heading-m" id="${c.id}-title">${c.title}</span>
@@ -256,13 +253,13 @@ export function onActivate(control: HTMLElement, handler: () => void): void {
 export function infoCard(
   caption: string,
   value: string,
-  opts: { chevron?: boolean; wide?: boolean; key?: string } = {},
+  opts: { chevron?: boolean; wide?: boolean } = {},
 ): string {
   return `
     <div class="info-card${opts.wide ? ' info-card--wide' : ''}">
       <div class="info-card__text">
         <span class="t-ui-s text-secondary">${caption}</span>
-        <span class="t-heading-s"${opts.key ? ` data-value="${opts.key}"` : ''}>${value}</span>
+        <span class="t-heading-s">${value}</span>
       </div>
       ${opts.chevron ? mask('chevron-right-small.svg', 'info-card__chevron') : ''}
     </div>`;

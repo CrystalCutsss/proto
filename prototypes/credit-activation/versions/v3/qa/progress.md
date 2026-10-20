@@ -21,9 +21,17 @@ Owner decisions (brief, 2026-10-20):
 | 0b. Figma intake | done    | references in `design-input/figma/`, new `assets/icons/plus-circle.svg` |
 | 1. Spec          | done    | `spec/spec.md` (v2 spec replaced)                                       |
 | 2. Build         | done    | prototype-builder, 2026-10-20; see «v3 build» below                     |
-| 3. Review        | pending | code-reviewer                                                           |
-| 4. Visual QA     | pending | against `design-input/figma/0[1-7]-*.png`, crop the 4 px device border  |
+| 3. Review        | done    | code-reviewer; nits fixed in fix round 1                                |
+| 4. Visual QA     | done    | `qa/visual-qa.md`; findings 1–3 fixed in fix round 1                    |
 | 5. Finish        | pending |                                                                         |
+
+## Fix round 1 (2026-10-20, prototype-builder)
+
+- Visual QA findings 1–3: option-card title → description 8 px (v3 frames; the v2 12 px owner decision stays
+  v2-only), «Сумма и платеж» footer padding-top 4 px (240 px), «Залог и условия» rows as 56 px cells 4 px apart
+  with a 40 px text block (304 px). Finding 4 kept (Q5). Measurements in `qa/visual-qa.md` «Fix round 1».
+- Code review nits: removed `legalAbove` from `bottomBlock`, the `role` field of `cardLarge` (always
+  `checkbox` in v3, now fixed in the markup) and `opts.key` of `infoCard`.
 
 ## Owner decisions on the intake questions (2026-10-20)
 

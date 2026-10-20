@@ -52,7 +52,6 @@ const feeCard = (key: FeeCut, label: string) =>
     title: 'Снизим комиссию',
     titleText: `Снизим комиссию ${label}`,
     description: FEE_TEXT,
-    role: 'checkbox',
     checked: isOn(key),
     body: badges(badge('percent', label)),
   });
@@ -72,7 +71,6 @@ export const light: Screen = {
           title: 'Пакет «Все включено»',
           titleText: 'Пакет «Все включено»',
           description: '',
-          role: 'checkbox',
           checked: isOn('package'),
           body: packageRows(),
           footer: secondaryButton('Изменить пакет'),

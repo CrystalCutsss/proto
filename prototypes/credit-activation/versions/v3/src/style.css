@@ -791,11 +791,11 @@ body.ds-root {
   display: block;
 }
 
-/* 12 px between the title and the description on pledge and option cards (owner, 2026-10-16): the header's
-   8 px plus 4 px here. */
+/* 8 px between the title and the description (the header's own padding), as the v3 frames draw it: cards
+   128 px on #/heavy, fee cards 148 px on #/light (v2 had 12 px, owner 2026-10-16 for v2). */
 .card-large__description {
   display: block;
-  padding: var(--ds-space-1) var(--ds-space-5) 0;
+  padding: 0 var(--ds-space-5);
 }
 
 .card-large__description:last-child {
@@ -919,7 +919,25 @@ body.ds-root {
   line-height: var(--ds-typography-body-l-line-height);
 }
 
+/* «Залог и условия»: 56 px cells 4 px apart (avatar py 8), 8 px under the last one (+ the footer's 4). */
+.card__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+  padding-bottom: var(--ds-space-2);
+}
+
+.row--avatar {
+  min-height: 0;
+}
+
+/* Text block 40 px like the avatar: title 20 + 4 + subtitle 16 (title → subtitle cap tops 25 px). */
+.row--avatar .row__text {
+  gap: var(--ds-space-1);
+}
+
 .avatar {
+  margin: var(--ds-space-2) 0;
   display: grid;
   flex: none;
   place-items: center;
@@ -929,8 +947,9 @@ body.ds-root {
   background: var(--ds-status-info-pale);
 }
 
+/* 4 px above the button: «Сумма и платеж» 240 px, «Залог и условия» 304 px, as drawn. */
 .card__footer {
-  padding: var(--ds-space-3) var(--ds-space-5) var(--ds-space-5);
+  padding: var(--ds-space-1) var(--ds-space-5) var(--ds-space-5);
 }
 
 .card--account {

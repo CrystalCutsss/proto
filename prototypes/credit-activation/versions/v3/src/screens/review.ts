@@ -15,7 +15,7 @@ const valueRow = (caption: string, value: string) => `
   </div>`;
 
 const avatarRow = (iconName: string, title: string, text: string) => `
-  <div class="row">
+  <div class="row row--avatar">
     <span class="avatar"><img src="${icon(iconName)}" alt="" width="24" height="24" /></span>
     <div class="row__text">
       <span class="t-body-l">${title}</span>
@@ -61,7 +61,7 @@ export const review: Screen = {
           rows.length
             ? `<section class="card" aria-labelledby="card-collateral">
                 <h2 class="card__title t-heading-m" id="card-collateral">Залог и условия</h2>
-                ${rows.join('')}
+                <div class="card__rows">${rows.join('')}</div>
                 <div class="card__footer">${secondaryButton('Как это работает')}</div>
               </section>`
             : ''

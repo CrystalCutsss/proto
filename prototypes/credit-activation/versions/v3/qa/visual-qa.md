@@ -74,6 +74,27 @@ Matching within ≤ 2 px (glyph noise only): `#/` (all blocks; payment 10 122 �
 Accepted: live numbers (`#/` payment, `#/light` chips 10 122 ₽ / 2,4 %, success amount), `#/upload` label
 «Загрузить».
 
+## Fix round 1 (2026-10-20)
+
+Fresh `pnpm site:build`, same states and scripts as above; re-shot `#/heavy`, `#/review` (+ `-812`, flow
+state), `#/light` (+ `-812`), `02-heavy-pledge-statement.png`; `qa/diff/0{2,3,6}-*.png` and `cmp-*` regenerated.
+
+- Finding 1 fixed: `.card-large__description` padding-top 0 (title → description 8 px, the header's own).
+  `#/heavy` card height 132 → 128 px (DOM 200–328, 344–472, 492–620); cap tops title → description ref 221 → 251,
+  actual 220 → 251 (was 255); card 2 title ref 365 / actual 364 (was 368); card 3 title ref 513 / 512 (was 520),
+  description ref 544 / 544 (was 555). `#/light` fee cards 152 → 148 px (DOM 528–676, 696–844); descriptions ref
+  579 / 579 (was 583) and 747 / 747 (was 755).
+- Finding 2 fixed: `.card__footer` padding-top `--ds-space-1` (4 px). «Сумма и платеж» 248 → 240 px (DOM
+  222–462, ref 222–462); «График платежей» button 406 → 398 (ref 398).
+- Finding 3 fixed: «Залог и условия» rows are 56 px cells 4 px apart (`.card__rows` gap `--ds-space-1`, 8 px
+  under the last), avatar margin 8 px, title → subtitle gap 4 px (text block 20 + 4 + 16 = 40 px = avatar). Card
+  308 → 304 px (DOM 482–786, ref 482–786); avatar top − card top 63 → 60 (ref 60); cap tops title → subtitle ref
+  545 → 570, actual 545 → 570 (was 557 → 578); «Рублевый счет» title ref 826 / actual 826 (was 838).
+- Finding 4 unchanged (v2 behaviour, owner Q5).
+- Diff ratios now: 02-heavy 4.21 → 3.03 %, 03-review 3.79 → 2.14 %, 06-light 3.61 → 2.73 % (remaining bands:
+  title glyphs and the device-frame corners).
+- Console: no errors or warnings; no external requests.
+
 ## Viewer (1440×1000)
 
 - `/p/credit-activation/?v=v3` → `qa/visual/viewer-v3-menu.png`: «Сценарий» (КН / ОК), «Залог» (Авто /

@@ -1,4 +1,4 @@
-// Markup shared by #/sts (1 док) and #/upload (2 дока): the v1 «Нужны фото СТС» screen with a file field.
+// Content of #/upload: the v1 «Нужны фото СТС» screen with a file field.
 import { mask } from '../components';
 import { icon } from '../icons';
 import { state } from '../state';

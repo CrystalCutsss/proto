@@ -1,5 +1,5 @@
-// «Единая активация» v2: КН / ОК credit activation flow as an iOS-like PWA (variant from query params).
-// Routes (hash): #/, #/options, #/review, #/sts, #/documents, #/upload, #/success — listed in version.json.
+// «Единая активация» v3: heavy and light conditions of the credit activation as an iOS-like PWA (one scenario).
+// Routes (hash): #/, #/heavy, #/review, #/documents, #/upload, #/light, #/success — listed in version.json.
 import '@proto/ui/ui.css';
 import './style.css';
 import { setupMotion } from '@proto/motion';

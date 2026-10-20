@@ -1,10 +1,10 @@
 // iOS-like navigation stack: push/pop slides with parallax and dimming, browser history, interactive
 // left-edge swipe back, «Закрыть» reset. location.hash is the source of truth. The stack holds screens by
 // route: history entry `i` (history.state.i) shows pages[i]; «next» pushes the route the top screen's
-// next() returns; a deep link builds the stack from the default path (screens/index.ts).
+// next() returns, a control with `data-push` pushes its own route; a deep link builds the stack from the
+// default path (screens/index.ts).
 import { duration, ease, gsap, prefersReducedMotion } from '@proto/motion';
 import type { NavAction } from './components';
-import { config } from './config';
 import { defaultPath, normalizeRoute, ROOT, screenFor } from './screens';
 import type { Screen } from './screens/types';
 import { resetState } from './state';
@@ -190,14 +190,16 @@ export function startNavigation(viewport: HTMLElement): void {
     });
   }
 
-  function next(): void {
-    const target = top().screen.next?.();
+  /** Push the screen of `target` (a hash route) on top; nothing when it is already on top. */
+  function forward(target: string | null | undefined): void {
     if (!target) return;
     const screen = screenFor(target);
     if (screen === top().screen) return;
     history.pushState({ i: depth() + 1 }, '', screen.route);
     push([screen]);
   }
+
+  const next = () => forward(top().screen.next?.());
 
   function back(): void {
     if (pages.length < 2 || !top().screen.canGoBack) return;
@@ -220,10 +222,11 @@ export function startNavigation(viewport: HTMLElement): void {
       event.stopPropagation();
       return;
     }
-    const el = (event.target as Element).closest<HTMLElement>('[data-action]');
+    const el = (event.target as Element).closest<HTMLElement>('[data-action], [data-push]');
     if (!el || tween || drag?.engaged || !top().el.contains(el)) return;
     const actions: Record<NavAction, () => void> = { next, back, close };
-    const handler = actions[el.dataset.action as NavAction];
+    const { push: target, action } = el.dataset;
+    const handler = target ? () => forward(target) : actions[action as NavAction];
     if (!handler) return;
     top().screen.beforeAction?.(el);
     handler();
@@ -254,7 +257,7 @@ export function startNavigation(viewport: HTMLElement): void {
       history.replaceState({ i: index }, '', screen.route);
       popTo(index);
     } else {
-      const path = defaultPath(screen, config.docs);
+      const path = defaultPath(screen);
       const from = path.indexOf(top().screen);
       const screens = from >= 0 ? path.slice(from + 1) : [screen];
       // The typed entry becomes the first pushed screen; the rest get their own entries.
@@ -363,7 +366,7 @@ export function startNavigation(viewport: HTMLElement): void {
   // ---------- start: a deep link builds the stack (and history) from the default path ----------
 
   const target = screenFor(location.hash);
-  const path = defaultPath(target, config.docs);
+  const path = defaultPath(target);
   const last = path.length - 1;
   if (historyIndex() !== last || normalizeRoute(location.hash) !== target.route) {
     history.replaceState({ i: 0 }, '', path[0]!.route);

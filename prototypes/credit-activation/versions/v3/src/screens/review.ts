@@ -1,8 +1,7 @@
-// #/review — check the amount, the conditions that are on and the account. Without a pledge and options
-// («Проверка без опций») there is no «Залог и условия» card and the button gets the money right away.
-import { formatRub, formatRubKopecks, hasConditions, monthlyPayment, totalAmount } from '../calc';
-import { LEGAL, bottomBlock, feeHtml, primaryButton, secondaryButton, topBars } from '../components';
-import { config } from '../config';
+// #/review — check the amount, the conditions that are on and the account; «Дальше» → #/documents.
+// No «Комиссия» row (owner, Q8). «Залог и условия» lists what is on; it is left out only when nothing is.
+import { formatRub, formatRubKopecks, monthlyPayment, totalAmount } from '../calc';
+import { bottomBlock, primaryButton, secondaryButton, topBars } from '../components';
 import { icon } from '../icons';
 import { choice, state } from '../state';
 import type { Screen } from './types';
@@ -24,23 +23,17 @@ const avatarRow = (iconName: string, title: string, text: string) => `
     </div>
   </div>`;
 
-/** Rows of «Залог и условия» in the spec order: pledge, check, turnover, statement, package. */
-function conditionRows(): string {
+/** Rows of «Залог и условия» in the spec order: pledge, check, statement, package. */
+function conditionRows(): string[] {
   const rows: string[] = [];
-  if (state.pledge === 'auto')
-    rows.push(avatarRow('transport-auto.svg', 'Mercedes-Benz W214', 'Понадобится фото СТС'));
-  if (state.pledge === 'realty') {
-    rows.push(avatarRow('doc.svg', 'Москва, ул.&nbsp;Лесная, 27, кв.&nbsp;263', 'Понадобится выписка ЕГРН'));
-  }
-  if (state.options.check)
+  if (state.pledge) rows.push(avatarRow('transport-auto.svg', 'Mercedes-Benz W214', 'Понадобится фото СТС'));
+  if (state.check)
     rows.push(avatarRow('doc.svg', 'Проверка данных', 'Обычно занимает до&nbsp;1 рабочего дня'));
-  if (state.options.turnover)
-    rows.push(avatarRow('briefcase.svg', 'Оборот по счету в&nbsp;Т‑Банке', 'От&nbsp;46&nbsp;789&nbsp;₽/мес'));
-  if (state.options.statement)
+  if (state.statement)
     rows.push(avatarRow('doc.svg', 'Выписка из другого банка', 'Обычно проверяем за 2 минуты'));
-  if (choice().package)
+  if (state.package)
     rows.push(avatarRow('briefcase.svg', 'Пакет «Все включено»', 'Документы не потребуются'));
-  return rows.join('');
+  return rows;
 }
 
 export const review: Screen = {
@@ -49,7 +42,7 @@ export const review: Screen = {
   canGoBack: true,
   html: () => {
     const c = choice();
-    const full = hasConditions(c);
+    const rows = conditionRows();
     return `
     ${topBars('back', 'close')}
     <div class="content">
@@ -62,14 +55,13 @@ export const review: Screen = {
           <h2 class="card__title t-heading-m" id="card-sum">Сумма и платеж</h2>
           ${valueRow('Сумма', formatRub(totalAmount(c)))}
           ${valueRow('Платеж в месяц', formatRubKopecks(monthlyPayment(c)))}
-          ${config.product === 'ok' ? valueRow('Комиссия', feeHtml(c)) : ''}
           <div class="card__footer">${secondaryButton('График платежей')}</div>
         </section>
         ${
-          full
+          rows.length
             ? `<section class="card" aria-labelledby="card-collateral">
                 <h2 class="card__title t-heading-m" id="card-collateral">Залог и условия</h2>
-                ${conditionRows()}
+                ${rows.join('')}
                 <div class="card__footer">${secondaryButton('Как это работает')}</div>
               </section>`
             : ''
@@ -83,12 +75,8 @@ export const review: Screen = {
         </section>
       </div>
     </div>
-    ${
-      full
-        ? bottomBlock({ button: primaryButton('Дальше', 'next') })
-        : bottomBlock({ button: primaryButton('Получить деньги', 'next'), legalBelow: LEGAL })
-    }`;
+    ${bottomBlock({ button: primaryButton('Дальше', 'next') })}`;
   },
 
-  next: () => (hasConditions(choice()) ? (config.docs === 'one' ? '#/sts' : '#/documents') : '#/success'),
+  next: () => '#/documents',
 };

@@ -1,5 +1,5 @@
-// #/upload — 2 дока: «Загрузить» marks the documents uploaded and pops back to #/documents, which shows
-// its ready state while it slides in (its refresh() runs before the pop).
+// #/upload — «Загрузить» (v2 label, owner Q12) marks the documents uploaded and pops back to #/documents,
+// which shows its ready state while it slides in (its refresh() runs before the pop).
 import { LEGAL, bottomBlock, primaryButton, topBars } from '../components';
 import { state } from '../state';
 import { mountFileField, stsContent } from './sts-content';

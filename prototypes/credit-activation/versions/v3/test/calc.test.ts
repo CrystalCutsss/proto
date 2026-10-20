@@ -2,193 +2,141 @@ import { describe, expect, it } from 'vitest';
 import {
   AMOUNT,
   amountTone,
+  BASE_CHOICE,
+  BASE_FEE,
   type Choice,
   fee,
   feeTone,
+  formatPaymentChip,
   formatPercent,
   formatRub,
   formatRubKopecks,
-  hasConditions,
   monthlyPayment,
   paymentTone,
-  PLEDGE_THRESHOLD,
-  pledgeOnAt,
-  rememberBelow,
-  sliderAfterPledgeOff,
-  sliderAfterPledgeOn,
   totalAmount,
 } from '../src/calc';
 
-const NBSP = '\u00a0';
-const choice = (over: Partial<Choice> = {}): Choice => ({
-  product: 'kn',
-  slider: 7_000_000,
-  pledge: true,
-  package: true,
-  check: false,
-  turnover: false,
-  statement: false,
-  ...over,
-});
+const NBSP = ' ';
+const choice = (over: Partial<Choice> = {}): Choice => ({ ...BASE_CHOICE, ...over });
 
-describe('monthly payment', () => {
-  it('is 17 713,05 ₽ at 7 000 000 ₽ whatever the pledge and the fee options', () => {
-    for (const product of ['kn', 'ok'] as const) {
-      for (const pledge of [true, false]) {
-        for (const turnover of [true, false]) {
-          for (const statement of [true, false]) {
-            const c = choice({ product, pledge, turnover, statement, package: product === 'kn' });
-            expect(monthlyPayment(c)).toBe(17_713.05);
-          }
-        }
-      }
-    }
-    expect(formatRubKopecks(monthlyPayment(choice()))).toBe(`17${NBSP}713,05${NBSP}₽`);
-    expect(formatRub(monthlyPayment(choice()))).toBe(`17${NBSP}713${NBSP}₽`);
+describe('defaults', () => {
+  it('nothing is selected except the package (owner, Q6)', () => {
+    expect(BASE_CHOICE).toEqual({
+      pledge: false,
+      check: false,
+      statement: false,
+      package: true,
+      feeCut: null,
+    });
   });
 
-  it('follows the total amount (slider and «Проверить данные»)', () => {
-    expect(monthlyPayment(choice({ slider: AMOUNT.min }))).toBe(10_121.74);
-    expect(monthlyPayment(choice({ slider: AMOUNT.max }))).toBe(22_773.92);
-    expect(monthlyPayment(choice({ slider: 5_000_000, check: true }))).toBe(17_713.05);
-    expect(monthlyPayment(choice({ slider: 6_000_000 }))).toBeGreaterThan(
-      monthlyPayment(choice({ slider: 5_000_000 })),
+  it('#/ shows 4 000 000 ₽, 2,9% and the formula payment at 4 млн (owner, Q1)', () => {
+    expect(totalAmount(BASE_CHOICE)).toBe(AMOUNT.initial);
+    expect(formatRub(AMOUNT.initial)).toBe(`4${NBSP}000${NBSP}000${NBSP}₽`);
+    expect(formatPercent(BASE_FEE)).toBe('2,9%');
+    expect(monthlyPayment(BASE_CHOICE)).toBe(10_121.74);
+    expect(formatRub(monthlyPayment(BASE_CHOICE))).toBe(`10${NBSP}122${NBSP}₽`);
+  });
+});
+
+describe('total amount', () => {
+  it('pledge adds 3 000 000 ₽, «Проверить данные» 2 000 000 ₽, the statement nothing', () => {
+    expect(totalAmount(choice({ pledge: true }))).toBe(7_000_000);
+    expect(totalAmount(choice({ check: true }))).toBe(6_000_000);
+    expect(totalAmount(choice({ pledge: true, check: true }))).toBe(9_000_000);
+    expect(totalAmount(choice({ statement: true }))).toBe(AMOUNT.initial);
+    expect(formatRub(totalAmount(choice({ pledge: true, check: true })))).toBe(
+      `9${NBSP}000${NBSP}000${NBSP}₽`,
     );
   });
 
-  it('turning the КН package off raises it by 15 %', () => {
-    expect(monthlyPayment(choice({ package: false }))).toBe(20_370.01);
-    for (const slider of [AMOUNT.min, 5_500_000, AMOUNT.max]) {
-      const on = monthlyPayment(choice({ slider }));
-      expect(monthlyPayment(choice({ slider, package: false }))).toBeCloseTo(on * 1.15, 1);
+  it('options on #/light change no amount', () => {
+    for (const feeCut of [null, 'one', 'half'] as const) {
+      for (const pkg of [true, false]) {
+        expect(totalAmount(choice({ pledge: true, feeCut, package: pkg }))).toBe(7_000_000);
+      }
     }
   });
+});
 
-  it('ОК ignores the package flag', () => {
-    expect(monthlyPayment(choice({ product: 'ok', package: false }))).toBe(17_713.05);
+describe('monthly payment', () => {
+  it('is 17 713,05 ₽ at 7 000 000 ₽ (pledge only), whatever the statement and the fee cards', () => {
+    for (const statement of [true, false]) {
+      for (const feeCut of [null, 'one', 'half'] as const) {
+        expect(monthlyPayment(choice({ pledge: true, statement, feeCut }))).toBe(17_713.05);
+      }
+    }
+    const c = choice({ pledge: true });
+    expect(formatRubKopecks(monthlyPayment(c))).toBe(`17${NBSP}713,05${NBSP}₽`);
+    expect(formatPaymentChip(monthlyPayment(c))).toBe(`17${NBSP}713${NBSP}₽${NBSP}/${NBSP}мес`);
+  });
+
+  it('follows the total amount', () => {
+    expect(monthlyPayment(choice({ check: true }))).toBe(15_182.61);
+    expect(monthlyPayment(choice({ pledge: true, check: true }))).toBe(22_773.92);
+  });
+
+  it('turning the package off raises it by 15 %', () => {
+    expect(monthlyPayment(choice({ pledge: true, package: false }))).toBe(20_370.01);
+    for (const over of [{}, { check: true }, { pledge: true, check: true }]) {
+      const on = monthlyPayment(choice(over));
+      expect(monthlyPayment(choice({ ...over, package: false }))).toBeCloseTo(on * 1.15, 1);
+    }
   });
 });
 
-describe('ОК fee', () => {
-  it('is 2,9 / 2,5 / 2,4 / 2,0 %', () => {
-    expect(fee({ pledge: false, turnover: false })).toBe(2.9);
-    expect(fee({ pledge: true, turnover: false })).toBe(2.5);
-    expect(fee({ pledge: false, turnover: true })).toBe(2.4);
-    expect(fee({ pledge: true, turnover: true })).toBe(2.0);
-    expect(formatPercent(2.0)).toBe('2,0%');
-    expect(formatPercent(2.5)).toBe('2,5%');
+describe('fee', () => {
+  it('base 2,9 %, pledge 2,5 %, «Снизим комиссию» −1 or −0,5 pp', () => {
+    expect(fee(choice())).toBe(2.9);
+    expect(fee(choice({ pledge: true }))).toBe(2.5);
+    expect(fee(choice({ feeCut: 'one' }))).toBe(1.9);
+    expect(fee(choice({ feeCut: 'half' }))).toBe(2.4);
+    expect(fee(choice({ pledge: true, feeCut: 'one' }))).toBe(1.5);
+    expect(fee(choice({ pledge: true, feeCut: 'half' }))).toBe(2.0);
+    expect(formatPercent(fee(choice({ pledge: true, feeCut: 'half' })))).toBe('2,0%');
+    expect(formatPercent(fee(choice({ pledge: true })))).toBe('2,5%');
   });
 
-  it('fee chip turns positive only below 2,9 %', () => {
-    expect(feeTone(choice({ product: 'ok', pledge: false }))).toBe('neutral');
-    expect(feeTone(choice({ product: 'ok', pledge: true }))).toBe('positive');
-    expect(feeTone(choice({ product: 'ok', pledge: false, turnover: true }))).toBe('positive');
-  });
-});
-
-describe('pledge threshold and slider', () => {
-  it('switches on at 7 000 000 ₽', () => {
-    expect(PLEDGE_THRESHOLD).toBe(7_000_000);
-    expect(pledgeOnAt(6_900_000)).toBe(false);
-    expect(pledgeOnAt(7_000_000)).toBe(true);
-    expect(pledgeOnAt(AMOUNT.max)).toBe(true);
-  });
-
-  it('remembers the last slider value below 7 млн', () => {
-    expect(rememberBelow(AMOUNT.initial, 5_500_000)).toBe(5_500_000);
-    expect(rememberBelow(5_500_000, 6_900_000)).toBe(6_900_000);
-    expect(rememberBelow(6_900_000, 7_000_000)).toBe(6_900_000);
-    expect(rememberBelow(6_900_000, AMOUNT.max)).toBe(6_900_000);
-  });
-
-  it('tap on adds the pledge chip (+3 млн, at most 9 млн) and reports what it added', () => {
-    expect(sliderAfterPledgeOn(AMOUNT.initial)).toEqual({ slider: 7_000_000, added: 3_000_000 });
-    expect(sliderAfterPledgeOn(5_500_000)).toEqual({ slider: 8_500_000, added: 3_000_000 });
-    expect(sliderAfterPledgeOn(6_800_000)).toEqual({ slider: AMOUNT.max, added: 2_200_000 });
-  });
-
-  it('tap off after a tap on takes the added amount back from the current value', () => {
-    expect(sliderAfterPledgeOff(8_000_000, 5_000_000, 3_000_000)).toBe(5_000_000);
-    // tap on 5 → 8, drag to 8,5, tap off → 5,5 (not back to 5), tap on → 8,5
-    const off = sliderAfterPledgeOff(8_500_000, 5_000_000, 3_000_000);
-    expect(off).toBe(5_500_000);
-    expect(sliderAfterPledgeOn(off).slider).toBe(8_500_000);
-    // capped tap on 6,8 → 9 (+2,2), drag to 8, tap off → 5,8
-    expect(sliderAfterPledgeOff(8_000_000, 6_800_000, 2_200_000)).toBe(5_800_000);
-  });
-
-  it('tap off after a drag switched the pledge on returns to the last value below 7 млн seen in the drag', () => {
-    let below: number = AMOUNT.initial;
-    for (const v of [5_500_000, 6_200_000, 6_800_000, 7_100_000, 9_000_000]) below = rememberBelow(below, v);
-    expect(sliderAfterPledgeOff(9_000_000, below, 0)).toBe(6_800_000);
-  });
-
-  it('alternating drags and taps never pin the slider to 7 млн', () => {
-    let slider = 5_000_000;
-    let below = slider;
-    let added = 0;
-    const tapOn = () => {
-      below = rememberBelow(below, slider);
-      ({ slider, added } = sliderAfterPledgeOn(slider));
-    };
-    const tapOff = () => {
-      slider = sliderAfterPledgeOff(slider, below, added);
-      below = rememberBelow(below, slider);
-    };
-    const drag = (v: number) => {
-      slider = v;
-      below = rememberBelow(below, v);
-    };
-    tapOn();
-    drag(8_500_000);
-    tapOff();
-    expect(slider).toBe(5_500_000);
-    tapOn();
-    expect(slider).toBe(8_500_000);
-    drag(7_600_000);
-    tapOff();
-    expect(slider).toBe(4_600_000);
-    drag(6_000_000);
-    tapOn();
-    expect(slider).toBe(9_000_000);
-    tapOff();
-    expect(slider).toBe(6_000_000);
-  });
-
-  it('tap off stays inside the range and below the threshold', () => {
-    expect(sliderAfterPledgeOff(AMOUNT.min, 1_000_000, 0)).toBe(AMOUNT.min);
-    expect(sliderAfterPledgeOff(AMOUNT.max, 8_000_000, 0)).toBeLessThan(PLEDGE_THRESHOLD);
-    expect(sliderAfterPledgeOff(AMOUNT.max, AMOUNT.min, 1_000_000)).toBeLessThan(PLEDGE_THRESHOLD);
-    expect(sliderAfterPledgeOff(7_000_000, AMOUNT.min, 3_500_000)).toBe(AMOUNT.min);
+  it('the other options change no fee', () => {
+    expect(fee(choice({ check: true, statement: true, package: false }))).toBe(BASE_FEE);
   });
 });
 
-describe('total and chips', () => {
-  it('«Проверить данные» adds 2 000 000 ₽', () => {
-    expect(totalAmount({ slider: 7_000_000, check: true })).toBe(9_000_000);
-    expect(totalAmount({ slider: 7_000_000, check: false })).toBe(7_000_000);
-    expect(formatRub(totalAmount({ slider: 7_000_000, check: true }))).toBe(`9${NBSP}000${NBSP}000${NBSP}₽`);
-  });
-
-  it('amount chip is positive with «Проверить данные» or «Предоставить выписку»', () => {
+describe('chip tones', () => {
+  it('amount: positive above 4 000 000 ₽ or with «Предоставить выписку»', () => {
     expect(amountTone(choice())).toBe('neutral');
+    expect(amountTone(choice({ pledge: true }))).toBe('positive');
     expect(amountTone(choice({ check: true }))).toBe('positive');
     expect(amountTone(choice({ statement: true }))).toBe('positive');
-    expect(monthlyPayment(choice({ statement: true }))).toBe(monthlyPayment(choice()));
+    expect(amountTone(choice({ feeCut: 'one', package: false }))).toBe('neutral');
   });
 
-  it('payment chip: КН green with the package, ОК green with a pledge', () => {
-    expect(paymentTone(choice())).toBe('positive');
-    expect(paymentTone(choice({ pledge: false }))).toBe('positive');
-    expect(paymentTone(choice({ package: false }))).toBe('neutral');
-    expect(paymentTone(choice({ product: 'ok', package: false, pledge: true }))).toBe('positive');
-    expect(paymentTone(choice({ product: 'ok', package: false, pledge: false }))).toBe('neutral');
+  it('payment: positive only on #/light while the package is on (owner, Q2)', () => {
+    expect(paymentTone(choice(), 'light')).toBe('positive');
+    expect(paymentTone(choice({ package: false }), 'light')).toBe('neutral');
+    expect(paymentTone(choice(), 'heavy')).toBe('neutral');
+    expect(paymentTone(choice({ pledge: true }), 'heavy')).toBe('neutral');
   });
 
-  it('«Проверка без опций» only when nothing is on', () => {
-    const none = choice({ pledge: false, package: false });
-    expect(hasConditions(none)).toBe(false);
-    expect(hasConditions({ ...none, package: true })).toBe(true);
-    expect(hasConditions({ ...none, statement: true })).toBe(true);
+  it('fee: positive below 2,9 %', () => {
+    expect(feeTone(choice())).toBe('neutral');
+    expect(feeTone(choice({ pledge: true }))).toBe('positive');
+    expect(feeTone(choice({ feeCut: 'half' }))).toBe('positive');
+    expect(feeTone(choice({ check: true, statement: true }))).toBe('neutral');
+  });
+
+  it('drawn #/heavy (pledge on) and #/light (package + «До −0,5%», pledge on) states', () => {
+    const heavyDrawn = choice({ pledge: true });
+    expect([amountTone(heavyDrawn), paymentTone(heavyDrawn, 'heavy'), feeTone(heavyDrawn)]).toEqual([
+      'positive',
+      'neutral',
+      'positive',
+    ]);
+    const lightDrawn = choice({ feeCut: 'half' });
+    expect([amountTone(lightDrawn), paymentTone(lightDrawn, 'light'), feeTone(lightDrawn)]).toEqual([
+      'neutral',
+      'positive',
+      'positive',
+    ]);
   });
 });

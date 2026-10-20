@@ -20,10 +20,56 @@ Owner decisions (brief, 2026-10-20):
 | 0. Prepare       | done    | `pnpm proto:version credit-activation` (base v2)                        |
 | 0b. Figma intake | done    | references in `design-input/figma/`, new `assets/icons/plus-circle.svg` |
 | 1. Spec          | done    | `spec/spec.md` (v2 spec replaced)                                       |
-| 2. Build         | pending | prototype-builder                                                       |
+| 2. Build         | done    | prototype-builder, 2026-10-20; see «v3 build» below                     |
 | 3. Review        | pending | code-reviewer                                                           |
 | 4. Visual QA     | pending | against `design-input/figma/0[1-7]-*.png`, crop the 4 px device border  |
 | 5. Finish        | pending |                                                                         |
+
+## Owner decisions on the intake questions (2026-10-20)
+
+- **Q1** Calc formula values everywhere: `#/` «Платеж в месяц» shows the formula at 4 000 000 ₽ with the package
+  (10 121,74 → «10 122 ₽»), not the drawn 193 500 ₽.
+- **Q2** Payment chip positive only on `#/light` while the package is on; always neutral on `#/heavy`.
+- **Q3** The two «Снизим комиссию» cards are mutually exclusive.
+- **Q4** Back from `#/light` returns to wherever it came from (`#/` via «Дальше», `#/documents` in the main
+  scenario); a deep link to `#/light` builds the long path through the documents.
+- **Q5** Keep v2 badges: a checked card's badges turn positive.
+- **Q6** Defaults: nothing selected except the package; «До −0,5%» is not pre-selected.
+- **Q7** Keep the gaps as drawn (16 / 16 / 20 px on `#/heavy`).
+- **Q8** No «Комиссия» row on `#/review`.
+- **Q9** `#/heavy` «Дальше» is always enabled, also with nothing selected.
+- **Q10** `#/documents` always shows the same two documents.
+- **Q11** `#/documents` «Получить деньги» always pushes `#/light` (no wait for the upload).
+- **Q12** `#/upload` yellow button keeps the v2 label «Загрузить».
+
+## v3 build (2026-10-20, prototype-builder)
+
+- Screens: `conditions.ts` (`#/`, replaces v2 `offer.ts`: static amount, no slider), `heavy.ts`, `light.ts`
+  (both from v2 `options.ts`; shared chips in `panel.ts`), `review.ts`, `documents.ts`, `upload.ts`,
+  `success.ts`. Removed `offer.ts`, `options.ts`, `sts.ts`, `config.ts` (no axes left: nothing to configure),
+  `haptics.ts` (slider only) and the unused icons `slider-tick.svg`, `cross-medium.svg`, `fade-mask.svg`.
+- Navigation: a control with `data-push="#/…"` pushes that route (`pushRoute()` in `components.ts`, handled in
+  the `nav.ts` click delegation next to `data-action`; `beforeAction` still runs first). Used by the
+  «Увеличить лимит» card (`#/heavy`) and the «Загрузить» badges (`#/upload`). The attribute is `data-push`, not
+  `data-route`, because every `.page` section already carries `data-route` (a `[data-route]` match would catch
+  any click inside a page). Push / pop / swipe / «Закрыть» are otherwise unchanged from v2.
+- `defaultPath()` follows the main scenario `#/ → #/heavy → #/review → #/documents → #/light → #/success`;
+  `#/upload` sits on `#/documents`.
+- `calc.ts`: `Choice = { pledge, check, statement, package, feeCut }`; total = 4 млн + 3 млн (pledge) + 2 млн
+  (check); payment as v2 КН (17 713,05 ₽ per 7 млн, +15 % without the package); fee as v2 ОК (2,9 / 2,5 with the
+  pledge) minus 1,0 («−1%») or 0,5 («До −0,5%») pp; `paymentTone(c, panel)` takes the screen (Q2).
+  `test/calc.test.ts` rewritten for these rules (13 tests).
+- `#/review` «Залог и условия» lists pledge, check, statement, package (each only when on); the card is left out
+  only when nothing is on (package off, possible only after a visit to `#/light`).
+- `#/light` package card: 16 px between the header and the check list, as the v3 spec (v2 had 8 px, owner
+  2026-10-16 for v2); `.card-list--light .check-rows`.
+- «Увеличить лимит» card: one `<button>`, card-large look, pressed scale 0.98 (as the buttons, CSS transition, off
+  under reduced motion), focus ring `--ds-border-focus`. `plus-circle.svg` as an `<img>` on the accent-2 avatar.
+- Smoke run (Chromium, built `dist/`, `?shell=0`): full flow, direct `#/ → #/light → back → #/`, deep links to
+  every route (depths 1–5), mutual exclusion of the fee cards, chip values and tones; no console errors.
+- Note: the drawn `#/light` chips (4 000 000 ₽ neutral · 2,5% with «До −0,5%») cannot all come from one state
+  under these rules (2,5 % needs the pledge, which makes the amount 7 млн): visual QA should pick a state and
+  accept the chip difference.
 
 ## v3 Figma intake
 

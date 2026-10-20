@@ -1,14 +1,20 @@
 // Shared building blocks rendered as HTML strings. Texts are static; user input is set via textContent.
 import { duration, ease, gsap, prefersReducedMotion } from '@proto/motion';
-import { BASE_FEE, fee, formatPercent, type Tone } from './calc';
+import type { Tone } from './calc';
 import { icon, maskStyle } from './icons';
 
 /** Legal line under «Получить деньги» (and under «Загрузить», as drawn). */
 export const LEGAL =
   'Нажимая «Получить деньги», вы соглашаетесь <u>с&nbsp;условиями</u>. Они доступны до 16&nbsp;сентября';
 
-/** Actions handled by the navigation controller through event delegation. */
+/**
+ * Actions handled by the navigation controller through event delegation. A control with `data-push="#/…"`
+ * instead pushes that route (screens with more than one forward target, e.g. #/ and #/documents).
+ */
 export type NavAction = 'next' | 'back' | 'close';
+
+/** Attribute of a control that pushes `route` when activated (see NavAction). */
+export const pushRoute = (route: string) => `data-push="${route}"`;
 
 const action = (a: NavAction) => `data-action="${a}"`;
 
@@ -70,7 +76,7 @@ interface BottomBlock {
   button?: string;
   legalAbove?: string;
   legalBelow?: string;
-  /** Chips row: the block becomes the translucent sticky panel of #/options (no fade). */
+  /** Chips row: the block becomes the translucent sticky panel of #/heavy and #/light (no fade). */
   chips?: string;
 }
 
@@ -124,7 +130,7 @@ export function badges(...items: string[]): string {
   return `<span class="badges">${items.join('')}</span>`;
 }
 
-/** `tui-chip` of the sticky panel on #/options; `data-tone` is updated in place. */
+/** `tui-chip` of the sticky panels on #/heavy and #/light; `data-tone` is updated in place. */
 export function chip(id: string, name: Glyph, label: string, tone: Tone): string {
   return `<span class="chip" data-chip="${id}" data-tone="${tone}">${glyph(name)}<span class="chip__label">${label}</span></span>`;
 }
@@ -136,14 +142,7 @@ export function setChip(root: HTMLElement, id: string, label: string, tone: Tone
   el.querySelector('.chip__label')!.textContent = label;
 }
 
-/** ОК fee: «2,9%» or «<s>2,9%</s> → 2,5%» with the new value in the positive colour. */
-export function feeHtml(c: { pledge: boolean; turnover: boolean }): string {
-  const value = fee(c);
-  if (value >= BASE_FEE) return formatPercent(BASE_FEE);
-  return `<s class="fee__old">${formatPercent(BASE_FEE)}</s> <span aria-hidden="true">→</span><span class="visually-hidden">, теперь</span> <span class="fee__new">${formatPercent(value)}</span>`;
-}
-
-// ---------- card-large (pledge and option cards) ----------
+// ---------- card-large (option cards on #/heavy and #/light) ----------
 
 interface CardLarge {
   /** Unique id prefix. */

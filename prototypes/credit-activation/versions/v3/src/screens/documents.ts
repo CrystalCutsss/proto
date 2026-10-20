@@ -1,6 +1,6 @@
-// #/documents — 2 дока: «Загрузите документы». Not ready: «Загрузить» badges and the yellow button push
-// #/upload. Ready (after «Загрузить» there): «Загружено» badges, the button goes to success.
-import { LEGAL, bottomBlock, primaryButton, topBars } from '../components';
+// #/documents — «Загрузите документы»: always the two documents (owner, Q10). The «Загрузить» badges push
+// #/upload; after «Загрузить» there both show «Загружено». «Получить деньги» always pushes #/light (owner, Q11).
+import { LEGAL, bottomBlock, primaryButton, pushRoute, topBars } from '../components';
 import { state } from '../state';
 import type { Screen } from './types';
 
@@ -16,7 +16,7 @@ const DOCS = [
 const status = (id: string) =>
   state.docsUploaded
     ? `<span class="badge badge--doc badge--positive"><span class="badge__label">Загружено</span></span>`
-    : `<button type="button" class="badge badge--doc badge--action" data-action="next" aria-describedby="${id}-title"><span class="badge__label">Загрузить</span></button>`;
+    : `<button type="button" class="badge badge--doc badge--action" ${pushRoute('#/upload')} aria-describedby="${id}-title"><span class="badge__label">Загрузить</span></button>`;
 
 const docCard = (doc: (typeof DOCS)[number]) => `
   <section class="doc-card" aria-labelledby="${doc.id}-title">
@@ -37,7 +37,7 @@ export const documents: Screen = {
     </div>
     ${bottomBlock({ button: primaryButton('Получить деньги', 'next'), legalBelow: LEGAL })}`,
 
-  next: () => (state.docsUploaded ? '#/success' : '#/upload'),
+  next: () => '#/light',
 
   refresh(root) {
     root.querySelectorAll<HTMLElement>('[data-doc-status]').forEach((el) => {

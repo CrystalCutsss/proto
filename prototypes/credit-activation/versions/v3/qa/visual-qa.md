@@ -1,162 +1,91 @@
-# credit-activation v2 — visual QA
+# credit-activation v3 — visual QA
 
-- Date: 2026-10-16. Build: `pnpm site:build` (fresh), served by `createSiteServer` (open preview, no auth),
+- Date: 2026-10-20. Build: `pnpm site:build` (fresh), served by `createSiteServer` (open preview, no auth),
   Chromium (Playwright 1.56.1), `reducedMotion: 'reduce'`, `deviceScaleFactor: 1`.
-- Pages: `/p/credit-activation/v2/?shell=0&product=…&pledge=…&docs=…#/route`, viewport 375 wide. The height
-  matches each reference's inner frame (812, 832, 915, 1014, 1069, 1159) so the whole content is in view. Extra
-  375×812 shots: `*-812.png`.
-- References: `design-input/figma/*`, scaled to 383 px wide where needed (`02-kn-options` ×1.140,
-  `03-ok-review` ×1.052), 4 px frame cropped, saved to `qa/visual/ref/`. Diffs `qa/diff/<name>.png`
-  (`pnpm qa:diff qa/visual/ref/<name>.png qa/visual/<name>.png`). Side-by-side images: `qa/visual/cmp-<name>.png`
-  (reference | actual | diff). Raw numbers: `qa/visual/results.json`.
-- Vertical positions below are y px (1x) of ink runs measured on the reference and on the screenshot.
-- Fonts: SF Pro is missing. Text renders with the system Inter through `-apple-system`/`BlinkMacSystemFont`
-  (CDP `getPlatformFontsForNode`: Inter / Inter-Bold / Inter-SemiBold, not custom). The bundled web fonts
-  stay `unloaded` because nothing uses them. Glyph differences are ignored, as agreed.
-- Console: no errors or warnings on any route or in the viewer. Network: no requests leave the site (no CDN).
+- Pages: `/p/credit-activation/v3/?shell=0#/route`, design bars shown, viewport 375 wide. Height = the reference's
+  inner frame (812; `#/review` 1012; `#/light` 1028) so the whole screen is in view; extra 375×812 shots
+  `*-812.png` for the two tall screens.
+- States: `#/heavy` pledge card tapped; `#/review` reached through the flow (`#/heavy`, pledge + statement on,
+  «Дальше») because the reference shows three rows (a deep link to `#/review` shows only the package row);
+  `#/light` deep link (package on by default) + «До −0,5%» card tapped.
+- References: `design-input/figma/*`, 4 px frame cropped (`qa/visual/ref/`). Diffs:
+  `pnpm qa:diff design-input/figma/<n>.png qa/visual/<n>.png --crop-ref 4 --out qa/diff/<n>.png`.
+  Side-by-side (reference | actual | diff): `qa/visual/cmp-<n>.png`.
+- Vertical positions below are y px (1x) of ink runs measured on the reference and the screenshot (pngjs scan),
+  plus DOM boxes from `getBoundingClientRect`.
+- Fonts: SF Pro is not available on Linux; text renders with the system fallback (all bundled `@font-face`
+  entries stay `unloaded`, nothing uses them). Glyph widths differ; ignored as agreed.
+- Console: no errors or warnings on any route or in the viewer. Network: no request leaves the site (no CDN).
 
 ## Diff ratios (pointer only, fallback font)
 
-| reference               | route / state                          | diff    |
-| ----------------------- | -------------------------------------- | ------- |
-| 01-kn-offer-auto        | kn, auto, `#/`                         | 2.64 %  |
-| 01-kn-offer-realty      | kn, realty, `#/`                       | 2.62 %  |
-| 01-ok-offer-two-pledges | ok, both, tap the realty card          | 3.23 %  |
-| 02-kn-options           | kn, pledge on → `#/options`            | 8.94 %  |
-| 02c-ok-options          | ok, pledge on → `#/options`            | 5.56 %  |
-| 03-kn-review            | kn, pledge auto + package → `#/review` | 3.86 %  |
-| 03-ok-review            | ok, pledge auto → `#/review`           | 5.69 %  |
-| 03b-review-no-options   | ok, nothing on, `#/review`             | 7.91 %  |
-| 04a-documents-one       | `#/sts`                                | 10.00 % |
-| 04b-documents-two       | docs=two `#/documents`                 | 6.88 %  |
-| 04c-upload              | docs=two `#/upload`                    | 9.91 %  |
-| 05-documents-ready      | upload → «Загрузить» → documents       | 6.89 %  |
-| 06-success              | `#/success`                            | 0.76 %  |
+| reference     | state                        | diff   | worst bands               |
+| ------------- | ---------------------------- | ------ | ------------------------- |
+| 01-conditions | `#/`                         | 2.16 % | 160–224 (amount glyphs)   |
+| 02-heavy      | pledge on                    | 4.21 % | 512–544, 384–416          |
+| 03-review     | pledge + statement + package | 3.79 % | 608–640, 672–704, 832–864 |
+| 04-documents  | `#/documents`                | 2.56 % | 96–128 (title glyphs)     |
+| 05-upload     | `#/upload`                   | 5.89 % | 320–384, 128–160          |
+| 06-light      | package + «До −0,5%»         | 3.61 % | 576–608, 736–768          |
+| 07-success    | `#/success`                  | 0.76 % | 448–480 (amount text)     |
 
-## Findings (ranked)
+The 800–812 / 992–1012 / 1024–1028 bands are the reference's rounded device-frame corners, not the UI.
 
-1. **`#/review` (no options), `#/sts`, `#/documents`, `#/upload`: the bottom block with legal text below is 16 px
-   too short.** Button ref y 658–713, actual 674–729 (+16). Legal text lines ref at 734 / 749 (15 px pitch),
-   actual 740 / 758 (18 px pitch). From the button's bottom to the top of the home indicator: ref 65 px,
-   actual 49 px. These are the worst diff bands on 5 screens (y 640–736, up to 46 %). Evidence: `cmp-03b-*`,
-   `cmp-04a-*`, `cmp-04b-*`, `cmp-04c-*`, `cmp-05-*`, `diff/04b-documents-two.png`. Fix: in `.legal` use the
-   ui-s line height (`--ds-typography-ui-s-line-height` = 16 px) instead of `--ds-font-line-height-x4-5` (18).
-   Make `.legal--below` about 64 px tall (now `min-height: space-12` = 48 with `margin-top: -12`), with the
-   text centred in it.
-2. **`#/options` and `#/review`: the large title sits 8 px too high.** First title line ink: ref y 111,
-   actual 102–103. On `#/documents` and `#/sts` the title matches (107/107, 103/103), so `.large-title` needs
-   `padding-top` 16 px instead of 8 on these two screens.
-   - `#/review`: the cards are already where they should be (card title 242 in both), so with padding-top 16
-     the bottom padding of `.large-title--review` must drop from 28 to 20 px. The gap from subtitle to card is
-     now 8 px too large (ref 185→242, actual 177→242).
-   - `#/options`: the first card is 16 px too high (radio ref 221, actual 205 in `02c`). After padding-top
-     16 it still needs 8 px more gap between the title and the first card.
-     Evidence: `cmp-02c-ok-options.png`, `cmp-03-kn-review.png`.
-3. **Card-large (pledge cards on `#/`, option cards on `#/options`): the description sits 4 px low, so each card
-   is 4 px too tall.** Description ink ref 456–469, actual 460–473. Badges ref 485–512, actual 489–516. With two
-   pledges (`01-ok`) this adds up to +8 px: the content is 923 px tall in a 915 px frame. `02c`: card 2 is −12
-   instead of −16, card 3 is −8 (the cumulative +4 per card). Computed: header 52 px (16 + title 24 + 12),
-   description 17/20. Fix: header bottom padding 8 px (`--ds-space-2`) instead of 12. Evidence:
-   `cmp-01-ok-offer-two-pledges.png`, `diff/01-kn-offer-auto.png` (band y 448–512).
-4. **`#/` ОК, slider at 7 000 000 ₽: the knob is about 46 px left of the design.** Actual knob centre x≈220
-   (60 % of the track, linear 4–9 млн). The design draws it at x≈266, on the 4th tick (75 %). The ticks match
-   (x≈104/187/269/349). Either the design is not linear or it is inaccurate: needs an owner decision, no code
-   change is implied. Evidence: `cmp-01-ok-offer-two-pledges.png`, diff band y 247–267.
-5. **`#/options` КН: the payment chip is green (positive) with the package on; the design (`02-kn-options`,
-   package checked) shows it neutral (white, dark icon).** This follows the spec rule («payment chip КН positive
-   while the package is on»), which contradicts this frame. Confirm with the owner, or check whether another
-   frame shows the green chip. Evidence: `cmp-02-kn-options.png`, band y 1024–1056 (27 %).
-6. **`#/options` КН, package card content.**
-   - The check icon is top-aligned and smaller: ink 9 px at the first line (y 254–262, row 1). The design has an
-     11 px glyph centred on the 2-line row (282–292).
-   - The text column is wider than in the design. The design wraps «Бесплатное обслуживание / счета для
-     бизнеса»; the actual page fits «…обслуживание счета» on one line, even though the fallback font is wider.
-     The design text box ends at about x 300–320 px; the actual one ends at x 339.
-   - Gaps are about 5–7 px smaller: title row to first check row 46 → 41, last row to «Изменить пакет» 58 → 51
-     (reference rescaled ×1.14, ±1 px).
-     Fix: centre the check vertically (`align-items: center`) and check the 16 px icon box/glyph size. Add
-     right padding (about 24–40 px) to `.check-rows` and re-read the row geometry in Figma
-     (42:2979). Evidence: `cmp-02-kn-options.png`, `02-kn-options-812.png`.
-7. **`#/review`: rows are 4–5 px shorter than in the design.**
-   - «Сумма и платеж» rows: pitch ref 61 px (caption 285 → 346), actual 56 (287 → 343). Caption-to-value
-     spacing (ink top to ink top): ref 20, actual 16.
-   - «Залог и условия» avatar rows: pitch ref 60 (542/602/662), actual 56 (542/598).
-   - Computed `.row` is `min-height: 56px`, caption 13/16, value 17/20. In the design rows are about 60 px (value
-     line height 24, or 10 px vertical padding).
-     Fix: value line height `--ds-typography-body-l-line-height` (24) or `.row` min-height 60.
-     Evidence: `cmp-03-kn-review.png`, `cmp-03-ok-review.png`.
-8. **`#/options` panel: 3 px taller and chips 2 px taller.** Divider ref y 680, actual 677. Chips ref ≈30 px
-   (696–725), actual 32 (694–725, as the spec says). The button position matches (742–797). Minor. Evidence:
-   `cmp-02c-ok-options.png`.
-9. **`#/` with two pledges at 812 px: no fade above «Дальше».** The content overflows by about 110 px, and the
-   second card is cut sharply at y 722 (`01-ok-offer-two-pledges-812.png`, also visible in the viewer). The
-   spec allows dropping the fade only when the content is short. Fix: use `bottom-block--fade` on the offer
-   (or only when it overflows). Minor.
-10. **`#/documents` cards: 2–3 px shorter.** Card 1 ref 130, actual 128; card 2 ref 148, actual 145. Badge
-    «Загрузить/Загружено» ref ≈30 px tall (240–269), actual 28. Minor.
-11. **Yellow button states.**
-    - Normal `#ffdd2d`, hover `#ffcd33`, pressed `#ffcd33` + `scale(0.98)` (matches `:active`, width 343 →
-      336.1), focus-visible 2 px ring `--ds-border-focus`.
-    - Hover and pressed have the same colour (the iOS hover token is null; this is a documented ledger
-      decision), so only the scale tells them apart. Under `prefers-reduced-motion` the scale is removed, which
-      makes hover and pressed identical.
-    - Evidence: `state-button-hover.png`, `state-button-pressed-no-preference.png`,
-      `state-button-pressed-reduce.png`, `state-button-focus.png`. Acceptable; flag to the owner.
-12. **Data, not layout (expected / known):**
-    - The offer payment shows 10 215 ₽ / 17 713 ₽ instead of 193 500 ₽ (owner chose the formula).
-    - `03b` is drawn at 7 000 000 ₽ with no «Комиссия» row (a КН-style frame). ОК with nothing on renders
-      4 000 000 ₽ with «Комиссия 2,9%», so the screen is 56 px taller in the top card and the rest shifts.
-    - Success shows the current total (4 000 000) instead of 8 000 000.
-    - `#/sts` and `#/upload`: the title wraps to 3 lines in the fallback font (2 in Figma), which pushes the
-      content 36 px down (known).
-    - The review «Залог и условия» lists only what is selected (known).
+## Findings
 
-## Matches
+1. `#/heavy`, `#/light` — title → description gap on option cards is 4 px larger than drawn, so each card is
+   4 px taller and the drift accumulates down the list — evidence `qa/visual/cmp-02-heavy.png`,
+   `qa/visual/cmp-06-light.png`, `qa/diff/02-heavy.png`. Cap tops title → description: ref 221 → 251 (30 px),
+   actual 220 → 255 (35 px). Card height ref 128 px, actual 132 px (DOM 200–332). Card 2 title ref 365, actual
+   368; card 3 title ref 513, actual 520; card 3 description ref 543, actual 555 (+12). `#/light` fee cards: ref
+   description 579 vs actual 583, card 3 description 747 vs 755; card height 148 → 152. — Suggested fix:
+   `.card-large__description { padding-top: 0 }` (header's 8 px only). Note: the 12 px gap was an owner decision
+   on 2026-10-16 (v2, comment in `style.css`); the v3 frames draw 8 px, so the owner must choose.
+2. `#/review` — «Сумма и платеж» card is 8 px taller: the gap from the last value row to «График платежей» is
+   22 px instead of 14 — evidence `qa/visual/cmp-03-review.png`. Button ref y 398–441, actual 406–449; value ink
+   bottom 380 in both. Card ref 222–462 (240 px), actual 222–470 (248 px). Everything below shifts +8.
+   — Suggested fix: `.card__footer` padding-top `--ds-space-1` (4 px) instead of `--ds-space-3` (12) for this
+   card (check the «Залог и условия» footer separately, see 3).
+3. `#/review` — «Залог и условия» rows: the subtitle sits 4 px closer to the title than drawn, and the row block
+   starts 3 px lower — evidence `qa/visual/cmp-03-review.png`. Cap tops title → subtitle: ref 545 → 570 (25 px),
+   actual 557 → 578 (21 px); the row title is `t-body-l` 17/20 (DOM 20 px tall), the design's text block is 40 px
+   (= avatar). First avatar top − card top: ref 60, actual 63. Card ref 482–786 (304 px), actual 490–798 (308);
+   «Рублевый счет» title ref 826, actual 838 (+12 total). — Suggested fix: row title line height 24 px
+   (`--ds-typography-body-l-line-height`, as `.row__value` already does) or a 4 px gap between title and
+   subtitle, and align the avatar row so the block starts at title bottom + 8 (`card__title` 52 px).
+4. `#/heavy`, `#/light` — checked cards show green badges (`.card-large.is-on .badge`), the frames show neutral
+   badges on checked cards («+3 000 000 ₽», «−0,5%» on `#/heavy`; «До −0,5%» on `#/light`) — evidence
+   `qa/visual/cmp-02-heavy.png` y 284–312, `qa/visual/cmp-06-light.png` y 804–832. Spec Q5 deliberately keeps the
+   v2 behaviour; listed so the owner confirms. — Fix if the owner wants the drawing: drop `.card-large.is-on
+.badge` from the positive rule.
+5. `#/upload` — title wraps to three lines («деньги» alone), the bullets wrap differently and everything below
+   moves 36 px down (sample row ref 328–358, actual 364–395; «Выберите файлы» ref 384–439, actual 424–481) —
+   evidence `qa/visual/cmp-05-upload.png`. Cause: fallback font is wider than SF Pro (same in v2,
+   `versions/v2/qa/visual/cmp-04c-upload.png`). Not a CSS defect; check on an Apple device. No fix proposed.
+6. `#/light` (scrolled, 375×812) — the top bars are transparent, so card text shows behind the status bar and
+   «Закрыть» when the list is scrolled — evidence `qa/visual/06-light-812.png` y 0–80. Not drawn in the design
+   (no scrolled frame); observation only.
 
-- Status bar, app bar, «Закрыть» / back chevron positions (y 59–75 on every screen).
-- Offer header, amount, slider track, ticks, labels.
-- Info cards (y 332–365 / 332–368), pledge card title row, radio, «?» and green badges.
-- Fee «2,9% → 2,5%».
-- `#/documents` title and card layout (±3 px), «Загружено» state after upload.
-- `#/success` (0.76 %).
-- The «Дальше» button on the offer, options and review (button y matches to the pixel).
+Matching within ≤ 2 px (glyph noise only): `#/` (all blocks; payment 10 122 ₽ is the accepted live value),
+`#/documents` (title 113/112, cards, badges 245–264 in both, button 658–713 in both, legal 734/750 in both),
+`#/success` (illustration, text 447/446, button 547/547), `#/heavy` and `#/light` bottom panels (chips 676/676,
+892, button 722–777 / 938), `#/light` package card (title 221/220, rows 268/267, 323/323, «Изменить пакет»
+444–487 in both). Colours of buttons (#FFDD2D), secondary buttons (#F7F7F8), avatars (#E1ECFE) match.
+Accepted: live numbers (`#/` payment, `#/light` chips 10 122 ₽ / 2,4 %, success amount), `#/upload` label
+«Загрузить».
 
-## Viewer, 1440×1000 (`/p/credit-activation/?v=v2`)
+## Viewer (1440×1000)
 
-- iPhone mockup on a black stage. The glow is gone: `.viewer[data-mode='device'].ds-stage::before { content:
-none }`, so the pseudo-element with `stage-glow.webp` is not generated.
-- The menu has three captioned segmented controls «Сценарий / Залог / Документы» (КН|ОК, Авто|Недвижимость|2
-  залога, 1 док|2 дока). There are no version or screen menus.
-- Switching to ОК / 2 залога / 2 дока reloads the iframe with `?product=ok&pledge=both&docs=two`.
-- No console errors, no external requests. Evidence: `viewer-1440.png`, `viewer-1440-ok-both-two.png`,
-  `viewer-1440-button-hover.png`.
+- `/p/credit-activation/?v=v3` → `qa/visual/viewer-v3-menu.png`: «Сценарий» (КН / ОК), «Залог» (Авто /
+  Недвижимость / 2 залога), «Документы» (1 док / 2 дока) greyed out — label brightness 141 vs 231 in v2, the
+  selected pill #3C3C3C vs #525252; the controls are `disabled`; clicking «ОК» leaves the URL unchanged.
+  «Версия» v1 / v2 / v3 is active (v3 selected); clicking v2 switches to v2. The v3 URL carries
+  `s=main&product=kn&pledge=auto&docs=one` (ignored by v3, kept for switching back).
+- `/p/credit-activation/?v=v2` → `qa/visual/viewer-v2-menu.png`: the same axes active, v2 selected.
+- Note: the greyed product axis is captioned «Сценарий» (v2 axis title), and v3 has no `scenarios` of its own
+  (the spec suggested «Тяжелые условия» / «Сразу легкие»), so on v3 the only «Сценарий» on screen is a disabled
+  v2 control.
 
 ## Verdict
 
-**minor differences.** Nothing is structurally wrong, but four systematic spacing issues are worth fixing before
-review: items 1–3 and 7, which are 4–16 px offsets. Items 4 and 5 are design or spec conflicts for the owner.
-
-## Round 1 fixes (prototype-builder, 2026-10-16)
-
-Re-captured with the same script and settings (fresh `pnpm site:build`, `createSiteServer`, reduced motion, 1x),
-same file names in `qa/visual/` (`*.png`, `*-812.png`, `cmp-*.png`, `results.json`) and `qa/diff/`. After
-values are DOM box positions (y px) at the same states; "before" values are the ones measured above.
-
-| #   | Item                                                                                            | Before                                                                                       | After                                                                                                                                                                           |
-| --- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Bottom block with legal below (`#/review` без опций, `#/sts`, `#/documents`, `#/upload`, ready) | button 674–729; legal pitch 18; button → home indicator 49                                   | button 658–714; legal pitch 16 (ui-s line height); legal block 714–778 = 64 px, text centred; indicator 778                                                                     |
-| 2   | Large title `#/options`, `#/review`                                                             | padding-top 8 (title ink 102–103 vs ref 111)                                                 | padding-top 16 (+8: review `h1` box 96 → 104); review bottom padding 28 → 20, card stays (card top 222); options: first radio 205 → 221 (ref 221), radios 221 / 369 / 537       |
-| 3   | Card-large header                                                                               | bottom padding 12, header 52 px; two-pledge offer 923 px tall in 915                         | bottom padding 8, header 48 px; offer content 915 px (= frame)                                                                                                                  |
-| 4   | КН package card                                                                                 | check 9 px ink, top-aligned; text column to x 339; title → rows / rows → button 5–7 px tight | glyph box 17 px (11 px ink), centred on the row (row 261–317, glyph centre 289.5); text column ends at x 311 (`check-rows` padding-right 32); +9 px above the rows, +8 px below |
-| 5   | Review rows                                                                                     | pitch 56                                                                                     | pitch 60 (`.row` min-height 60, value line height body-l 24): rows 274 / 334, 542 / 602                                                                                         |
-| 6   | Offer two pledges at 812: fade                                                                  | —                                                                                            | Already present: `bottom-block--fade::before` 24 px gradient, y 698–722, the badges of the second card fade under it; the sharp edge at 722 is the button's top. No change      |
-| 7   | Options panel / chips; documents badges                                                         | divider 677, chips 32 (694–725); doc badges 28, cards 128 / 145                              | divider 679 (ref 680), chips 30 (696–726); doc badges 30 (`.badge--doc`), cards 130 / 148 (ref 130 / 148)                                                                       |
-| 8   | 2 залога radiogroup (a11y)                                                                      | both radios tabindex 0                                                                       | roving: checked 0, other −1; none checked → both 0                                                                                                                              |
-
-Diff ratios after the fixes (before → after): 01-kn-offer-auto 2.64 → 2.36, 01-kn-offer-realty
-2.62 → 2.24, 01-ok-offer-two-pledges 3.23 → 2.50, 02-kn-options 8.94 → 6.64, 02c-ok-options 5.56 → 3.07,
-03-kn-review 3.86 → 3.58, 03-ok-review 5.69 → 5.39, 03b-review-no-options 7.91 → 2.90, 04a-documents-one
-10.00 → 5.83, 04b-documents-two 6.88 → 2.56, 04c-upload 9.91 → 5.84, 05-documents-ready 6.89 → 2.57,
-06-success 0.76 → 0.76. No console errors or external requests.
-
-Unchanged by request: slider linear mapping (item 4), payment chip colour rule (item 5), hover colour (item 11).
+minor differences

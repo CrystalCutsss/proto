@@ -163,3 +163,5 @@ Defaults the builder follows until answered are in `spec/spec.md`.
 - Figma calls for this change (2026-10-20): `get_screenshot` 60:3874 (section diff against the intake render: only
   «Проверка условий» and «Легкие» changed; their frames are now `65:5511` and `63:5252`), `get_metadata` 60:3874,
   `get_screenshot` 65:5511 → `03-review.png`, 63:5252 → `06-light.png`; `00-flow.png` re-saved.
+- Change (2026-10-20): the two «Снизим комиссию» cards on `#/light` are independent checkboxes and add up (−1 and
+  −0,5 pp → −1,5 pp); replaces Q3. `Choice.feeCut` → `feeCuts` (list).

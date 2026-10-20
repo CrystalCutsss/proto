@@ -302,6 +302,12 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/light$/);
   await expect(top.getByRole('heading', { name: 'Выберите улучшения условий' })).toBeVisible();
+  // Both «Снизим комиссию» cards can be on, the cuts add up: 2,5 % with the pledge − 1 − 0,5 → 1,0 %.
+  await top.locator('[data-choice="one"]').click();
+  await top.locator('[data-choice="half"]').click();
+  await expect(top.locator('[data-choice="one"]')).toHaveAttribute('aria-checked', 'true');
+  await expect(top.locator('[data-choice="half"]')).toHaveAttribute('aria-checked', 'true');
+  await expect(top.getByText('1,0%')).toBeVisible();
   // «Получить деньги» and its legal line are only on the review screen.
   await expect(top.getByRole('button', { name: 'Получить деньги' })).toHaveCount(0);
   await expect(legal).toHaveCount(0);

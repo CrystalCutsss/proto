@@ -11,8 +11,8 @@ export interface FlowState {
   statement: boolean;
   /** «Пакет «Все включено»» on #/light. */
   package: boolean;
-  /** Selected «Снизим комиссию» card on #/light (one at a time), null when none. */
-  feeCut: FeeCut | null;
+  /** Selected «Снизим комиссию» cards on #/light (independent checkboxes; replaced, never mutated). */
+  feeCuts: readonly FeeCut[];
   /** Both documents uploaded on #/upload. */
   docsUploaded: boolean;
   /** Names of the files chosen in the file field. */
@@ -34,6 +34,6 @@ export function choice(): Choice {
     check: state.check,
     statement: state.statement,
     package: state.package,
-    feeCut: state.feeCut,
+    feeCuts: state.feeCuts,
   };
 }

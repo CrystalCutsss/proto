@@ -1,5 +1,5 @@
 // #/light — «Выберите улучшения условий»: the package (on by default) and two «Снизим комиссию» cards, which
-// are mutually exclusive (owner, Q3: selecting one clears the other; tapping the selected one clears it). The
+// are independent checkboxes whose cuts add up (owner, 2026-10-20; was mutually exclusive, Q3). The
 // sticky panel's chips are recalculated on every toggle; «Дальше» (no legal line) pushes #/review on both
 // paths (owner, 2026-10-20).
 import type { FeeCut } from '../calc';
@@ -42,11 +42,15 @@ const FEE_TEXT: Record<FeeCut, string> = {
 
 type Key = 'package' | FeeCut;
 
-const isOn = (key: string): boolean => (key === 'package' ? state.package : state.feeCut === key);
+const isOn = (key: string): boolean =>
+  key === 'package' ? state.package : state.feeCuts.includes(key as FeeCut);
 
 function toggle(key: Key): void {
   if (key === 'package') state.package = !state.package;
-  else state.feeCut = state.feeCut === key ? null : key;
+  else
+    state.feeCuts = state.feeCuts.includes(key)
+      ? state.feeCuts.filter((cut) => cut !== key)
+      : [...state.feeCuts, key];
 }
 
 const feeCard = (key: FeeCut, label: string) =>

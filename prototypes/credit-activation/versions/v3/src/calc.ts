@@ -15,7 +15,8 @@ const PAYMENT = { amount: 7_000_000, value: 17_713.05 } as const;
 /** With «Все включено» off the payment is 15 % higher (owner, 2026-10-16). */
 export const NO_PACKAGE_RAISE = 1.15;
 
-/** «Снизим комиссию» cards on #/light: −1 pp or «До −0,5%». Mutually exclusive (owner, Q3). */
+/** «Снизим комиссию» cards on #/light: −1 pp and «До −0,5%». Independent checkboxes, the cuts add up
+ *  (owner, 2026-10-20; was mutually exclusive, Q3). */
 export type FeeCut = 'one' | 'half';
 
 /** Fee in tenths of a percent, so 2,9 % is 29 (no floating point drift). */
@@ -31,8 +32,8 @@ export interface Choice {
   statement: boolean;
   /** «Пакет «Все включено»» on #/light (on by default). */
   package: boolean;
-  /** Selected «Снизим комиссию» card on #/light, null when none. */
-  feeCut: FeeCut | null;
+  /** Selected «Снизим комиссию» cards on #/light (any of them, none when empty). */
+  feeCuts: readonly FeeCut[];
 }
 
 /** The offer before any choice (#/ shows these terms). */
@@ -41,7 +42,7 @@ export const BASE_CHOICE: Choice = {
   check: false,
   statement: false,
   package: true,
-  feeCut: null,
+  feeCuts: [],
 };
 
 export function totalAmount(c: Pick<Choice, 'pledge' | 'check'>): number {
@@ -58,15 +59,16 @@ export function monthlyPayment(c: Pick<Choice, 'pledge' | 'check' | 'package'>):
   return Math.round(raised * 100) / 100;
 }
 
-/** Fee in percent: 2,9 base, 2,5 with the pledge, minus 1,0 or 0,5 pp for a «Снизим комиссию» card. */
-export function fee(c: Pick<Choice, 'pledge' | 'feeCut'>): number {
-  const tenths = (c.pledge ? FEE.pledge : FEE.base) - (c.feeCut ? FEE_CUT[c.feeCut] : 0);
+/** Fee in percent: 2,9 base, 2,5 with the pledge, minus 1,0 and/or 0,5 pp for the «Снизим комиссию» cards. */
+export function fee(c: Pick<Choice, 'pledge' | 'feeCuts'>): number {
+  const cuts = c.feeCuts.reduce((sum, cut) => sum + FEE_CUT[cut], 0);
+  const tenths = (c.pledge ? FEE.pledge : FEE.base) - cuts;
   return tenths / 10;
 }
 
 export const BASE_FEE = FEE.base / 10;
 
-export const feeLowered = (c: Pick<Choice, 'pledge' | 'feeCut'>): boolean => fee(c) < BASE_FEE;
+export const feeLowered = (c: Pick<Choice, 'pledge' | 'feeCuts'>): boolean => fee(c) < BASE_FEE;
 
 // ---------- chip tones (panels on #/heavy and #/light) ----------
 

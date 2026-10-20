@@ -1,7 +1,8 @@
 // #/light — «Выберите улучшения условий»: the package (on by default) and two «Снизим комиссию» cards, which
 // are mutually exclusive (owner, Q3: selecting one clears the other; tapping the selected one clears it). The
 // sticky panel's chips are recalculated on every toggle; «Получить деньги» (heavy path, with the legal line) pushes #/success;
-// on the direct path (state.direct) the button is «Дальше» without the legal line and pushes #/review.
+// on the direct path (state.direct) the button is «Дальше» without the legal line and pushes #/review, where
+// «Получить деньги» and the legal line are.
 import type { FeeCut } from '../calc';
 import {
   LEGAL,

@@ -309,7 +309,8 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await top.getByRole('button', { name: 'К счету' }).click();
   await expect(page).toHaveURL(/#\/$/);
 
-  // Direct path: «Дальше» on light conditions (no «Получить деньги», no legal line) → review → success.
+  // Direct path: «Дальше» on light conditions (no «Получить деньги», no legal line) → review, where «Получить
+  // деньги» with the legal line → success.
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/light$/);
   await expect(top.getByRole('button', { name: 'Получить деньги' })).toHaveCount(0);
@@ -319,7 +320,8 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await top.getByRole('button', { name: 'Дальше' }).click();
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/review$/);
-  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(top.getByText(/Нажимая «Получить деньги»/)).toBeVisible();
+  await top.getByRole('button', { name: 'Получить деньги' }).click();
   await expect(page).toHaveURL(/#\/success$/);
   await top.getByRole('button', { name: 'К счету' }).click();
   await expect(page).toHaveURL(/#\/$/);

@@ -155,3 +155,4 @@ Defaults the builder follows until answered are in `spec/spec.md`.
 - Change (2026-10-20): direct path `#/` «Дальше» → `#/light` «Дальше» (no legal line) → `#/review` «Дальше» →
   `#/success`. The heavy path is unchanged. `state.direct` is set by the control pressed on `#/`; deep links take
   the heavy path.
+- Change (2026-10-20): on the direct path `#/review` shows «Получить деньги» with the legal line (was «Дальше»).

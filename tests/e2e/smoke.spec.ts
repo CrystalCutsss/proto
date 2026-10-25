@@ -346,7 +346,7 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await expect(page).toHaveURL(/#\/documents$/);
 });
 
-test('credit-activation v4: КН goes through the tariffs, ОК straight to the review; the conditions wheel', async ({
+test('credit-activation v4: КН goes through the tariffs, ОК straight to the review; condition cards toggle', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -360,9 +360,12 @@ test('credit-activation v4: КН goes through the tariffs, ОК straight to the 
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/tariffs$/);
   await expect(top.getByRole('heading', { name: 'Варианты платежа' })).toBeVisible();
+  // The card's payment follows the amount (4,2 млн with the pledge) and the review shows the same value.
+  await expect(top.getByRole('heading', { name: '35\u00a0175\u00a0₽/мес' })).toBeVisible();
   await top.getByRole('button', { name: 'Выбрать' }).first().click();
   await expect(page).toHaveURL(/#\/review$/);
   await expect(top.getByText('Тариф «Универсальный»')).toBeVisible();
+  await expect(top.getByText('35\u00a0175,00\u00a0₽')).toBeVisible();
   await expect(top.getByText('Комиссия', { exact: true })).toHaveCount(0);
   await expect(legal).toHaveCount(0);
   await top.getByRole('button', { name: 'Дальше' }).click();
@@ -392,6 +395,25 @@ test('credit-activation v4: КН goes through the tariffs, ОК straight to the 
   await expect(top.getByText('Комиссия', { exact: true })).toBeVisible();
   await top.getByRole('button', { name: 'Получить деньги' }).click();
   await expect(page).toHaveURL(/#\/success$/);
+});
+
+test('credit-activation v4: the shared-header transition to the conditions and back leaves both screens clean', async ({
+  page,
+}) => {
+  await page.goto('/p/credit-activation/v4/?shell=0#/');
+  const top = page.locator('section:not([inert])');
+  await top.getByRole('button', { name: /До 4,5/ }).click();
+  await expect(page).toHaveURL(/#\/conditions$/);
+  await expect(page.locator('.viewport')).not.toHaveClass(/is-busy/);
+  // After the push the conditions page is opaque again and its faded parts are fully shown.
+  await expect(top).not.toHaveClass(/page--sharing/);
+  await expect(top.locator('.wheel')).toHaveCSS('opacity', '1');
+  await top.getByRole('button', { name: 'Назад' }).click();
+  await expect(page).toHaveURL(/#\/$/);
+  await expect(page.locator('.viewport')).not.toHaveClass(/is-busy/);
+  await expect(page.locator('.page')).toHaveCount(1);
+  await expect(top.locator('[data-amount]')).toHaveCSS('opacity', '1');
+  await expect(top.locator('.info-cards')).toHaveCSS('opacity', '1');
 });
 
 test('versions ship a web app manifest and home-screen icons (ADR-0019)', async ({ page }) => {

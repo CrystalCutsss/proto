@@ -2,7 +2,7 @@
 // while the «Барабан условий» scrolls under it and under «Дальше» like an iOS picker wheel (wheel.ts). A tap
 // anywhere on a card or on its «+» toggles it; the header recalculates at once («Условия выбраны»).
 // Opened from #/ with the shared-header transition (nav.ts); «Дальше» pushes #/review in КН and ОК.
-import { renderAmount } from '../amount';
+import { renderAmount, stopAmount } from '../amount';
 import {
   CHECK_BONUS,
   type FeeCut,
@@ -31,6 +31,8 @@ import {
 import { choice, state } from '../state';
 import { mountWheel } from '../wheel';
 import type { Screen } from './types';
+
+const stopWheel = new WeakMap<HTMLElement, () => void>();
 
 type Key = 'pledge' | 'check' | 'statement' | FeeCut;
 
@@ -144,6 +146,11 @@ export const conditions: Screen = {
         renderHeader(root, true);
       });
     });
-    mountWheel(root);
+    stopWheel.set(root, mountWheel(root));
+  },
+
+  unmount(root) {
+    stopWheel.get(root)?.();
+    stopAmount(root);
   },
 };

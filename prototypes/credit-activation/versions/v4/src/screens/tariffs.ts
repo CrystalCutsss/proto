@@ -1,16 +1,18 @@
 // #/tariffs — «Варианты платежа» (КН only, after «Дальше» on #/): a horizontal snap slider of tariff cards.
 // «Выбрать» sets the tariff, which drives the payment on #/review (owner, 2026-10-25), and pushes #/review;
 // «Свои условия» → «Настроить» opens #/conditions. Only the first card's bullets are drawn; the others are
-// Lorem ipsum in the frame, so their texts are placeholders (spec, Q14).
-import { formatPerMonth, type Tariff, tariffPayment } from '../calc';
+// Lorem ipsum in the frame, so their texts are placeholders (spec, Q5).
+// The card payments follow the current amount (they are drawn at the base 4 000 000 ₽), as on #/review.
+import { formatPerMonth, monthlyPayment, type Tariff } from '../calc';
 import { bottomBlock, mask, pushRoute, topBars } from '../components';
 import { icon } from '../icons';
-import { state } from '../state';
+import { choice, state } from '../state';
 import type { Screen } from './types';
 
 interface TariffCard {
   id: Tariff;
-  title: string;
+  /** Fixed title; the paid tariffs show their payment instead. */
+  title?: string;
   subtitle: string;
   bullets: string[];
   button: string;
@@ -21,7 +23,6 @@ interface TariffCard {
 const CARDS: TariffCard[] = [
   {
     id: 'universal',
-    title: formatPerMonth(tariffPayment('universal')),
     subtitle: '«Универсальный»',
     bullets: [
       'Ставка ниже на&nbsp;15% — сэкономите 10&nbsp;541&nbsp;₽',
@@ -34,7 +35,6 @@ const CARDS: TariffCard[] = [
   },
   {
     id: 'minimal',
-    title: formatPerMonth(tariffPayment('minimal')),
     subtitle: '«Минимальный»',
     bullets: [
       'Самый низкий платеж в&nbsp;месяц',
@@ -58,12 +58,14 @@ const CARDS: TariffCard[] = [
   },
 ];
 
+const title = (c: TariffCard) => c.title ?? formatPerMonth(monthlyPayment({ ...choice(), tariff: c.id }));
+
 const card = (c: TariffCard) => `
   <section class="tariff" role="listitem" aria-labelledby="tariff-${c.id}">
     ${c.badge ? `<span class="tariff__badge">${c.badge}</span>` : ''}
     <div class="tariff__header">
       <div class="tariff__titles">
-        <h2 class="t-heading-m" id="tariff-${c.id}">${c.title}</h2>
+        <h2 class="t-heading-m" id="tariff-${c.id}">${title(c)}</h2>
         <p class="t-body-m">${c.subtitle}</p>
       </div>
       <button type="button" class="tooltip-button" aria-label="Подробнее о тарифе ${c.subtitle}">

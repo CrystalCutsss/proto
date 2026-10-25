@@ -5,6 +5,13 @@ import { choice } from './state';
 
 const shown = new WeakMap<HTMLElement, { value: number }>();
 
+/** Stop a running count on a page that leaves the DOM. */
+export function stopAmount(root: HTMLElement): void {
+  const el = root.querySelector<HTMLElement>('[data-amount]');
+  const proxy = el && shown.get(el);
+  if (proxy) gsap.killTweensOf(proxy);
+}
+
 /** Set the page's amount to the current total; `animate` counts from the shown value (off: jump). */
 export function renderAmount(root: HTMLElement, animate = true): void {
   const el = root.querySelector<HTMLElement>('[data-amount]');

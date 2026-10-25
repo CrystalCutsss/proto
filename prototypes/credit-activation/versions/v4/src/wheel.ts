@@ -1,8 +1,9 @@
 // «Барабан условий» on #/conditions: an iOS picker-like scroll. Cards that reach the top or the bottom edge of
 // the visible band (between the sticky conditions block and the sticky «Дальше») shrink a little, tilt away and
 // dim as they slide under those blocks; the gradients at both edges keep them from cutting off sharply.
-// It reacts from the moment a card starts to slide under a block. Scroll-linked, read once per frame from cached offsets (transforms do not change them). Off under reduced
-// motion: the cards then just scroll under the gradients.
+// A card reacts from the moment it starts to slide under a block. Scroll-linked, read once per frame from cached
+// offsets (transforms do not change them); re-measured when the wheel, the block or the scroller resize and when
+// the fonts are ready. Off under reduced motion: the cards then just scroll under the gradients.
 import { prefersReducedMotion } from '@proto/motion';
 
 const MIN_SCALE = 0.9;
@@ -16,13 +17,15 @@ interface Item {
   height: number;
 }
 
-export function mountWheel(root: HTMLElement): void {
-  if (prefersReducedMotion()) return;
+/** Start the wheel on a page; returns the function that stops it (screen unmount). */
+export function mountWheel(root: HTMLElement): () => void {
+  const none = () => {};
+  if (prefersReducedMotion()) return none;
   const scroll = root.querySelector<HTMLElement>('.page__scroll');
   const wheel = root.querySelector<HTMLElement>('.wheel');
   const head = root.querySelector<HTMLElement>('.top-bars');
   const foot = root.querySelector<HTMLElement>('.bottom-block');
-  if (!scroll || !wheel || !head || !foot) return;
+  if (!scroll || !wheel || !head || !foot) return none;
 
   let items: Item[] = [];
   let frame = 0;
@@ -66,8 +69,16 @@ export function mountWheel(root: HTMLElement): void {
   measure();
   update();
   scroll.addEventListener('scroll', schedule, { passive: true });
-  new ResizeObserver(() => {
+  const remeasure = () => {
     measure();
     schedule();
-  }).observe(scroll);
+  };
+  const observer = new ResizeObserver(remeasure);
+  [scroll, wheel, head].forEach((el) => observer.observe(el));
+  void document.fonts?.ready.then(remeasure);
+  return () => {
+    observer.disconnect();
+    scroll.removeEventListener('scroll', schedule);
+    cancelAnimationFrame(frame);
+  };
 }

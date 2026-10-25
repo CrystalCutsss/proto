@@ -153,7 +153,7 @@ interface OptionCard {
   description: string;
   badges: string;
   checked: boolean;
-  /** A text button next to the title (outside the control, no nested controls), e.g. «Изменить» on #/. */
+  /** A text link next to the title, e.g. «Изменить» on #/: visual only (no behaviour in the design yet). */
   link?: string;
 }
 
@@ -175,7 +175,7 @@ export function optionCard(c: OptionCard): string {
         </span>
         ${actionCircle()}
       </div>
-      ${c.link ? `<button type="button" class="text-button option__link">${c.link}</button>` : ''}
+      ${c.link ? `<span class="option__link t-body-l" aria-hidden="true">${c.link}</span>` : ''}
     </div>`;
 }
 

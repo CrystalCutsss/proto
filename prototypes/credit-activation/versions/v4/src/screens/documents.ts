@@ -1,4 +1,4 @@
-// #/documents — «Загрузите документы»: always the two documents (owner, Q10). The «Загрузить» badges push
+// #/documents — «Загрузите документы»: always the two documents (as v3). The «Загрузить» badges push
 // #/upload; after «Загрузить» there both show «Загружено». Reached from #/review with the pledge (v2 fork,
 // owner 2026-10-25): «Получить деньги» with the legal line → #/success, without waiting for the upload (v3).
 import { LEGAL, bottomBlock, primaryButton, pushRoute, topBars } from '../components';

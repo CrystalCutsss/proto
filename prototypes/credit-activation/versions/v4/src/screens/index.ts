@@ -17,10 +17,11 @@ export function normalizeRoute(hash: string): string {
   return hash === '' || hash === '#' ? '#/' : hash;
 }
 
-/** Screen of a hash; unknown hashes fall back to «Кредит». */
+/** Screen of a hash; unknown hashes (and «Тарифы» in ОК, which has none) fall back to «Кредит». */
 export function screenFor(hash: string): Screen {
   const route = normalizeRoute(hash);
-  return SCREENS.find((screen) => screen.route === route) ?? ROOT;
+  const screen = SCREENS.find((s) => s.route === route) ?? ROOT;
+  return screen === tariffs && product === 'ok' ? ROOT : screen;
 }
 
 /**

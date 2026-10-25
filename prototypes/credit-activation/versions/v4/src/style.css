@@ -118,7 +118,7 @@ body.ds-root {
  * Letter spacing comes from the TUI tokens: they are Apple's tracking table of the variable SF Pro (17 px -0.43,
  * 20 px -0.45…), the font iOS draws in the browser. The Figma file's styles carry the older table of the static
  * SF Pro Text / Display (Figma does not apply tracking itself); with it the wider system font wraps titles such as
- * «Пакет «Все включено»» (owner, 2026-10-16).
+ * v2's «Пакет «Все включено»» (owner, 2026-10-16).
  */
 
 .t-heading-l {
@@ -815,6 +815,8 @@ body.ds-root {
 
 .option__link {
   position: absolute;
+  color: var(--ds-text-action);
+  pointer-events: none;
   top: calc(var(--ds-space-4) + var(--ds-space-1) / 2);
   right: var(--ds-space-5);
 }
@@ -916,8 +918,7 @@ body.ds-root {
 
 /* During the shared transition the upper page lets the lower one show through (nav.ts). */
 .page--sharing,
-.page--sharing .top-bars,
-.page--sharing .bottom-block::before {
+.page--sharing .top-bars {
   background: none;
   backdrop-filter: none;
   box-shadow: none;

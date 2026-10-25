@@ -1,4 +1,4 @@
-// #/upload — «Загрузить» (v2 label, owner Q12) marks the documents uploaded and pops back to #/documents,
+// #/upload — «Загрузить» (v2 label, as v3) marks the documents uploaded and pops back to #/documents,
 // which shows its ready state while it slides in (its refresh() runs before the pop).
 import { bottomBlock, primaryButton, topBars } from '../components';
 import { state } from '../state';

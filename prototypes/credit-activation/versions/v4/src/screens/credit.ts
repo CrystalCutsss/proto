@@ -1,8 +1,9 @@
 // #/ — «Кредит» (same in КН and ОК): the approved offer, the hint «До 4,5 млн ₽ с условиями» that opens
 // #/conditions with the shared-header transition, and the pledge card «Залог авто» (the same flag as on
 // #/conditions). «Дальше» goes to #/tariffs in КН and straight to #/review in ОК (owner, 2026-10-25).
-// «Платеж в месяц» is the formula value (as v3), not the drawn 193 500 ₽ (spec, Q1).
-import { renderAmount } from '../amount';
+// «Платеж в месяц» is the formula value (as v3), not the drawn 193 500 ₽ (spec, Q2). Every
+// forward step from here starts a fresh branch, so a tariff chosen earlier is dropped (it belongs to #/tariffs).
+import { renderAmount, stopAmount } from '../amount';
 import { formatRub, monthlyPayment, PLEDGE_BONUS, totalAmount } from '../calc';
 import { product } from '../config';
 import {
@@ -33,7 +34,7 @@ const hint = () => `
     </button>
   </div>`;
 
-const payment = () => formatRub(monthlyPayment(choice()));
+const payment = () => formatRub(monthlyPayment({ ...choice(), tariff: null }));
 
 function render(root: HTMLElement, animate: boolean): void {
   renderAmount(root, animate);
@@ -72,6 +73,12 @@ export const credit: Screen = {
     ${bottomBlock({ button: primaryButton('Дальше', 'next'), plain: true })}`,
 
   next: () => (product === 'kn' ? '#/tariffs' : '#/review'),
+
+  beforeAction() {
+    state.tariff = null;
+  },
+
+  unmount: stopAmount,
 
   refresh(root) {
     render(root, false);

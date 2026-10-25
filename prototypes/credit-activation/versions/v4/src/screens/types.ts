@@ -18,6 +18,8 @@ export interface Screen {
   /** Route that «next» pushes (may depend on the state); null: nothing to push. Controls with `data-push`
    *  push their own route instead (components.ts `pushRoute`). */
   next?(): string | null;
+  /** Release tweens and observers before the page leaves the DOM. */
+  unmount?(root: HTMLElement): void;
   /** Re-render state-dependent parts; called on the page below before it is uncovered (pop, drag start). */
   refresh?(root: HTMLElement): void;
   /** Called with the clicked control before the navigation controller runs its `data-action`. */

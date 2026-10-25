@@ -1,8 +1,8 @@
 // iOS-like navigation stack: push/pop slides with parallax and dimming (or the shared-element cross-fade of
-// screens with `transition: 'shared'`), browser history, interactive left-edge swipe back, «Закрыть» reset. location.hash is the source of truth. The stack holds screens by
-// route: history entry `i` (history.state.i) shows pages[i]; «next» pushes the route the top screen's
-// next() returns, a control with `data-push` pushes its own route; a deep link builds the stack from the
-// default path (screens/index.ts).
+// screens with `transition: 'shared'`), browser history, interactive left-edge swipe back, «Закрыть» reset.
+// location.hash is the source of truth. The stack holds screens by route: history entry `i` (history.state.i)
+// shows pages[i]; «next» pushes the route the top screen's next() returns, a control with `data-push` pushes its
+// own route; a deep link builds the stack from the default path (screens/index.ts).
 import { duration, ease, gsap, prefersReducedMotion } from '@proto/motion';
 import type { NavAction } from './components';
 import { defaultPath, normalizeRoute, ROOT, screenFor } from './screens';
@@ -66,6 +66,12 @@ export function startNavigation(viewport: HTMLElement): void {
       scroll: el.querySelector<HTMLElement>('.page__scroll')!,
       dim: el.querySelector<HTMLElement>('.page__dim')!,
     };
+  }
+
+  /** Take a page out of the DOM after its screen released what it holds (tweens, observers). */
+  function remove(page: Page): void {
+    page.screen.unmount?.(page.el);
+    page.el.remove();
   }
 
   /** Park a page below the top one: shifted, dimmed, hidden and inert (its scroll position is kept). */
@@ -200,13 +206,13 @@ export function startNavigation(viewport: HTMLElement): void {
     finish();
     const upper = top();
     const removed = pages.splice(target + 1);
-    removed.slice(0, -1).forEach((page) => page.el.remove());
+    removed.slice(0, -1).forEach(remove);
     const lower = top();
     upper.el.inert = true;
     refresh(lower);
     lower.el.classList.remove('page--covered');
     run(0, 1, transitionTime(), ease.expressive, transition(lower, upper), () => {
-      upper.el.remove();
+      remove(upper);
       activate(lower);
     });
   }
@@ -216,7 +222,7 @@ export function startNavigation(viewport: HTMLElement): void {
     finish();
     resetState();
     const leaving = pages.length > 1 ? top() : null;
-    pages.forEach((page) => page !== leaving && page.el.remove());
+    pages.forEach((page) => page !== leaving && remove(page));
     const fresh = createPage(ROOT);
     pages = [fresh];
 
@@ -233,7 +239,7 @@ export function startNavigation(viewport: HTMLElement): void {
     const dismiss: Draw = (p) =>
       reduced ? gsap.set(leaving.el, { opacity: 1 - p }) : gsap.set(leaving.el, { yPercent: 100 * p });
     run(0, 1, transitionTime(), ease.expressiveExit, dismiss, () => {
-      leaving.el.remove();
+      remove(leaving);
       activate(fresh);
     });
   }
@@ -386,7 +392,7 @@ export function startNavigation(viewport: HTMLElement): void {
       syncHistoryAfterPop(from);
       const seconds = Math.max(duration.fast, duration.slow * (1 - progress));
       run(progress, 1, seconds, ease.productiveEntrance, draw, () => {
-        upper.el.remove();
+        remove(upper);
         activate(lower);
       });
     } else {

@@ -44,7 +44,7 @@ the screens v4 keeps.
 | `#/documents`  | «Загрузить» / «Получить деньги»        | `#/upload` (back marks both uploaded) / `#/success` |
 | `#/success`    | «К счету»                              | reset to `#/`                                       |
 
-Deep links (`defaultPath`): `#/conditions`, `#/tariffs` → `[credit, it]`; the rest follow the product's main path
+Deep links (`defaultPath`): `#/conditions`, `#/tariffs` → `[credit, it]` (`#/tariffs` in ОК falls back to `#/`); the rest follow the product's main path
 (КН `#/ → #/tariffs → #/review → #/documents`, ОК `#/ → #/conditions → #/review → #/documents`), `#/success` on top
 of `#/review`, `#/upload` on top of `#/documents`.
 
@@ -55,7 +55,7 @@ of `#/review`, `#/upload` on top of `#/documents`.
 - Fee: base 2,5 % (header chip); pledge −0,5 pp, «Снизить комиссию» −1 pp and «До −0,5%» −0,5 pp, adding up. The fee
   chip turns positive when the fee is below 2,5 %. «Условия выбраны» draws «2,5%» positive with the pledge (Q1).
 - Payment: 17 713,05 ₽ per 4 000 000 ₽ (header chip), proportional to the amount; a КН tariff replaces it with
-  33 500 / 17 500 ₽ per 4 000 000 ₽ (cards), scaled; «Свои условия» keeps the formula. «Платеж в месяц» on `#/`
+  33 500 / 17 500 ₽ per 4 000 000 ₽ (cards), scaled; «Свои условия» keeps the formula. The tariff cards show their payment at the current amount. «Платеж в месяц» on `#/`
   shows the formula value, not the drawn 193 500 ₽ (Q2).
 - ОК shows a «Комиссия» row on `#/review` (v2); КН shows the tariff row in «Залог и условия».
 
@@ -125,3 +125,5 @@ and «Тариф «…»» (briefcase) for a КН tariff, no «Пакет «Вс
 - Q4. Second «Снизить комиссию» text: typo in the frame («Поддержтвать обороте»), fixed.
 - Q5. Bullets of «Минимальный» and «Свои условия» are placeholders.
 - Q6. The new iOS 26 app bar is used on every screen (review, documents, upload had text «Закрыть» in V4).
+- Q7. A deep link to `#/documents` builds a review underneath with nothing chosen (no pledge), so back shows the
+  no-pledge review; the in-app path always arrives with the pledge.

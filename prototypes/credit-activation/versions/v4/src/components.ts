@@ -254,14 +254,14 @@ export function onActivate(control: HTMLElement, handler: () => void): void {
   });
 }
 
-/** Offer info card (`tui-card-large` neutral-1, 72 px): caption + value + chevron. Visual only. */
-export function infoCard(caption: string, value: string, valueAttr = ''): string {
+/** Offer info card (`tui-card-large` neutral-1, 72 px): caption + value (+ chevron, off on «Комиссия»). Visual only. */
+export function infoCard(caption: string, value: string, valueAttr = '', chevron = true): string {
   return `
     <div class="info-card">
       <div class="info-card__text">
         <span class="t-ui-s text-secondary">${caption}</span>
         <span class="t-heading-s"${valueAttr ? ` ${valueAttr}` : ''}>${value}</span>
       </div>
-      ${mask('chevron-right-service.svg', 'info-card__chevron')}
+      ${chevron ? mask('chevron-right-service.svg', 'info-card__chevron') : ''}
     </div>`;
 }

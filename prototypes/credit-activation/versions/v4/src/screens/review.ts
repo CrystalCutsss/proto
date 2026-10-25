@@ -27,8 +27,8 @@ const avatarRow = (iconName: string, title: string, text: string) => `
   </div>`;
 
 const TARIFF_ROW = {
-  universal: ['Тариф «Универсальный»', 'Ставка ниже на&nbsp;15%'],
-  minimal: ['Тариф «Минимальный»', 'Самый низкий платеж в&nbsp;месяц'],
+  universal: ['Пакет «Универсальный»', 'Ставка ниже на&nbsp;15%'],
+  minimal: ['Пакет «Минимальный»', 'Самый низкий платеж в&nbsp;месяц'],
 } as const;
 
 /** Rows of «Залог и условия» in the spec order: pledge, check, statement, fee cuts, tariff. */

@@ -12,6 +12,7 @@ import {
   formatRub,
   formatRubKopecks,
   monthlyPayment,
+  paymentTone,
   tariffPayment,
   totalAmount,
 } from '../src/calc';
@@ -62,9 +63,20 @@ describe('fee', () => {
 });
 
 describe('payment', () => {
-  it('scales with the amount', () => {
-    expect(monthlyPayment(choice({ pledge: true }))).toBe(18_598.7);
-    expect(formatRubKopecks(monthlyPayment(choice({ pledge: true })))).toBe(`18${NBSP}598,70${NBSP}₽`);
+  it('scales with the amount and with (1 + fee)', () => {
+    expect(monthlyPayment(choice({ check: true }))).toBe(18_155.88);
+    // 4 200 000 ₽ at 2,0 %: 18 598,70 × 102 / 102,5.
+    expect(monthlyPayment(choice({ pledge: true }))).toBe(18_507.98);
+    expect(formatRubKopecks(monthlyPayment(choice({ pledge: true })))).toBe(`18${NBSP}507,98${NBSP}₽`);
+    expect(monthlyPayment(choice({ feeCuts: ['one'] }))).toBe(17_540.24);
+  });
+
+  it('the payment chip turns positive only when the payment goes below the offer', () => {
+    expect(paymentTone(BASE_CHOICE)).toBe('neutral');
+    expect(paymentTone(choice({ pledge: true }))).toBe('neutral');
+    expect(paymentTone(choice({ feeCuts: ['one'] }))).toBe('positive');
+    expect(paymentTone(choice({ feeCuts: ['half'] }))).toBe('positive');
+    expect(paymentTone(choice({ check: true, feeCuts: ['one'] }))).toBe('neutral');
   });
 
   it('a КН tariff sets it: 33 500 / 17 500 ₽ at the base amount, scaled; «Свои условия» keeps the formula', () => {
@@ -72,6 +84,7 @@ describe('payment', () => {
     expect(monthlyPayment(choice({ tariff: 'minimal' }))).toBe(17_500);
     expect(monthlyPayment(choice({ tariff: 'universal', check: true }))).toBe(34_337.5);
     expect(monthlyPayment(choice({ tariff: 'custom' }))).toBe(17_713.05);
+    expect(monthlyPayment(choice({ tariff: 'universal', feeCuts: ['one'] }))).toBe(33_500);
     expect(formatPerMonth(tariffPayment('universal'))).toBe(`33${NBSP}500${NBSP}₽/мес`);
   });
 });

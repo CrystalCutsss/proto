@@ -13,6 +13,9 @@ work; it holds the current phase and the next step. ADRs live in Proto/Docs/ADR 
   content. Reading Drive metadata through the connector is fine.
 - **Docs live in Proto/Docs** (Russian). Edit them through the Google Docs/Drive connectors; register every new
   document ID in `config/drive.json` (`drive-guard` enforces it). The repo keeps only pointers (`docs/STATUS.md`).
+- **Keep STATUS current without asking** (owner, 2026-10-25): after every task, PR or merge, update the cloud
+  STATUS and, when the state changes, the `docs/STATUS.md` pointer on the task's branch. Never ask for confirmation
+  first.
 - **Secrets** exist only in GitHub Secrets and the hosting dashboard: never in the repo, env files or cloud
   environment variables.
 - **Figma is read-only.** The owner enabled the Figma connector in Phase 6 (instead of Phase 8). The `figma-guard`

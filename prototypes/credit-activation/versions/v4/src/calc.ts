@@ -54,12 +54,18 @@ export function totalAmount(c: Pick<Choice, 'pledge' | 'check'>): number {
 }
 
 /**
- * Monthly payment in rubles, rounded to kopecks, proportional to the total amount: 17 713,05 ₽ per 4 000 000 ₽,
- * or the chosen tariff's payment (33 500 / 17 500 ₽ per 4 000 000 ₽). «Свои условия» keeps the formula.
+ * Monthly payment in rubles, rounded to kopecks: 17 713,05 ₽ per 4 000 000 ₽ at the base fee 2,5 %, proportional
+ * to the total amount and to (1 + fee): a lower fee lowers the payment (owner, 2026-10-25: the payment can go
+ * down, its chip then turns positive). A chosen tariff's payment (33 500 / 17 500 ₽ per 4 000 000 ₽) follows the
+ * amount only; «Свои условия» keeps the formula.
  */
-export function monthlyPayment(c: Pick<Choice, 'pledge' | 'check' | 'tariff'>): number {
-  const perBase = c.tariff && c.tariff !== 'custom' ? TARIFF_PAYMENT[c.tariff] : PAYMENT.value;
-  return Math.round(((perBase * totalAmount(c)) / PAYMENT.amount) * 100) / 100;
+export function monthlyPayment(c: Pick<Choice, 'pledge' | 'check' | 'feeCuts' | 'tariff'>): number {
+  const byAmount = totalAmount(c) / PAYMENT.amount;
+  const value =
+    c.tariff && c.tariff !== 'custom'
+      ? TARIFF_PAYMENT[c.tariff] * byAmount
+      : (PAYMENT.value * byAmount * (100 + fee(c))) / (100 + BASE_FEE);
+  return Math.round(value * 100) / 100;
 }
 
 /** Fee in percent: 2,5 base, −0,5 pp with the pledge, −1,0 and/or −0,5 pp for the «Снизить комиссию» cards. */
@@ -72,10 +78,13 @@ export const BASE_FEE = FEE.base / 10;
 
 export const feeLowered = (c: Pick<Choice, 'pledge' | 'feeCuts'>): boolean => fee(c) < BASE_FEE;
 
-/** Header chips on #/conditions: only the fee chip changes tone (positive when lowered), as drawn. */
+/** Header chips on #/conditions: the fee and the payment chips turn positive when lowered below the offer. */
 export type Tone = 'neutral' | 'positive';
 
 export const feeTone = (c: Choice): Tone => (feeLowered(c) ? 'positive' : 'neutral');
+
+export const paymentTone = (c: Choice): Tone =>
+  monthlyPayment(c) < monthlyPayment({ ...BASE_CHOICE, tariff: c.tariff }) ? 'positive' : 'neutral';
 
 // ---------- formats (ru-RU, non-breaking spaces) ----------
 

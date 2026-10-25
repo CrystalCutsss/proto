@@ -346,7 +346,7 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await expect(page).toHaveURL(/#\/documents$/);
 });
 
-test('credit-activation v4: КН goes through the tariffs, ОК straight to the review; condition cards toggle', async ({
+test('credit-activation v4: КН goes through the packages, ОК straight to the review; condition cards toggle', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -364,7 +364,7 @@ test('credit-activation v4: КН goes through the tariffs, ОК straight to the 
   await expect(top.getByRole('heading', { name: '35\u00a0175\u00a0₽/мес' })).toBeVisible();
   await top.getByRole('button', { name: 'Выбрать' }).first().click();
   await expect(page).toHaveURL(/#\/review$/);
-  await expect(top.getByText('Тариф «Универсальный»')).toBeVisible();
+  await expect(top.getByText('Пакет «Универсальный»')).toBeVisible();
   await expect(top.getByText('35\u00a0175,00\u00a0₽')).toBeVisible();
   await expect(top.getByText('Комиссия', { exact: true })).toHaveCount(0);
   await expect(legal).toHaveCount(0);
@@ -375,9 +375,11 @@ test('credit-activation v4: КН goes through the tariffs, ОК straight to the 
   await top.getByRole('button', { name: 'К счету' }).click();
   await expect(page).toHaveURL(/#\/$/);
 
-  // «До 4,5 млн ₽ с условиями» → «Условия»: a tap on a card toggles it and recalculates the header.
+  // «До 4,5 млн ₽ с условиями» → «Условия» (КН: no pledge card, it lives on «Кредит»): a tap on a card toggles
+  // it and recalculates the header.
   await top.getByRole('button', { name: /До 4,5/ }).click();
   await expect(page).toHaveURL(/#\/conditions$/);
+  await expect(top.getByRole('checkbox', { name: /залог/ })).toHaveCount(0);
   await top.getByRole('checkbox', { name: /Проверить данные/ }).click();
   await expect(top.getByRole('checkbox', { name: /Проверить данные/ })).toHaveAttribute(
     'aria-checked',
@@ -388,8 +390,24 @@ test('credit-activation v4: КН goes through the tariffs, ОК straight to the 
   await expect(page).toHaveURL(/#\/review$/);
   await expect(legal).toBeVisible();
 
-  // ОК: «Дальше» on «Кредит» goes straight to the review, which shows the fee.
+  // ОК: «Кредит» shows the fee and no pledge card; on «Условия» a lower fee lowers the payment and turns its chip
+  // positive; «Дальше» on «Кредит» goes straight to the review, which shows the fee.
   await page.goto('/p/credit-activation/v4/?shell=0&product=ok#/');
+  await expect(top.getByText('Комиссия', { exact: true })).toBeVisible();
+  await expect(top.getByRole('checkbox', { name: /Залог авто/ })).toHaveCount(0);
+  await top.getByRole('button', { name: /До 4,5/ }).click();
+  await expect(top.getByRole('checkbox', { name: /Оставить в залог авто/ })).toBeVisible();
+  await top
+    .getByRole('checkbox', { name: /Снизить комиссию/ })
+    .first()
+    .click();
+  await expect(top.locator('[data-chip="payment"]')).toHaveAttribute('data-tone', 'positive');
+  await top
+    .getByRole('checkbox', { name: /Снизить комиссию/ })
+    .first()
+    .click();
+  await top.getByRole('button', { name: 'Назад' }).click();
+  await expect(page).toHaveURL(/#\/$/);
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/review$/);
   await expect(top.getByText('Комиссия', { exact: true })).toBeVisible();

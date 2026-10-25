@@ -2,6 +2,8 @@
 // while the «Барабан условий» scrolls under it and under «Дальше» like an iOS picker wheel (wheel.ts). A tap
 // anywhere on a card or on its «+» toggles it; the header recalculates at once («Условия выбраны»).
 // Opened from #/ with the shared-header transition (nav.ts); «Дальше» pushes #/review in КН and ОК.
+// КН has no pledge card here: its pledge lives on #/ (owner, 2026-10-25). The payment chip turns positive when the
+// payment goes below the offer's, like the fee chip.
 import { renderAmount, stopAmount } from '../amount';
 import {
   CHECK_BONUS,
@@ -12,6 +14,7 @@ import {
   formatPercent,
   formatRub,
   monthlyPayment,
+  paymentTone,
   PLEDGE_BONUS,
   STATEMENT_LIMIT,
   totalAmount,
@@ -28,6 +31,7 @@ import {
   setOptionChecked,
   topBars,
 } from '../components';
+import { product } from '../config';
 import { choice, state } from '../state';
 import { mountWheel } from '../wheel';
 import type { Screen } from './types';
@@ -36,7 +40,7 @@ const stopWheel = new WeakMap<HTMLElement, () => void>();
 
 type Key = 'pledge' | 'check' | 'statement' | FeeCut;
 
-const CARDS: { key: Key; title: string; description: string; badges: string }[] = [
+const ALL_CARDS: { key: Key; title: string; description: string; badges: string }[] = [
   {
     key: 'pledge',
     title: 'Оставить в залог авто',
@@ -70,6 +74,8 @@ const CARDS: { key: Key; title: string; description: string; badges: string }[] 
   },
 ];
 
+const CARDS = product === 'kn' ? ALL_CARDS.filter((card) => card.key !== 'pledge') : ALL_CARDS;
+
 const isFeeCut = (key: Key): key is FeeCut => key === 'one' || key === 'half';
 
 const isOn = (key: Key): boolean => (isFeeCut(key) ? state.feeCuts.includes(key) : state[key]);
@@ -88,7 +94,7 @@ function renderHeader(root: HTMLElement, animate: boolean): void {
   const c = choice();
   renderAmount(root, animate);
   setChip(root, 'fee', formatPercent(fee(c)), feeTone(c));
-  setChip(root, 'payment', paymentChip(), 'neutral');
+  setChip(root, 'payment', paymentChip(), paymentTone(c));
 }
 
 const header = () => {
@@ -99,7 +105,7 @@ const header = () => {
       <div class="chips" data-fade aria-live="polite">
         ${chip('term', 'calendar', '5 лет')}
         ${chip('fee', 'percent', formatPercent(fee(c)), feeTone(c))}
-        ${chip('payment', 'arrow', paymentChip())}
+        ${chip('payment', 'arrow', paymentChip(), paymentTone(c))}
       </div>
       <div class="wheel-fade wheel-fade--top" data-fade aria-hidden="true"></div>
     </div>`;

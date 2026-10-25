@@ -280,10 +280,13 @@ body.ds-root {
   cursor: pointer;
 }
 
-/* Glyph boxes of the exported masks: back 11 × 19, close-ios26 17.3 px, close-ios 24 px (its own padding). */
+/* Glyph boxes of the exported masks: back-ios26 is an 11 × 19 glyph at (5, 2.5) in its 24 px box, so it sits
+   1.5 px left of the circle's centre as drawn; close-ios26 17.3 px, close-ios 24 px (its own padding). */
 .glass-button__back {
-  width: 11px;
-  height: 19px;
+  width: 24px;
+  height: 24px;
+  mask-position: 5px 2.5px;
+  mask-size: 11px 19px;
 }
 
 .glass-button__dismiss {
@@ -691,6 +694,16 @@ body.ds-root {
   padding: var(--ds-space-6) var(--side) 0;
 }
 
+/* ОК («Кредит ОК»): «Срок» | «Комиссия», then the wide «Платеж в месяц»; 16 px apart both ways. */
+.info-cards--ok {
+  gap: var(--ds-space-4);
+}
+
+.info-cards__wide {
+  display: grid;
+  grid-column: 1 / -1;
+}
+
 .info-card {
   display: flex;
   gap: var(--ds-space-1);
@@ -801,7 +814,8 @@ body.ds-root {
   gap: var(--ds-space-2);
 }
 
-/* #/ «Залог авто»: the title row carries «Изменить»; description 16 px below, the circle beside the badges. */
+/* #/ «Залог авто»: the title row carries «Изменить»; description 16 px below, the circle centred on the
+   description and the badges (16 px from the card's bottom, as drawn). */
 .option--link .option__control {
   grid-template-areas:
     'title title'
@@ -809,8 +823,12 @@ body.ds-root {
     'badges circle';
 }
 
+.option--link .option__title {
+  padding-bottom: var(--ds-space-4);
+}
+
 .option--link .option__description {
-  padding-top: var(--ds-space-4);
+  padding-top: 0;
 }
 
 .option__link {

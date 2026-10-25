@@ -28,7 +28,7 @@ const FEE = { base: 25, pledge: 5 } as const;
 const FEE_CUT: Record<FeeCut, number> = { one: 10, half: 5 };
 
 export interface Choice {
-  /** «Оставить в залог авто» (#/conditions) = «Залог авто» (#/). */
+  /** «Залог авто» on #/ (КН) = «Залог авто» on #/conditions (ОК). */
   pledge: boolean;
   /** «Проверить данные» on #/conditions. */
   check: boolean;

@@ -3,7 +3,8 @@
 // anywhere on a card or on its «+» toggles it; the header recalculates at once («Условия выбраны»).
 // Opened from #/ with the shared-header transition (nav.ts); «Дальше» pushes #/review in КН and ОК.
 // КН has no pledge card here: its pledge lives on #/ (owner, 2026-10-25). The payment chip turns positive when the
-// payment goes below the offer's, like the fee chip.
+// payment goes below the offer's, like the fee chip. ОК's pledge card is drawn like the one on КН's #/: «Залог авто»
+// with «Изменить» in the title row.
 import { renderAmount, stopAmount } from '../amount';
 import {
   CHECK_BONUS,
@@ -40,12 +41,13 @@ const stopWheel = new WeakMap<HTMLElement, () => void>();
 
 type Key = 'pledge' | 'check' | 'statement' | FeeCut;
 
-const ALL_CARDS: { key: Key; title: string; description: string; badges: string }[] = [
+const ALL_CARDS: { key: Key; title: string; description: string; badges: string; link?: string }[] = [
   {
     key: 'pledge',
-    title: 'Оставить в залог авто',
+    title: 'Залог авто',
     description: 'Mercedes-Benz W214',
     badges: badges(badge(`+${formatRub(PLEDGE_BONUS)}`), badge('−0,5%')),
+    link: 'Изменить',
   },
   {
     key: 'check',
@@ -128,6 +130,7 @@ export const conditions: Screen = {
             description: card.description,
             badges: card.badges,
             checked: isOn(card.key),
+            link: card.link,
           }),
         ).join('')}
       </div>

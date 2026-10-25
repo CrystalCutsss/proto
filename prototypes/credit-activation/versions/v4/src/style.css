@@ -616,7 +616,7 @@ body.ds-root {
   white-space: nowrap;
 }
 
-/* «+ До 4,5 млн ₽ с условиями ›»: tui-inline-hint, a 12 px tail pointing up at the amount, then the 44 px body. */
+/* «+ 400 000 ₽ и улучшить условия ›»: tui-inline-hint, a 12 px tail pointing up at the amount, then the 44 px body. */
 .hint {
   display: flex;
   justify-content: center;
@@ -826,7 +826,7 @@ body.ds-root {
   gap: var(--ds-space-2);
 }
 
-/* #/ «Залог авто»: the title row carries «Изменить»; description 16 px below, the circle centred on the
+/* «Залог авто» (#/ in КН, #/conditions in ОК): the title row carries «Изменить»; description 16 px below, the circle centred on the
    description and the badges (16 px from the card's bottom, as drawn). */
 .option--link .option__control {
   grid-template-areas:

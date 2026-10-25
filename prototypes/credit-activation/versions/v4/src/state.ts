@@ -3,7 +3,7 @@
 import { BASE_CHOICE, type Choice, type FeeCut, type Tariff } from './calc';
 
 export interface FlowState {
-  /** «Залог авто» on #/ = «Оставить в залог авто» on #/conditions (one flag). */
+  /** «Залог авто» on #/ (КН) = «Залог авто» on #/conditions (ОК): one flag. */
   pledge: boolean;
   /** «Проверить данные» on #/conditions. */
   check: boolean;

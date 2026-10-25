@@ -375,9 +375,9 @@ test('credit-activation v4: КН goes through the packages, ОК straight to the
   await top.getByRole('button', { name: 'К счету' }).click();
   await expect(page).toHaveURL(/#\/$/);
 
-  // «До 4,5 млн ₽ с условиями» → «Условия» (КН: no pledge card, it lives on «Кредит»): a tap on a card toggles
+  // «400 000 ₽ и улучшить условия» → «Условия» (КН: no pledge card, it lives on «Кредит»): a tap on a card toggles
   // it and recalculates the header.
-  await top.getByRole('button', { name: /До 4,5/ }).click();
+  await top.getByRole('button', { name: /улучшить условия/ }).click();
   await expect(page).toHaveURL(/#\/conditions$/);
   await expect(top.getByRole('checkbox', { name: /залог/ })).toHaveCount(0);
   await top.getByRole('checkbox', { name: /Проверить данные/ }).click();
@@ -395,8 +395,9 @@ test('credit-activation v4: КН goes through the packages, ОК straight to the
   await page.goto('/p/credit-activation/v4/?shell=0&product=ok#/');
   await expect(top.getByText('Комиссия', { exact: true })).toBeVisible();
   await expect(top.getByRole('checkbox', { name: /Залог авто/ })).toHaveCount(0);
-  await top.getByRole('button', { name: /До 4,5/ }).click();
-  await expect(top.getByRole('checkbox', { name: /Оставить в залог авто/ })).toBeVisible();
+  await top.getByRole('button', { name: /улучшить условия/ }).click();
+  await expect(top.getByRole('checkbox', { name: /Залог авто/ })).toBeVisible();
+  await expect(top.getByText('Изменить')).toBeVisible();
   await top
     .getByRole('checkbox', { name: /Снизить комиссию/ })
     .first()
@@ -420,7 +421,7 @@ test('credit-activation v4: the shared-header transition to the conditions and b
 }) => {
   await page.goto('/p/credit-activation/v4/?shell=0#/');
   const top = page.locator('section:not([inert])');
-  await top.getByRole('button', { name: /До 4,5/ }).click();
+  await top.getByRole('button', { name: /улучшить условия/ }).click();
   await expect(page).toHaveURL(/#\/conditions$/);
   await expect(page.locator('.viewport')).not.toHaveClass(/is-busy/);
   // After the push the conditions page is opaque again and its faded parts are fully shown.

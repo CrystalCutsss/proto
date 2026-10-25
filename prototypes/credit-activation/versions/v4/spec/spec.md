@@ -19,7 +19,7 @@ the screens v4 keeps.
 ## Owner's brief (2026-10-25)
 
 - New version; a new control in the viewer menu with two variants, КН and ОК (`axes` → `product`, ADR-0022).
-- «Кредит» is the same in КН and ОК. «До 4,5 млн ₽ с условиями» → «Условия» with a smooth move of the amount
+- «Кредит» is the same in КН and ОК. «400 000 ₽ и улучшить условия» → «Условия» with a smooth move of the amount
   (Header), a fade of the navbar and of every other element of both screens; «Дальше» does not animate.
 - «Условия»: the «Барабан условий» scrolls like an iOS picker: top and bottom cards scale a little and go under the
   conditions block and «Дальше»; under those blocks a small gradient (opacity 100 → 0) so the wheel does not butt
@@ -38,7 +38,7 @@ the screens v4 keeps.
 - The payment chip on «Условия» turns positive (green) when the payment is recalculated downwards, like the fee chip.
 - «Тариф» becomes «Пакет» in every visible text (the code keeps `tariff`).
 - The inline hint gets its tail back; «Залог авто»: the «+» sits 16 px above the card's bottom edge.
-- ОК: no «Залог авто» card on «Кредит». КН: no «Оставить в залог авто» card on «Условия» (the pledge lives on
+- ОК: no «Залог авто» card on «Кредит». КН: no «Залог авто» card on «Условия» (the pledge lives on
   «Кредит»).
 - Back chevron in the app bar placed as drawn: 11 × 19 glyph at (5, 2.5) in its 24 px box.
 
@@ -46,7 +46,7 @@ the screens v4 keeps.
 
 | From           | Control                                | Goes to                                             |
 | -------------- | -------------------------------------- | --------------------------------------------------- |
-| `#/`           | «+ До 4,5 млн ₽ с условиями ›»         | push `#/conditions` (shared transition)             |
+| `#/`           | «+ 400 000 ₽ и улучшить условия ›»     | push `#/conditions` (shared transition)             |
 | `#/`           | «Залог авто» card / «+»                | toggles the pledge (same flag as on conditions)     |
 | `#/`           | «Дальше»                               | КН: `#/tariffs`; ОК: `#/review`                     |
 | `#/conditions` | «Дальше»                               | `#/review`                                          |
@@ -99,7 +99,7 @@ of `#/review`, `#/upload` on top of `#/documents`.
 - Conditions block (part of the sticky top bars, plain background): amount pt 8 pb 8 (`data-shared`), chips row
   (`tui-chip` 36 px, px 10, neutral-1, 8 px gap, glyph secondary, ui-s-bold): «5 лет» (calendar), fee (percent,
   positive-pale + positive when lowered), «17 713 ₽ / мес» (arrow; positive when the payment is below the offer's).
-- Wheel: option cards, 20 px apart (pt 20); ОК has all five, КН has no pledge card: «Оставить в залог авто» (+200 000 ₽, −0,5%), «Проверить данные» /
+- Wheel: option cards, 20 px apart (pt 20); ОК has all five, КН has no pledge card: «Залог авто» (ОК; drawn like КН's card on «Кредит» — «Изменить» in the title row, «Mercedes-Benz W214», +200 000 ₽, −0,5%), «Проверить данные» /
   «Занимает до 1 рабочего дня» (+100 000 ₽), «Предоставить выписку» / «По счетам из других банков» (До +10 000 000 ₽),
   «Снизить комиссию» / «За каждые 100 000 ₽, выплаченных сотрудникам в месяц» (% −1%, neutral-2), «Снизить
   комиссию» / «Поддерживайте оборот по счету для бизнеса в Т‑Банке от 46 789 ₽/мес» (% До −0,5%; the frame's

@@ -1039,13 +1039,15 @@ body.ds-root {
   padding: calc(var(--ds-space-1) * 1.5) 0;
 }
 
-/* tui-ic-small / check (13 × 9 glyph, accent-2), its top on the top edge of the bullet's text: the capitals of a
-   Body L line (17 / 20 px) start 3 px below the line box (owner, 2026-10-25). */
+/* tui-ic-small / check (13 × 9 glyph, accent-2) on the middle line of the bullet's first line, with optical
+   compensation (owner, 2026-10-25). In a Body L line (17 / 20 px) the x-height spans 5.5–14 px of the line box,
+   so its middle is 9.75; the check's weight sits in its bottom vertex, so it reads lower than its box and goes 1 px
+   up: the glyph's centre at 8.75, its top at 4.25. */
 .tariff__check {
   width: 16px;
   height: 16px;
   color: var(--ds-background-accent-2);
-  mask-position: 1.5px 3px;
+  mask-position: 1.5px 4.25px;
   mask-size: 13px 9px;
 }
 

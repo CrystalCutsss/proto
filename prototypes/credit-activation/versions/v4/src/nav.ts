@@ -129,8 +129,10 @@ export function startNavigation(viewport: HTMLElement): void {
     gsap.set(lower.dim, { opacity: 0 });
     gsap.set(to, { clearProps: 'transform' });
     upper.el.classList.add('page--sharing');
-    const a = from.getBoundingClientRect();
-    const b = to.getBoundingClientRect();
+    // Align the glyphs, not the boxes: the two amounts have different paddings, so box-aligned tops would leave the
+    // text 12 px off and jump when the pages swap at the end.
+    const a = textRect(from);
+    const b = textRect(to);
     const dx = a.left + a.width / 2 - (b.left + b.width / 2);
     const dy = a.top - b.top;
     const lowerFades = [...lower.el.querySelectorAll<HTMLElement>('[data-fade]')];
@@ -138,12 +140,19 @@ export function startNavigation(viewport: HTMLElement): void {
     const rising = upperFades.filter((el) => !el.closest('.top-bars'));
     const clamp = gsap.utils.clamp(0, 1);
     return (p) => {
-      gsap.set(to, { x: dx * p, y: dy * p });
+      gsap.set(to, { x: dx * p, y: dy * p, force3D: true });
       gsap.set(from, { opacity: p >= 1 ? 1 : 0 });
       gsap.set(upperFades, { opacity: clamp(1 - p * 2) });
       gsap.set(rising, { y: SHARED_SHIFT * p });
       gsap.set(lowerFades, { opacity: clamp((p - 0.5) * 2) });
     };
+  }
+
+  /** Box of an element's text (its padding left out). */
+  function textRect(el: HTMLElement): DOMRect {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    return range.getBoundingClientRect();
   }
 
   /** The transition between two neighbouring pages: shared when `upper` asks for it and both have the element. */

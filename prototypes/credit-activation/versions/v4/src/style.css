@@ -635,12 +635,15 @@ body.ds-root {
   background: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  transition: transform var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
 }
 
+/* The tail is part of the bubble: it takes the body's hover and pressed fills and scales with it. */
 .hint__tail {
   width: 30px;
   height: 12px;
   color: var(--ds-background-neutral-1);
+  transition: color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
 }
 
 .hint__body {
@@ -651,20 +654,29 @@ body.ds-root {
   padding: 0 calc(var(--ds-space-5) / 2);
   border-radius: calc(var(--bar-height) / 2);
   background: var(--ds-background-neutral-1);
-  transition:
-    background-color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard),
-    transform var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
+  transition: background-color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
 }
 
 @media (hover: hover) {
   .hint__button:hover .hint__body {
     background: var(--ds-state-background-neutral-1-hover);
   }
+
+  .hint__button:hover .hint__tail {
+    color: var(--ds-state-background-neutral-1-hover);
+  }
+}
+
+.hint__button:active {
+  transform: scale(0.98);
 }
 
 .hint__button:active .hint__body {
   background: var(--ds-state-background-neutral-1-pressed);
-  transform: scale(0.98);
+}
+
+.hint__button:active .hint__tail {
+  color: var(--ds-state-background-neutral-1-pressed);
 }
 
 /* tui-ic-service / plus in the 24 px accessory box (an 18 px glyph at 3 px), action colour as drawn. */
@@ -1314,6 +1326,8 @@ body.ds-root {
   .app .text-button,
   .app .glass-button,
   .app .tooltip-button,
+  .app .hint__button,
+  .app .hint__tail,
   .app .hint__body,
   .app .badge,
   .app .chip,
@@ -1325,7 +1339,7 @@ body.ds-root {
 
   .app .button:active,
   .app .glass-button:active,
-  .app .hint__button:active .hint__body {
+  .app .hint__button:active {
     transform: none;
   }
 }

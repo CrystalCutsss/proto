@@ -81,7 +81,8 @@ of `#/review`, `#/upload` on top of `#/documents`.
 - `tui-header` pt 12: «Одобрили кредит / ИП Константинопольский К. К.» heading-s centred; 20 px; amount
   numbers-2xl (57 px), `data-shared="amount"`.
 - `tui-inline-hint`: 30 × 12 tail (neutral-1) pointing at the amount, body 44 px neutral-1 radius 22, px 10: `plus`
-  24 px (18 px glyph, action), label body-m px 6, chevron 7 × 16 tertiary.
+  24 px (18 px glyph, action), label body-m px 6, chevron 7 × 16 tertiary. Pressed: the whole bubble, tail included, scales to 0,98
+  and takes the pressed fill (hover: the hover fill).
 - Info cards (pt 8 + 16, 72 px; caption ui-s secondary, value heading-s). КН: «Срок / 5 лет ›», «Платеж в месяц /
   … ›», 20 px gap. ОК: «Срок / 5 лет ›» | «Комиссия / 2,5%» (no chevron, the current fee), then the wide «Платеж в
   месяц / … ›»; 16 px gaps. The ОК frame draws 2,9 %; v4 shows the fee of the conditions (Q9).
@@ -112,7 +113,8 @@ of `#/review`, `#/upload` on top of `#/documents`.
 
 ### Shared transition `#/` ↔ `#/conditions` (`nav.ts`)
 
-- No slide: the amount moves from y 170 to y 106 (expressive ease, slow duration); the `[data-fade]` parts of
+- No slide: the amount moves from y 170 to y 106 (aligned by its text, not its box: the two amounts have different
+  paddings) (expressive ease, slow duration); the `[data-fade]` parts of
   «Кредит» (title, hint, info cards, pledge card, app bar) fade out over the first half, those of «Условия» (app
   bar, chips, gradient, wheel rising 12 px) fade in over the second; status bar and «Дальше» stay. Back (chevron,
   browser back, edge swipe scrubbing the same draw) reverses it. Reduced motion: the usual cross-fade.

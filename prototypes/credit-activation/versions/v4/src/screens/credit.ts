@@ -1,4 +1,4 @@
-// #/ — «Кредит»: the approved offer and the hint «400 000 ₽ и улучшить условия» that opens #/conditions with the
+// #/ — «Кредит»: the approved offer and the hint «400 000 ₽ с улучшением условий» that opens #/conditions with the
 // shared-header transition. Two states (frames «Кредит КН» / «Кредит ОК»): КН shows «Срок» and «Платеж в месяц»
 // and the pledge card «Залог авто» (the same flag as on #/conditions, where КН has no pledge card); ОК shows
 // «Срок», «Комиссия» and a wide «Платеж в месяц» and no pledge card (owner, 2026-10-25). «Дальше» goes to
@@ -30,7 +30,7 @@ const hint = () => `
       ${mask('hint-tail.svg', 'hint__tail')}
       <span class="hint__body">
         ${mask('plus.svg', 'hint__plus')}
-        <span class="hint__label t-body-m">400&nbsp;000&nbsp;₽ и&nbsp;улучшить условия</span>
+        <span class="hint__label t-body-m">400&nbsp;000&nbsp;₽ с&nbsp;улучшением условий</span>
         ${mask('chevron-right-service.svg', 'hint__chevron')}
       </span>
     </button>

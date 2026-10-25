@@ -364,7 +364,9 @@ test('credit-activation v4: КН goes through the packages, ОК straight to the
   await expect(top.getByRole('heading', { name: '35\u00a0175\u00a0₽/мес' })).toBeVisible();
   await top.getByRole('button', { name: 'Выбрать' }).first().click();
   await expect(page).toHaveURL(/#\/review$/);
-  await expect(top.getByText('Пакет «Универсальный»')).toBeVisible();
+  // The tariff card says «Пакет «Универсальный»» too, so look on the review screen only.
+  const review = page.locator('[data-route="#/review"]');
+  await expect(review.getByText('Пакет «Универсальный»')).toBeVisible();
   await expect(top.getByText('35\u00a0175,00\u00a0₽')).toBeVisible();
   await expect(top.getByText('Комиссия', { exact: true })).toHaveCount(0);
   await expect(legal).toHaveCount(0);
@@ -375,9 +377,9 @@ test('credit-activation v4: КН goes through the packages, ОК straight to the
   await top.getByRole('button', { name: 'К счету' }).click();
   await expect(page).toHaveURL(/#\/$/);
 
-  // «400 000 ₽ и улучшить условия» → «Условия» (КН: no pledge card, it lives on «Кредит»): a tap on a card toggles
+  // «400 000 ₽ с улучшением условий» → «Условия» (КН: no pledge card, it lives on «Кредит»): a tap on a card toggles
   // it and recalculates the header.
-  await top.getByRole('button', { name: /улучшить условия/ }).click();
+  await top.getByRole('button', { name: /улучшением условий/ }).click();
   await expect(page).toHaveURL(/#\/conditions$/);
   await expect(top.getByRole('checkbox', { name: /залог/ })).toHaveCount(0);
   await top.getByRole('checkbox', { name: /Проверить данные/ }).click();
@@ -395,7 +397,7 @@ test('credit-activation v4: КН goes through the packages, ОК straight to the
   await page.goto('/p/credit-activation/v4/?shell=0&product=ok#/');
   await expect(top.getByText('Комиссия', { exact: true })).toBeVisible();
   await expect(top.getByRole('checkbox', { name: /Залог авто/ })).toHaveCount(0);
-  await top.getByRole('button', { name: /улучшить условия/ }).click();
+  await top.getByRole('button', { name: /улучшением условий/ }).click();
   await expect(top.getByRole('checkbox', { name: /Залог авто/ })).toBeVisible();
   await expect(top.getByText('Изменить')).toBeVisible();
   await top
@@ -421,7 +423,7 @@ test('credit-activation v4: the shared-header transition to the conditions and b
 }) => {
   await page.goto('/p/credit-activation/v4/?shell=0#/');
   const top = page.locator('section:not([inert])');
-  await top.getByRole('button', { name: /улучшить условия/ }).click();
+  await top.getByRole('button', { name: /улучшением условий/ }).click();
   await expect(page).toHaveURL(/#\/conditions$/);
   await expect(page.locator('.viewport')).not.toHaveClass(/is-busy/);
   // After the push the conditions page is opaque again and its faded parts are fully shown.

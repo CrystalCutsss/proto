@@ -616,7 +616,7 @@ body.ds-root {
   white-space: nowrap;
 }
 
-/* «+ 400 000 ₽ и улучшить условия ›»: tui-inline-hint, a 12 px tail pointing up at the amount, then the 44 px body. */
+/* «+ 400 000 ₽ с улучшением условий ›»: tui-inline-hint, a 12 px tail pointing up at the amount, then the 44 px body. */
 .hint {
   display: flex;
   justify-content: center;
@@ -960,13 +960,14 @@ body.ds-root {
   padding: var(--ds-space-2) var(--side);
 }
 
-/* Horizontal snap slider: 300 px cards, 16 px apart and inset; 10 px on top for the «Часто выбирают» badge. */
+/* Horizontal snap slider: 300 px cards, 16 px apart and inset, 20 px under the title; 14 px of it on top for the
+   «Часто выбирают» badge. */
 .tariffs {
   display: flex;
   gap: var(--ds-space-4);
   align-items: stretch;
-  margin-top: calc(var(--ds-space-2) + var(--ds-space-1) / 2);
-  padding: calc(var(--ds-space-2) + var(--ds-space-1) / 2) var(--side) var(--ds-space-2);
+  margin-top: calc(var(--ds-space-1) * 1.5);
+  padding: calc(var(--ds-space-3) + var(--ds-space-1) / 2) var(--side) var(--ds-space-2);
   overflow-x: auto;
   scroll-padding: 0 var(--side);
   scroll-snap-type: x mandatory;
@@ -988,9 +989,10 @@ body.ds-root {
 
 .tariff__badge {
   position: absolute;
-  top: calc(var(--ds-space-5) / -2);
+  top: calc((var(--ds-space-5) + var(--ds-space-2)) / -2);
   left: var(--ds-space-5);
-  padding: calc(var(--ds-space-1) * 0.375) calc(var(--ds-space-1) * 1.5) calc(var(--ds-space-1) * 0.625);
+  min-height: calc(var(--ds-space-5) + var(--ds-space-2));
+  padding: calc(var(--ds-space-1) * 1.375) var(--ds-space-3) calc(var(--ds-space-1) * 1.625);
   border-radius: var(--ds-radius-full);
   font-family: var(--ds-typography-ui-s-bold-font-family);
   font-size: var(--ds-typography-ui-s-bold-font-size);
@@ -1006,7 +1008,7 @@ body.ds-root {
   display: flex;
   gap: var(--ds-space-4);
   align-items: flex-start;
-  padding: var(--ds-space-4) var(--ds-space-5) var(--ds-space-3);
+  padding: calc(var(--ds-space-5) + var(--ds-space-2)) var(--ds-space-5) var(--ds-space-3);
 }
 
 .tariff__titles {
@@ -1016,10 +1018,17 @@ body.ds-root {
   gap: var(--ds-space-2);
 }
 
+/* The «?» sits on the middle of the payment line (owner, 2026-10-25): its box is one heading-l line high. */
+.tariff__hint {
+  display: flex;
+  align-items: center;
+  height: var(--ds-typography-heading-mobile-l-line-height);
+}
+
 .tariff__bullets {
   flex: 1;
   margin: 0;
-  padding: 0 var(--ds-space-5) var(--ds-space-5);
+  padding: 0 var(--ds-space-5) var(--ds-space-8);
   list-style: none;
 }
 
@@ -1030,12 +1039,13 @@ body.ds-root {
   padding: calc(var(--ds-space-1) * 1.5) 0;
 }
 
-/* tui-ic-small / check: a 13 × 9 glyph at 1.5 / 3.8 px in its 16 px box, accent-2. */
+/* tui-ic-small / check (13 × 9 glyph, accent-2), its top on the top edge of the bullet's text: the capitals of a
+   Body L line (17 / 20 px) start 3 px below the line box (owner, 2026-10-25). */
 .tariff__check {
   width: 16px;
   height: 16px;
   color: var(--ds-background-accent-2);
-  mask-position: 1.5px 3.8px;
+  mask-position: 1.5px 3px;
   mask-size: 13px 9px;
 }
 

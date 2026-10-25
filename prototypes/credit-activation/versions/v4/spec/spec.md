@@ -14,12 +14,12 @@ the screens v4 keeps.
 | `01-credit-ok.png`            | «Кредит ОК» `74:23562`       | `#/` (ОК)                  |
 | `02-conditions.png`           | «Условия» `73:22591`         | `#/conditions`             |
 | `02b-conditions-selected.png` | «Условия выбраны» `73:22711` | `#/conditions` (pledge on) |
-| `06-tariffs.png`              | «Тарифы» `73:22577`          | `#/tariffs` (КН)           |
+| `06-tariffs.png`              | «Тарифы» `90:5528`           | `#/tariffs` (КН)           |
 
 ## Owner's brief (2026-10-25)
 
 - New version; a new control in the viewer menu with two variants, КН and ОК (`axes` → `product`, ADR-0022).
-- «Кредит» is the same in КН and ОК. «400 000 ₽ и улучшить условия» → «Условия» with a smooth move of the amount
+- «Кредит» is the same in КН and ОК. «400 000 ₽ с улучшением условий» → «Условия» with a smooth move of the amount
   (Header), a fade of the navbar and of every other element of both screens; «Дальше» does not animate.
 - «Условия»: the «Барабан условий» scrolls like an iOS picker: top and bottom cards scale a little and go under the
   conditions block and «Дальше»; under those blocks a small gradient (opacity 100 → 0) so the wheel does not butt
@@ -46,12 +46,12 @@ the screens v4 keeps.
 
 | From           | Control                                | Goes to                                             |
 | -------------- | -------------------------------------- | --------------------------------------------------- |
-| `#/`           | «+ 400 000 ₽ и улучшить условия ›»     | push `#/conditions` (shared transition)             |
+| `#/`           | «+ 400 000 ₽ с улучшением условий ›»   | push `#/conditions` (shared transition)             |
 | `#/`           | «Залог авто» card / «+»                | toggles the pledge (same flag as on conditions)     |
 | `#/`           | «Дальше»                               | КН: `#/tariffs`; ОК: `#/review`                     |
 | `#/conditions` | «Дальше»                               | `#/review`                                          |
 | `#/tariffs`    | «Выбрать» (Универсальный, Минимальный) | sets the tariff, push `#/review`                    |
-| `#/tariffs`    | «Настроить» («Свои условия»)           | push `#/conditions` (slide: no shared amount)       |
+| `#/tariffs`    | «Выбрать» («Ваши условия»)             | push `#/conditions` (slide: no shared amount)       |
 | `#/review`     | «Дальше» (pledge) / «Получить деньги»  | `#/documents` / `#/success`                         |
 | `#/documents`  | «Загрузить» / «Получить деньги»        | `#/upload` (back marks both uploaded) / `#/success` |
 | `#/success`    | «К счету»                              | reset to `#/`                                       |
@@ -68,7 +68,7 @@ of `#/review`, `#/upload` on top of `#/documents`.
   chip turns positive when the fee is below 2,5 %. «Условия выбраны» draws «2,5%» positive with the pledge (Q1).
 - Payment: 17 713,05 ₽ per 4 000 000 ₽ at 2,5 % (header chip), proportional to the amount and to (1 + fee), so a
   fee cut lowers it (Q8); its chip turns positive when it is below the offer's payment. A КН tariff replaces it with
-  33 500 / 17 500 ₽ per 4 000 000 ₽ (cards), scaled by the amount only; «Свои условия» keeps the formula. The tariff cards show their payment at the current amount. «Платеж в месяц» on `#/`
+  33 500 / 17 500 ₽ per 4 000 000 ₽ (cards), scaled by the amount only; «Ваши условия» keeps the formula. The tariff cards show their payment at the current amount. «Платеж в месяц» on `#/`
   shows the formula value, not the drawn 193 500 ₽ (Q2).
 - ОК shows «Комиссия» on `#/` and a «Комиссия» row on `#/review` (v2); КН shows the package row in «Залог и условия».
 
@@ -119,15 +119,17 @@ of `#/review`, `#/upload` on top of `#/documents`.
   bar, chips, gradient, wheel rising 12 px) fade in over the second; status bar and «Дальше» stay. Back (chevron,
   browser back, edge swipe scrubbing the same draw) reverses it. Reduced motion: the usual cross-fade.
 
-### `#/tariffs` «Варианты платежа» (`73:22577`, КН; visible texts say «Пакет»)
+### `#/tariffs` «Варианты платежа» (`90:5528`, КН; visible texts say «Пакет»)
 
 - App bar back + close; `tui-header [large]` px 16 py 8: heading-l. 20 px.
 - Horizontal snap slider (`scroll-snap-type: x mandatory`), 300 px cards, 16 px gap and inset, equal heights:
-  neutral-1-on-base, radius 24; header pt 16 px 20 pb 12: payment heading-m / subtitle body-m (8 px), «?» 22 px;
-  check list (16 px `check-small` in accent-2, body-m, py 6, 12 px gap); footer px 20 pb 20 medium yellow button.
-  «Часто выбирают» badge (accent-2, on-dark, ui-s-bold) at top −10, left 20 of the first card.
-- Cards: «33 500 ₽/мес» «Универсальный» (drawn bullets) · «17 500 ₽/мес» «Минимальный» · «Свои условия» «На ваш
-  выбор» → «Настроить». Bullets of cards 2–3 are Lorem ipsum in the frame: placeholders (Q5).
+  neutral-1-on-base, radius 24; header pt 28 px 20 pb 12: payment heading-l / subtitle body-l (8 px), «?» 22 px centred on the payment line;
+  check list (16 px `check-small` in accent-2, py 6, 12 px gap; the texts are body-l (owner, 2026-10-25) and the
+  check's top sits on the top of the text; 32 px below the list); footer px 20 pb 20 medium yellow button. «Часто выбирают» badge
+  (accent-2, on-dark, ui-s-bold, 28 px high) at top −14, left 20 of the first card.
+- Cards: «33 500 ₽/мес» «Пакет «Универсальный»» (drawn bullets) · «17 500 ₽/мес» «Пакет «Минимальный»» ·
+  «Ваши условия» «Выбираете сами»; every card ends with «Выбрать». Bullets of cards 2–3 are Lorem ipsum in the
+  frame: placeholders (Q5).
 
 ### `#/review`, `#/documents`, `#/upload`, `#/success`
 
@@ -140,7 +142,7 @@ and «Пакет «…»» (briefcase) for a КН package, no «Пакет «В�
 - Q2. «Платеж в месяц» on «Кредит» draws 193 500 ₽; v4 shows the formula value (17 713 ₽ at 4 млн).
 - Q3. No TUI token for the iOS 26 liquid glass; a white disc with a provisional small shadow.
 - Q4. Second «Снизить комиссию» text: typo in the frame («Поддержтвать обороте»), fixed.
-- Q5. Bullets of «Минимальный» and «Свои условия» are placeholders.
+- Q5. Bullets of «Минимальный» and «Ваши условия» are placeholders.
 - Q6. The new iOS 26 app bar is used on every screen (review, documents, upload had text «Закрыть» in V4).
 - Q7. A deep link to `#/documents` builds a review underneath with nothing chosen (no pledge), so back shows the
   no-pledge review; the in-app path always arrives with the pledge.

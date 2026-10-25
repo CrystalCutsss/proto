@@ -17,7 +17,8 @@ export function renderAmount(root: HTMLElement, animate = true): void {
   const el = root.querySelector<HTMLElement>('[data-amount]');
   if (!el) return;
   const target = totalAmount(choice());
-  const proxy = shown.get(el) ?? { value: target };
+  // The first change on a page counts from the amount the markup drew, not from the new total (no jump-in).
+  const proxy = shown.get(el) ?? { value: Number(el.textContent?.replace(/\D/g, '')) || target };
   shown.set(el, proxy);
   gsap.killTweensOf(proxy);
   if (!animate || prefersReducedMotion() || proxy.value === target) {

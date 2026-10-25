@@ -108,7 +108,7 @@ of `#/review`, `#/upload` on top of `#/documents`.
   bottom block) gets `perspective(800px) rotateX(±20° · p) scale(1 − 0.1 · p)` and opacity `1 − 0.6 · p` (p = the share of the card past the edge), origin at
   the side away from the edge. 24 px gradients
   (`--ds-background-base` → transparent) below the conditions block and above «Дальше». Off under reduced motion.
-- Tap anywhere on a card or its «+» toggles it (`role="checkbox"`, Space / Enter); the amount counts to the new
+- Tap anywhere on a card or its «+» toggles it (`role="checkbox"`, Space / Enter); the amount counts (from the first tap on) to the new
   value, the chips update.
 
 ### Shared transition `#/` ↔ `#/conditions` (`nav.ts`)
@@ -125,7 +125,7 @@ of `#/review`, `#/upload` on top of `#/documents`.
 - Horizontal snap slider (`scroll-snap-type: x mandatory`), 300 px cards, 16 px gap and inset, equal heights:
   neutral-1-on-base, radius 24; header pt 28 px 20 pb 12: payment heading-l / subtitle body-l (8 px), «?» 22 px centred on the payment line;
   check list (16 px `check-small` in accent-2, py 6, 12 px gap; the texts are body-l (owner, 2026-10-25) and the
-  check's top sits on the top of the text; 32 px below the list); footer px 20 pb 20 medium yellow button. «Часто выбирают» badge
+  check sits on the middle of the first line's x-height, 1 px higher for optical balance; 32 px below the list); footer px 20 pb 20 medium yellow button. «Часто выбирают» badge
   (accent-2, on-dark, ui-s-bold, 28 px high) at top −14, left 20 of the first card.
 - Cards: «33 500 ₽/мес» «Пакет «Универсальный»» (drawn bullets) · «17 500 ₽/мес» «Пакет «Минимальный»» ·
   «Ваши условия» «Выбираете сами»; every card ends with «Выбрать». Bullets of cards 2–3 are Lorem ipsum in the

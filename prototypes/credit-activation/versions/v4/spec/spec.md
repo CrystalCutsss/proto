@@ -19,7 +19,7 @@ the screens v4 keeps.
 ## Owner's brief (2026-10-25)
 
 - New version; a new control in the viewer menu with two variants, КН and ОК (`axes` → `product`, ADR-0022).
-- «Кредит» is the same in КН and ОК. «400 000 ₽ и улучшить условия» → «Условия» with a smooth move of the amount
+- «Кредит» is the same in КН and ОК. «400 000 ₽ с улучшением условий» → «Условия» with a smooth move of the amount
   (Header), a fade of the navbar and of every other element of both screens; «Дальше» does not animate.
 - «Условия»: the «Барабан условий» scrolls like an iOS picker: top and bottom cards scale a little and go under the
   conditions block and «Дальше»; under those blocks a small gradient (opacity 100 → 0) so the wheel does not butt
@@ -46,7 +46,7 @@ the screens v4 keeps.
 
 | From           | Control                                | Goes to                                             |
 | -------------- | -------------------------------------- | --------------------------------------------------- |
-| `#/`           | «+ 400 000 ₽ и улучшить условия ›»     | push `#/conditions` (shared transition)             |
+| `#/`           | «+ 400 000 ₽ с улучшением условий ›»   | push `#/conditions` (shared transition)             |
 | `#/`           | «Залог авто» card / «+»                | toggles the pledge (same flag as on conditions)     |
 | `#/`           | «Дальше»                               | КН: `#/tariffs`; ОК: `#/review`                     |
 | `#/conditions` | «Дальше»                               | `#/review`                                          |

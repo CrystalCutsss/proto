@@ -616,7 +616,7 @@ body.ds-root {
   white-space: nowrap;
 }
 
-/* «+ 400 000 ₽ и улучшить условия ›»: tui-inline-hint, a 12 px tail pointing up at the amount, then the 44 px body. */
+/* «+ 400 000 ₽ с улучшением условий ›»: tui-inline-hint, a 12 px tail pointing up at the amount, then the 44 px body. */
 .hint {
   display: flex;
   justify-content: center;

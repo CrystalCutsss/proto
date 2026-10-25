@@ -1,0 +1,1312 @@
+/* «Единая активация» v4. Every design value comes from --ds-* tokens; local properties are built from them. */
+
+/* ---------- frame ---------- */
+
+html,
+body {
+  height: 100%;
+}
+
+/* White like the design's screens: on a phone it also colours the status bar and home indicator areas. */
+body.ds-root {
+  overflow: hidden;
+  background: var(--ds-background-base);
+}
+
+/* The app always fills its window; the viewer draws the iPhone mockup on wide screens (ADR-0020). */
+#app {
+  height: 100dvh;
+}
+
+.app {
+  /* provisional: no TUI shadow token. Medium drop shadow from the design: 0 6 34 black 12 %. */
+  --shadow-medium: 0 calc(var(--ds-space-1) * 1.5) calc(var(--ds-space-8) + var(--ds-space-1) / 2)
+    var(--ds-color-black-black-alpha-12);
+
+  /* provisional: no TUI shadow token (left edge of a pushed screen). */
+  --shadow-edge: calc(var(--ds-space-2) * -1) 0 var(--ds-space-6) var(--ds-color-black-black-alpha-10);
+
+  /* provisional: no TUI token for the iOS 26 liquid glass. A white disc with the small drop shadow (0 5 20). */
+  --shadow-glass: 0 calc(var(--ds-space-1) * 1.25) var(--ds-space-5) var(--ds-color-black-black-alpha-10);
+  --side: var(--ds-space-4);
+  --bar-height: 44px;
+
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--ds-typography-body-l-font-family);
+  color: var(--ds-text-primary);
+  background: var(--ds-background-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app *,
+.app *::before,
+.app *::after {
+  box-sizing: border-box;
+}
+
+.viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.viewport.is-dragging {
+  user-select: none;
+}
+
+/* ---------- pages ---------- */
+
+.page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--ds-background-base);
+  box-shadow: var(--shadow-edge);
+  will-change: transform;
+}
+
+.viewport.is-busy .page {
+  pointer-events: none;
+}
+
+.page--covered {
+  visibility: hidden;
+}
+
+.page__scroll {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  touch-action: pan-y;
+}
+
+.page__scroll:focus {
+  outline: none;
+}
+
+.page__dim {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: var(--ds-color-black-black-alpha-10);
+  opacity: 0;
+}
+
+.content {
+  flex: 1 0 auto;
+  padding-bottom: var(--ds-space-8);
+}
+
+.content--center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 0;
+}
+
+/* ---------- typography ---------- */
+
+/*
+ * Letter spacing comes from the TUI tokens: they are Apple's tracking table of the variable SF Pro (17 px -0.43,
+ * 20 px -0.45…), the font iOS draws in the browser. The Figma file's styles carry the older table of the static
+ * SF Pro Text / Display (Figma does not apply tracking itself); with it the wider system font wraps titles such as
+ * «Пакет «Все включено»» (owner, 2026-10-16).
+ */
+
+.t-heading-l {
+  font-family: var(--ds-typography-heading-mobile-l-font-family);
+  font-size: var(--ds-typography-heading-mobile-l-font-size);
+  font-weight: var(--ds-typography-heading-mobile-l-font-weight);
+  line-height: var(--ds-typography-heading-mobile-l-line-height);
+  letter-spacing: var(--ds-typography-heading-mobile-l-letter-spacing);
+}
+
+.t-heading-m {
+  font-family: var(--ds-typography-heading-mobile-m-font-family);
+  font-size: var(--ds-typography-heading-mobile-m-font-size);
+  font-weight: var(--ds-typography-heading-mobile-m-font-weight);
+  line-height: var(--ds-typography-heading-mobile-m-line-height);
+  letter-spacing: var(--ds-typography-heading-mobile-m-letter-spacing);
+}
+
+/* iOS/Heading S is SF Pro Text Semibold in Figma; the TUI token points it at the display family. */
+.t-heading-s {
+  font-family: var(--ds-typography-body-l-font-family);
+  font-size: var(--ds-typography-heading-mobile-s-font-size);
+  font-weight: var(--ds-typography-heading-mobile-s-font-weight);
+  line-height: var(--ds-typography-heading-mobile-s-line-height);
+  letter-spacing: var(--ds-typography-heading-mobile-s-letter-spacing);
+}
+
+/* Figma uses SF Pro "normal" line heights: body-l 17/20 and body-m 15/18, i.e. the iOS ui-l / ui-m values. */
+.t-body-l,
+.button--l .button__label,
+.text-button {
+  font-family: var(--ds-typography-body-l-font-family);
+  font-size: var(--ds-typography-body-l-font-size);
+  font-weight: var(--ds-typography-body-l-font-weight);
+  line-height: var(--ds-typography-ui-l-line-height);
+  letter-spacing: var(--ds-typography-body-l-letter-spacing);
+}
+
+.t-body-m,
+.button--m .button__label {
+  font-family: var(--ds-typography-body-m-font-family);
+  font-size: var(--ds-typography-body-m-font-size);
+  font-weight: var(--ds-typography-body-m-font-weight);
+  line-height: var(--ds-typography-ui-m-line-height);
+  letter-spacing: var(--ds-typography-body-m-letter-spacing);
+}
+
+.t-ui-s {
+  font-family: var(--ds-typography-ui-s-font-family);
+  font-size: var(--ds-typography-ui-s-font-size);
+  font-weight: var(--ds-typography-ui-s-font-weight);
+  line-height: var(--ds-typography-ui-s-line-height);
+  letter-spacing: var(--ds-typography-ui-s-letter-spacing);
+}
+
+.t-number-2xl {
+  font-family: var(--ds-typography-numbers-2-xl-font-family);
+  font-size: var(--ds-typography-numbers-2-xl-font-size);
+  font-weight: var(--ds-typography-numbers-2-xl-font-weight);
+  line-height: var(--ds-typography-numbers-2-xl-line-height);
+  letter-spacing: var(--ds-typography-numbers-2-xl-letter-spacing);
+}
+
+.text-secondary {
+  color: var(--ds-text-secondary);
+}
+
+.content h1,
+.content h2,
+.content p,
+.content ul {
+  margin: 0;
+}
+
+/* ---------- masks (SVG shape, token colour) ---------- */
+
+.mask {
+  display: inline-block;
+  flex: none;
+  background-color: currentcolor;
+  mask-image: var(--mask);
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+/* ---------- top bars ---------- */
+
+.top-bars {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  flex: none;
+  background: var(--ds-component-navigation-bar-background);
+  backdrop-filter: blur(20px);
+}
+
+.status-bar {
+  position: relative;
+  height: var(--bar-height);
+}
+
+.status-bar img {
+  display: block;
+}
+
+.status-bar__time {
+  position: absolute;
+  top: calc(50% + 1px);
+  left: 34px;
+  transform: translateY(-50%);
+}
+
+.status-bar__right {
+  position: absolute;
+  top: calc(50% + 1px);
+  right: 14px;
+  width: 67px;
+  height: 12px;
+  transform: translateY(-50%);
+}
+
+/* The signal/wifi glyph carries the battery level at its right end; the battery outline sits on top. */
+.status-bar__right img {
+  position: absolute;
+  top: 1px;
+  left: 0;
+}
+
+.status-bar__right .status-bar__battery {
+  top: 0;
+  left: 42px;
+}
+
+/* iOS 26 app bar: 44 px glass circles 16 px from the edges, 10 px above the content (V5). */
+.app-bar {
+  display: flex;
+  justify-content: space-between;
+  height: calc(var(--bar-height) + var(--ds-space-2) + var(--ds-space-1) / 2);
+  padding: 0 var(--side) calc(var(--ds-space-2) + var(--ds-space-1) / 2);
+}
+
+.app-bar__slot {
+  display: flex;
+  align-items: center;
+}
+
+.glass-button {
+  display: grid;
+  place-items: center;
+  width: var(--bar-height);
+  height: var(--bar-height);
+  padding: 0;
+  border: 0;
+  border-radius: var(--ds-radius-full);
+  color: var(--ds-text-primary);
+  background: var(--ds-background-elevation-1);
+  box-shadow: var(--shadow-glass);
+  cursor: pointer;
+}
+
+/* Glyph boxes of the exported masks: back 11 × 19, close-ios26 17.3 px, close-ios 24 px (its own padding). */
+.glass-button__back {
+  width: 11px;
+  height: 19px;
+}
+
+.glass-button__dismiss {
+  width: 17.3px;
+  height: 17.3px;
+}
+
+.glass-button__close {
+  width: 24px;
+  height: 24px;
+}
+
+/* ---------- buttons ---------- */
+
+.button,
+.text-button,
+.glass-button,
+.tooltip-button {
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard),
+    color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard),
+    transform var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  cursor: pointer;
+}
+
+.button--l {
+  width: 100%;
+  padding: var(--ds-space-4);
+  border-radius: var(--ds-radius-l);
+}
+
+/* 56 px tall like the design: the label keeps a 24 px line. */
+.button--l .button__label {
+  line-height: var(--ds-font-line-height-x6);
+}
+
+.button--m {
+  padding: calc(var(--ds-space-5) / 2);
+  border-radius: var(--ds-radius-m);
+}
+
+.button--primary {
+  color: var(--ds-text-primary-on-accent-1);
+  background: var(--ds-appearance-primary-background-normal);
+}
+
+.button--secondary {
+  width: 100%;
+  color: var(--ds-text-action);
+  background: var(--ds-background-neutral-1);
+}
+
+.button--secondary .button__label {
+  line-height: var(--ds-font-line-height-x6);
+}
+
+.button--primary.button--m .button__label {
+  padding: calc(var(--ds-space-1) * 0.75) var(--ds-space-2);
+  line-height: var(--ds-font-line-height-x4-5);
+}
+
+.text-button {
+  padding: 0;
+  border: 0;
+  color: var(--ds-text-action);
+  background: none;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  /* iOS has no hover state (the hover token is null there); the web hover value equals the iOS pressed one. */
+  .button--primary:hover {
+    background: var(--ds-state-background-accent-1-pressed);
+  }
+
+  .button--secondary:hover {
+    background: var(--ds-state-background-neutral-1-hover);
+  }
+
+  .text-button:hover {
+    color: var(--ds-state-text-action-hover);
+  }
+
+  .glass-button:hover {
+    background: var(--ds-state-background-neutral-1-hover);
+  }
+}
+
+.button--primary:active {
+  background: var(--ds-appearance-primary-background-pressed);
+  transform: scale(0.98);
+}
+
+.button--secondary:active {
+  background: var(--ds-state-background-neutral-1-pressed);
+  transform: scale(0.98);
+}
+
+.text-button:active {
+  color: var(--ds-state-text-action-pressed);
+}
+
+.glass-button:active {
+  background: var(--ds-state-background-neutral-1-pressed);
+  transform: scale(0.94);
+}
+
+/* ---------- bottom block ---------- */
+
+.bottom-block {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  flex: none;
+  background: var(--ds-background-base);
+}
+
+/* The device draws its own bars (installed web app, phone screen in the viewer): the shell hides the drawn
+   status bar and home indicator ([data-proto-system-bar]); the safe areas take their place (ADR-0020). */
+:root[data-proto-bars='hidden'] .bottom-block {
+  padding-bottom: var(--proto-safe-area-inset-bottom);
+}
+
+:root[data-proto-bars='hidden'] .bottom-block:not(.bottom-block--fade, :has(.bottom-block__actions)) {
+  padding-bottom: max(var(--proto-safe-area-inset-bottom), var(--ds-space-4));
+}
+
+/* TUI floating container: content scrolling under the button fades out. */
+.bottom-block--fade::before {
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: var(--ds-space-6);
+  pointer-events: none;
+  content: '';
+  background-image: linear-gradient(transparent, var(--ds-background-base));
+}
+
+.bottom-block__actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-3);
+  padding: 0 var(--side);
+}
+
+.legal {
+  margin: 0;
+  font-family: var(--ds-typography-ui-s-font-family);
+  font-size: var(--ds-typography-ui-s-font-size);
+  line-height: var(--ds-typography-ui-s-line-height);
+  letter-spacing: var(--ds-typography-ui-s-letter-spacing);
+  color: var(--ds-text-secondary);
+  text-align: center;
+}
+
+.legal--below {
+  /* 64 px between the button and the home indicator, the text centred in it (design: 65). */
+  display: grid;
+  place-items: center;
+  min-height: calc(var(--ds-space-12) + var(--ds-space-4));
+  padding: 0 var(--side);
+}
+
+.home-indicator {
+  position: relative;
+  height: 34px;
+}
+
+.home-indicator::after {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 133px;
+  height: 5px;
+  content: '';
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-background-accent-opposite);
+  transform: translateX(-50%);
+}
+
+/* ---------- badges and chips ---------- */
+
+/* 16 px glyph box; the inner glyphs keep their exported size at a 1 px offset. */
+.glyph {
+  width: 16px;
+  height: 16px;
+  mask-position: 0 0;
+  mask-size: 16px 16px;
+}
+
+.glyph--percent {
+  mask-position: 1px 1px;
+  mask-size: 14.667px 14.667px;
+}
+
+.glyph--arrow {
+  mask-position: 1px 1px;
+  mask-size: 14px 14px;
+}
+
+.glyph--calendar {
+  mask-position: 1px 2px;
+  mask-size: 14px 12px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-1);
+}
+
+.badge,
+.chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  border: 0;
+  border-radius: var(--ds-radius-full);
+  white-space: nowrap;
+  transition:
+    background-color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard),
+    color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
+}
+
+/* tui-badge 28 px: amounts on neutral-1, the fee cuts with the % glyph on neutral-2 (V5). */
+.badge {
+  height: 28px;
+  padding: 0 calc(var(--ds-space-1) * 1.5);
+  color: var(--ds-text-primary);
+  background: var(--ds-background-neutral-1);
+}
+
+.badge--glyph {
+  background: var(--ds-background-neutral-2);
+}
+
+/* Badges on #/documents are 30 px tall in the design. */
+.badge--doc {
+  height: 30px;
+}
+
+/* tui-chip of the conditions block: 36 px, px 10, the glyph in secondary; positive when the value improved. */
+.chip {
+  height: 36px;
+  padding: 0 calc(var(--ds-space-5) / 2);
+  color: var(--ds-text-primary);
+  background: var(--ds-background-neutral-1);
+}
+
+.chip .glyph {
+  color: var(--ds-text-secondary);
+}
+
+.badge__label,
+.chip__label {
+  padding: 0 var(--ds-space-1);
+  font-family: var(--ds-typography-ui-s-bold-font-family);
+  font-size: var(--ds-typography-ui-s-bold-font-size);
+  font-weight: var(--ds-typography-ui-s-bold-font-weight);
+  line-height: var(--ds-typography-ui-s-bold-line-height);
+  letter-spacing: var(--ds-typography-ui-s-bold-letter-spacing);
+}
+
+.badge--positive,
+.chip[data-tone='positive'],
+.chip[data-tone='positive'] .glyph {
+  color: var(--ds-text-positive);
+}
+
+.badge--positive,
+.chip[data-tone='positive'] {
+  background: var(--ds-status-positive-pale);
+}
+
+/* «Загрузить» on #/documents: a badge-sized action. */
+.badge--action {
+  margin: 0;
+  color: var(--ds-text-action);
+  background: var(--ds-background-neutral-1);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .badge--action:hover {
+    background: var(--ds-state-background-neutral-1-hover);
+  }
+}
+
+.badge--action:active {
+  background: var(--ds-state-background-neutral-1-pressed);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-space-2);
+  justify-content: center;
+}
+
+/* ---------- #/ «Кредит» ---------- */
+
+.content--credit {
+  padding-bottom: var(--ds-space-5);
+}
+
+.offer__title {
+  padding: var(--ds-space-3) var(--side) 0;
+  text-align: center;
+}
+
+/* 20 px under the title; 57 px tall like the design's tui-labs-input-number-plain. */
+.offer__amount,
+.conditions-head__amount {
+  padding: var(--ds-space-5) var(--side) 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* «+ До 4,5 млн ₽ с условиями ›»: tui-inline-hint, a 12 px tail pointing up at the amount, then the 44 px body. */
+.hint {
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--side);
+}
+
+.hint__button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  color: var(--ds-text-primary);
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hint__tail {
+  width: 30px;
+  height: 12px;
+  color: var(--ds-background-neutral-1);
+}
+
+.hint__body {
+  display: flex;
+  gap: calc(var(--ds-space-1) / 2);
+  align-items: center;
+  min-height: var(--bar-height);
+  padding: 0 calc(var(--ds-space-5) / 2);
+  border-radius: calc(var(--bar-height) / 2);
+  background: var(--ds-background-neutral-1);
+  transition:
+    background-color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard),
+    transform var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
+}
+
+@media (hover: hover) {
+  .hint__button:hover .hint__body {
+    background: var(--ds-state-background-neutral-1-hover);
+  }
+}
+
+.hint__button:active .hint__body {
+  background: var(--ds-state-background-neutral-1-pressed);
+  transform: scale(0.98);
+}
+
+/* tui-ic-service / plus in the 24 px accessory box (an 18 px glyph at 3 px), action colour as drawn. */
+.hint__plus {
+  width: 24px;
+  height: 24px;
+  color: var(--ds-text-action);
+  mask-size: 18px 18px;
+}
+
+.hint__label {
+  padding: var(--ds-space-3) calc(var(--ds-space-1) * 1.5);
+}
+
+.hint__chevron {
+  width: 7px;
+  height: 16px;
+  margin: 0 calc(var(--ds-space-2) + var(--ds-space-1) / 2);
+  color: var(--ds-text-tertiary);
+}
+
+/* «Срок» and «Платеж в месяц»: two 72 px neutral cards, 20 px apart, 16 px under the hint (+ 8). */
+.info-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ds-space-5);
+  padding: var(--ds-space-6) var(--side) 0;
+}
+
+.info-card {
+  display: flex;
+  gap: var(--ds-space-1);
+  align-items: flex-start;
+  padding: var(--ds-space-3) var(--ds-space-4);
+  border-radius: var(--ds-radius-l);
+  background: var(--ds-background-neutral-1);
+}
+
+.info-card__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+  min-width: 0;
+  padding: var(--ds-space-1);
+  white-space: nowrap;
+}
+
+.info-card__chevron {
+  box-sizing: content-box;
+  width: 7px;
+  height: 16px;
+  margin-top: var(--ds-space-4);
+  padding: var(--ds-space-1);
+  color: var(--ds-text-tertiary);
+  mask-origin: content-box;
+  mask-clip: content-box;
+}
+
+.credit-pledge {
+  padding: var(--ds-space-5) var(--side) 0;
+}
+
+.tooltip-button {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-background-neutral-1);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .tooltip-button:hover {
+    background: var(--ds-state-background-neutral-1-hover);
+  }
+}
+
+.tooltip-button:active {
+  background: var(--ds-state-background-neutral-1-pressed);
+}
+
+/* ---------- option cards (#/ pledge, the wheel on #/conditions) ---------- */
+
+/* The card's own transform belongs to the wheel; the surface (and the press feedback) is the control. */
+.option {
+  position: relative;
+}
+
+/* tui-cell [button]: py 16, px 20; text column | 56 px action circle (16 px gap), the circle centred. */
+.option__control {
+  display: grid;
+  grid-template-areas:
+    'title circle'
+    'description circle'
+    'badges circle';
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: var(--ds-space-4);
+  padding: var(--ds-space-4) var(--ds-space-5);
+  border-radius: var(--ds-radius-xl);
+  background: var(--ds-background-elevation-1);
+  box-shadow: var(--shadow-medium);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.option__control:focus-visible {
+  outline: none;
+}
+
+.option__text,
+.option__head {
+  display: contents;
+}
+
+.option__title {
+  grid-area: title;
+  align-self: end;
+}
+
+.option__description {
+  grid-area: description;
+  align-self: start;
+  max-width: 230px;
+  padding-top: var(--ds-space-1);
+}
+
+.option .badges {
+  grid-area: badges;
+  align-self: start;
+  padding: var(--ds-space-3) 0 0;
+  gap: var(--ds-space-2);
+}
+
+/* #/ «Залог авто»: the title row carries «Изменить»; description 16 px below, the circle beside the badges. */
+.option--link .option__control {
+  grid-template-areas:
+    'title title'
+    'description circle'
+    'badges circle';
+}
+
+.option--link .option__description {
+  padding-top: var(--ds-space-4);
+}
+
+.option__link {
+  position: absolute;
+  top: calc(var(--ds-space-4) + var(--ds-space-1) / 2);
+  right: var(--ds-space-5);
+}
+
+.action-circle {
+  position: relative;
+  display: block;
+  grid-area: circle;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-background-neutral-1);
+  transition: background-color var(--ds-animation-duration-moderate)
+    var(--ds-animation-curve-productive-standard);
+}
+
+.action-circle .mask {
+  position: absolute;
+  inset: 25%;
+  transition:
+    opacity var(--ds-animation-duration-moderate) var(--ds-animation-curve-productive-standard),
+    transform var(--ds-animation-duration-moderate) var(--ds-animation-curve-productive-standard);
+}
+
+/* tui-ic-service / plus: an 18 px glyph at 3 px in its 24 px box. */
+.action-circle__plus {
+  color: var(--ds-text-action);
+  mask-size: 18px 18px;
+}
+
+.action-circle__check {
+  color: var(--ds-text-positive);
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.option.is-on .action-circle {
+  background: var(--ds-status-positive-pale);
+}
+
+.option.is-on .action-circle__plus {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.6);
+}
+
+.option.is-on .action-circle__check {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- #/conditions ---------- */
+
+/* The conditions block rides with the bars: amount (pt 8) and the chips, on the plain background. */
+.top-bars:has(.conditions-head) {
+  background: var(--ds-background-base);
+  backdrop-filter: none;
+}
+
+.conditions-head {
+  position: relative;
+}
+
+.conditions-head__amount {
+  margin: 0;
+  padding: var(--ds-space-2) var(--side) var(--ds-space-2);
+}
+
+/* 2 px block gap + 2 px padding above the chips: the block is 113 px, as drawn. */
+.conditions-head .chips {
+  padding: var(--ds-space-1) var(--ds-space-8) 0;
+}
+
+/* Gradients (base → transparent) at both edges of the wheel: the cards slide under the blocks, not into them. */
+.wheel-fade {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: var(--ds-space-6);
+  pointer-events: none;
+  background-image: linear-gradient(var(--ds-background-base), transparent);
+}
+
+.content--conditions {
+  padding-bottom: var(--ds-space-5);
+}
+
+.wheel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-5);
+  padding: var(--ds-space-5) var(--side) 0;
+}
+
+.wheel .option {
+  will-change: transform;
+}
+
+/* During the shared transition the upper page lets the lower one show through (nav.ts). */
+.page--sharing,
+.page--sharing .top-bars,
+.page--sharing .bottom-block::before {
+  background: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+/* ---------- #/tariffs ---------- */
+
+.large-title--tariffs {
+  padding: var(--ds-space-2) var(--side);
+}
+
+/* Horizontal snap slider: 300 px cards, 16 px apart and inset; 10 px on top for the «Часто выбирают» badge. */
+.tariffs {
+  display: flex;
+  gap: var(--ds-space-4);
+  align-items: stretch;
+  margin-top: calc(var(--ds-space-2) + var(--ds-space-1) / 2);
+  padding: calc(var(--ds-space-2) + var(--ds-space-1) / 2) var(--side) var(--ds-space-2);
+  overflow-x: auto;
+  scroll-padding: 0 var(--side);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x pan-y;
+}
+
+.tariff {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 300px;
+  border-radius: var(--ds-radius-xl);
+  background: var(--ds-background-neutral-1-on-base);
+  scroll-snap-align: start;
+}
+
+.tariff__badge {
+  position: absolute;
+  top: calc(var(--ds-space-5) / -2);
+  left: var(--ds-space-5);
+  padding: calc(var(--ds-space-1) * 0.375) calc(var(--ds-space-1) * 1.5) calc(var(--ds-space-1) * 0.625);
+  border-radius: var(--ds-radius-full);
+  font-family: var(--ds-typography-ui-s-bold-font-family);
+  font-size: var(--ds-typography-ui-s-bold-font-size);
+  font-weight: var(--ds-typography-ui-s-bold-font-weight);
+  line-height: var(--ds-typography-ui-s-bold-line-height);
+  letter-spacing: var(--ds-typography-ui-s-bold-letter-spacing);
+  white-space: nowrap;
+  color: var(--ds-text-primary-on-dark);
+  background: var(--ds-background-accent-2);
+}
+
+.tariff__header {
+  display: flex;
+  gap: var(--ds-space-4);
+  align-items: flex-start;
+  padding: var(--ds-space-4) var(--ds-space-5) var(--ds-space-3);
+}
+
+.tariff__titles {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--ds-space-2);
+}
+
+.tariff__bullets {
+  flex: 1;
+  margin: 0;
+  padding: 0 var(--ds-space-5) var(--ds-space-5);
+  list-style: none;
+}
+
+.tariff__bullet {
+  display: flex;
+  gap: var(--ds-space-3);
+  align-items: flex-start;
+  padding: calc(var(--ds-space-1) * 1.5) 0;
+}
+
+/* tui-ic-small / check: a 13 × 9 glyph at 1.5 / 3.8 px in its 16 px box, accent-2. */
+.tariff__check {
+  width: 16px;
+  height: 16px;
+  color: var(--ds-background-accent-2);
+  mask-position: 1.5px 3.8px;
+  mask-size: 13px 9px;
+}
+
+.tariff__footer {
+  padding: 0 var(--ds-space-5) var(--ds-space-5);
+}
+
+.tariff__footer .button {
+  width: 100%;
+}
+
+/* ---------- shared large title ---------- */
+
+.large-title {
+  padding: var(--ds-space-2) var(--side) var(--ds-space-5);
+}
+
+.large-title--review {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--ds-space-1) * 1.5);
+  padding-top: var(--ds-space-4);
+  padding-bottom: var(--ds-space-5);
+}
+
+.large-title--documents {
+  padding-bottom: var(--ds-space-6);
+}
+
+.large-title--docs {
+  padding: var(--ds-space-3) var(--side) var(--ds-space-6);
+}
+
+/* ---------- #/review ---------- */
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-5);
+  padding: 0 var(--side);
+}
+
+.card {
+  border-radius: var(--ds-radius-xl);
+  background: var(--ds-background-base);
+  box-shadow: var(--shadow-medium);
+}
+
+.card__title {
+  padding: var(--ds-space-4) var(--ds-space-5) var(--ds-space-3);
+}
+
+.row {
+  display: flex;
+  gap: var(--ds-space-4);
+  align-items: center;
+  min-height: 60px;
+  padding: 0 var(--ds-space-5);
+}
+
+.row__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: var(--ds-space-2) 0;
+}
+
+/* Value rows of «Сумма и платеж»: body-l on its own 24 px line, as in the design (rows 60 px apart). */
+.row__value {
+  line-height: var(--ds-typography-body-l-line-height);
+}
+
+/* «Залог и условия»: 56 px cells 4 px apart (avatar py 8), 8 px under the last one (+ the footer's 4). */
+.card__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+  padding-bottom: var(--ds-space-2);
+}
+
+.row--avatar {
+  min-height: 0;
+}
+
+/* Text block 40 px like the avatar: title 20 + 4 + subtitle 16 (title → subtitle cap tops 25 px). */
+.row--avatar .row__text {
+  gap: var(--ds-space-1);
+}
+
+.avatar {
+  margin: var(--ds-space-2) 0;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-status-info-pale);
+}
+
+/* 4 px above the button: «Сумма и платеж» 240 px, «Залог и условия» 304 px, as drawn. */
+.card__footer {
+  padding: var(--ds-space-1) var(--ds-space-5) var(--ds-space-5);
+}
+
+.card--account {
+  padding: var(--ds-space-4) var(--ds-space-5);
+}
+
+.card--account .card__subtitle {
+  padding: var(--ds-space-2) 0 calc(var(--ds-space-1) / 2);
+}
+
+.card__header {
+  display: flex;
+  gap: var(--ds-space-4);
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ---------- #/documents ---------- */
+
+.doc-card {
+  padding: var(--ds-space-4) var(--ds-space-5) var(--ds-space-5);
+  border-radius: var(--ds-radius-xl);
+  background: var(--ds-background-base);
+  box-shadow: var(--shadow-medium);
+}
+
+.doc-card .doc-card__text {
+  margin-top: calc(var(--ds-space-1) * 1.5);
+}
+
+.doc-card__status {
+  display: flex;
+  margin-top: var(--ds-space-4);
+}
+
+/* ---------- #/upload ---------- */
+
+.bullets {
+  padding: 0;
+  list-style: none;
+}
+
+.bullets__item {
+  display: flex;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-2) var(--side);
+}
+
+.bullets__dot {
+  flex: none;
+  margin-top: calc(var(--ds-space-2) + var(--ds-border-width-thin) * -1);
+}
+
+.disclosure {
+  display: flex;
+  gap: var(--ds-space-4);
+  align-items: center;
+  margin-top: var(--ds-space-1);
+  padding: var(--ds-space-2) var(--side);
+}
+
+.disclosure__image {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--ds-radius-m);
+  object-fit: contain;
+}
+
+.disclosure__title {
+  flex: 1;
+}
+
+.disclosure__chevron {
+  width: 7px;
+  height: 16px;
+  color: var(--ds-text-tertiary);
+}
+
+.file-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+  padding: var(--ds-space-2) var(--side) 0;
+}
+
+/* The file input uses Desktop/Body M in Figma (Neue Haas Unica 15/24, no tracking), not an iOS style. */
+.file-field__button {
+  position: relative;
+  font-family: var(--ds-font-font-family-text-desktop-value);
+  letter-spacing: 0;
+  display: block;
+  padding: var(--ds-space-4);
+  border: var(--ds-border-width-thin) solid var(--ds-background-accent-2);
+  border-radius: var(--ds-radius-m);
+  line-height: var(--ds-font-line-height-x6);
+  color: var(--ds-text-action);
+  text-align: center;
+  cursor: pointer;
+  transition: background-color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
+}
+
+@media (hover: hover) {
+  .file-field__button:hover {
+    background: var(--ds-status-info-pale);
+  }
+}
+
+.file-field__button:active {
+  background: var(--ds-state-status-info-pale-pressed);
+}
+
+.file-field__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+/* Desktop/Body S in Figma: Neue Haas Unica 13/20, no tracking. */
+.file-field__hint {
+  font-family: var(--ds-font-font-family-text-desktop-value);
+  line-height: var(--ds-font-line-height-x5);
+  letter-spacing: 0;
+}
+
+.file-field__list {
+  padding: 0;
+  list-style: none;
+  color: var(--ds-text-primary);
+}
+
+/* ---------- #/success ---------- */
+
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 var(--side);
+  text-align: center;
+}
+
+.status__image {
+  display: block;
+}
+
+.status .status__title {
+  margin-top: var(--ds-space-6);
+}
+
+.status .status__text {
+  max-width: 290px;
+  margin-top: var(--ds-space-2);
+}
+
+.status .button {
+  margin-top: var(--ds-space-6);
+}
+
+/* The device's own status bar replaces the drawn one (ADR-0020); after the page-specific top-bars rules. */
+:root[data-proto-bars='hidden'] .top-bars {
+  padding-top: var(--proto-safe-area-inset-top);
+}
+
+/* ---------- focus (after the base rules of every control) ---------- */
+
+.button:focus-visible,
+.text-button:focus-visible,
+.glass-button:focus-visible,
+.tooltip-button:focus-visible,
+.badge--action:focus-visible,
+.hint__button:focus-visible .hint__body,
+.option__control:focus-visible,
+.tariffs:focus-visible,
+.file-field__button:has(:focus-visible) {
+  outline: var(--ds-border-width-focus) solid var(--ds-border-focus);
+  outline-offset: var(--ds-border-width-focus);
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .app .button,
+  .app .text-button,
+  .app .glass-button,
+  .app .tooltip-button,
+  .app .hint__body,
+  .app .badge,
+  .app .chip,
+  .app .action-circle,
+  .app .action-circle .mask,
+  .app .file-field__button {
+    transition: none;
+  }
+
+  .app .button:active,
+  .app .glass-button:active,
+  .app .hint__button:active .hint__body {
+    transform: none;
+  }
+}

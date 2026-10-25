@@ -108,6 +108,7 @@ test('a version with menu axes shows one captioned control per axis and the vers
     'v1',
     'v2',
     'v3',
+    'v4',
   ]);
   await expect(page.getByRole('radiogroup', { name: 'Залог' }).getByRole('radio')).toHaveText([
     'Авто',
@@ -343,6 +344,54 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await page.goto('/p/credit-activation/v3/?shell=0#/light');
   await top.getByRole('button', { name: 'Назад' }).click();
   await expect(page).toHaveURL(/#\/documents$/);
+});
+
+test('credit-activation v4: КН goes through the tariffs, ОК straight to the review; the conditions wheel', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  const top = page.locator('section:not([inert])');
+  const legal = top.getByText(/Нажимая «Получить деньги»/);
+
+  // КН: «Кредит» → «Варианты платежа» → «Выбрать» → review with the tariff; the pledge forks to the documents.
+  await page.goto('/p/credit-activation/v4/?shell=0&product=kn#/');
+  await top.getByRole('checkbox', { name: /Залог авто/ }).click();
+  await expect(top.getByText('4 200 000 ₽')).toBeVisible();
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/tariffs$/);
+  await expect(top.getByRole('heading', { name: 'Варианты платежа' })).toBeVisible();
+  await top.getByRole('button', { name: 'Выбрать' }).first().click();
+  await expect(page).toHaveURL(/#\/review$/);
+  await expect(top.getByText('Тариф «Универсальный»')).toBeVisible();
+  await expect(top.getByText('Комиссия', { exact: true })).toHaveCount(0);
+  await expect(legal).toHaveCount(0);
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/documents$/);
+  await top.getByRole('button', { name: 'Получить деньги' }).click();
+  await expect(page).toHaveURL(/#\/success$/);
+  await top.getByRole('button', { name: 'К счету' }).click();
+  await expect(page).toHaveURL(/#\/$/);
+
+  // «До 4,5 млн ₽ с условиями» → «Условия»: a tap on a card toggles it and recalculates the header.
+  await top.getByRole('button', { name: /До 4,5/ }).click();
+  await expect(page).toHaveURL(/#\/conditions$/);
+  await top.getByRole('checkbox', { name: /Проверить данные/ }).click();
+  await expect(top.getByRole('checkbox', { name: /Проверить данные/ })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(top.locator('[data-amount]')).toHaveText('4 100 000 ₽');
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/review$/);
+  await expect(legal).toBeVisible();
+
+  // ОК: «Дальше» on «Кредит» goes straight to the review, which shows the fee.
+  await page.goto('/p/credit-activation/v4/?shell=0&product=ok#/');
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/review$/);
+  await expect(top.getByText('Комиссия', { exact: true })).toBeVisible();
+  await top.getByRole('button', { name: 'Получить деньги' }).click();
+  await expect(page).toHaveURL(/#\/success$/);
 });
 
 test('versions ship a web app manifest and home-screen icons (ADR-0019)', async ({ page }) => {

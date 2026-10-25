@@ -364,7 +364,9 @@ test('credit-activation v4: КН goes through the packages, ОК straight to the
   await expect(top.getByRole('heading', { name: '35\u00a0175\u00a0₽/мес' })).toBeVisible();
   await top.getByRole('button', { name: 'Выбрать' }).first().click();
   await expect(page).toHaveURL(/#\/review$/);
-  await expect(top.getByText('Пакет «Универсальный»')).toBeVisible();
+  // The tariff card says «Пакет «Универсальный»» too, so look on the review screen only.
+  const review = page.locator('[data-route="#/review"]');
+  await expect(review.getByText('Пакет «Универсальный»')).toBeVisible();
   await expect(top.getByText('35\u00a0175,00\u00a0₽')).toBeVisible();
   await expect(top.getByText('Комиссия', { exact: true })).toHaveCount(0);
   await expect(legal).toHaveCount(0);

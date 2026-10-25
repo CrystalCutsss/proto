@@ -17,7 +17,7 @@ const PAYMENT = { amount: AMOUNT.initial, value: 17_713.05 } as const;
 /** «Снизить комиссию» cards: −1 pp (salaries) and «До −0,5%» (turnover). Independent, the cuts add up (v3). */
 export type FeeCut = 'one' | 'half';
 
-/** Tariffs of #/tariffs (КН only); `custom` is «Свои условия» → #/conditions. */
+/** Tariffs of #/tariffs (КН only); `custom` is «Ваши условия» → #/conditions. */
 export type Tariff = 'universal' | 'minimal' | 'custom';
 
 /** Payments drawn on the tariff cards at the base amount (33 500 and 17 500 ₽/мес); they scale with it. */
@@ -57,7 +57,7 @@ export function totalAmount(c: Pick<Choice, 'pledge' | 'check'>): number {
  * Monthly payment in rubles, rounded to kopecks: 17 713,05 ₽ per 4 000 000 ₽ at the base fee 2,5 %, proportional
  * to the total amount and to (1 + fee): a lower fee lowers the payment (owner, 2026-10-25: the payment can go
  * down, its chip then turns positive). A chosen tariff's payment (33 500 / 17 500 ₽ per 4 000 000 ₽) follows the
- * amount only; «Свои условия» keeps the formula.
+ * amount only; «Ваши условия» keeps the formula.
  */
 export function monthlyPayment(c: Pick<Choice, 'pledge' | 'check' | 'feeCuts' | 'tariff'>): number {
   const byAmount = totalAmount(c) / PAYMENT.amount;

@@ -1032,6 +1032,13 @@ body.ds-root {
   list-style: none;
 }
 
+/* «Ваши условия»: one line of text in the list's place, without a check (same 6 px rhythm and 32 px below). */
+.tariff__note {
+  flex: 1;
+  margin: 0;
+  padding: calc(var(--ds-space-1) * 1.5) var(--ds-space-5) var(--ds-space-8);
+}
+
 .tariff__bullet {
   display: flex;
   gap: var(--ds-space-3);

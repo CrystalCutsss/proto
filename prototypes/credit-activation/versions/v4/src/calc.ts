@@ -20,8 +20,9 @@ export type FeeCut = 'one' | 'half';
 /** Tariffs of #/tariffs (КН only); `custom` is «Ваши условия» → #/conditions. */
 export type Tariff = 'universal' | 'minimal' | 'custom';
 
-/** Payments drawn on the tariff cards at the base amount (33 500 and 17 500 ₽/мес); they scale with it. */
-const TARIFF_PAYMENT: Record<Exclude<Tariff, 'custom'>, number> = { universal: 33_500, minimal: 17_500 };
+/** Payments drawn on the tariff cards at the base amount (17 713 and 33 500 ₽/мес, Figma «Тарифы» 90:5528); they
+ * scale with it. «Универсальный» is the offer's payment (PAYMENT.value). */
+const TARIFF_PAYMENT: Record<Exclude<Tariff, 'custom'>, number> = { universal: 17_713.05, minimal: 33_500 };
 
 /** Fee in tenths of a percent, so 2,5 % is 25 (no floating point drift). Badges: pledge −0,5%. */
 const FEE = { base: 25, pledge: 5 } as const;
@@ -56,7 +57,7 @@ export function totalAmount(c: Pick<Choice, 'pledge' | 'check'>): number {
 /**
  * Monthly payment in rubles, rounded to kopecks: 17 713,05 ₽ per 4 000 000 ₽ at the base fee 2,5 %, proportional
  * to the total amount and to (1 + fee): a lower fee lowers the payment (owner, 2026-10-25: the payment can go
- * down, its chip then turns positive). A chosen tariff's payment (33 500 / 17 500 ₽ per 4 000 000 ₽) follows the
+ * down, its chip then turns positive). A chosen tariff's payment (17 713,05 / 33 500 ₽ per 4 000 000 ₽) follows the
  * amount only; «Ваши условия» keeps the formula.
  */
 export function monthlyPayment(c: Pick<Choice, 'pledge' | 'check' | 'feeCuts' | 'tariff'>): number {
@@ -106,7 +107,7 @@ export const formatPercent = (value: number): string => `${percent.format(value)
 /** Chip label of the payment: «17 713 ₽ / мес». */
 export const formatPaymentChip = (value: number): string => `${formatRub(value)}${NBSP}/${NBSP}мес`;
 
-/** Tariff card title: «33 500 ₽/мес». */
+/** Tariff card title: «17 713 ₽/мес». */
 export const formatPerMonth = (value: number): string => `${formatRub(value)}/мес`;
 
 /** Tariff payment at the base amount (the number drawn on its card). */

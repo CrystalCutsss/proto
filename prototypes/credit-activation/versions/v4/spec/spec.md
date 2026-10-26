@@ -44,17 +44,17 @@ the screens v4 keeps.
 
 ## Navigation
 
-| From           | Control                                | Goes to                                             |
-| -------------- | -------------------------------------- | --------------------------------------------------- |
-| `#/`           | «+ 400 000 ₽ с улучшением условий ›»   | push `#/conditions` (shared transition)             |
-| `#/`           | «Залог авто» card / «+»                | toggles the pledge (same flag as on conditions)     |
-| `#/`           | «Дальше»                               | КН: `#/tariffs`; ОК: `#/review`                     |
-| `#/conditions` | «Дальше»                               | `#/review`                                          |
-| `#/tariffs`    | «Выбрать» (Универсальный, Минимальный) | sets the tariff, push `#/review`                    |
-| `#/tariffs`    | «Выбрать» («Ваши условия»)             | push `#/conditions` (slide: no shared amount)       |
-| `#/review`     | «Дальше» (pledge) / «Получить деньги»  | `#/documents` / `#/success`                         |
-| `#/documents`  | «Загрузить» / «Получить деньги»        | `#/upload` (back marks both uploaded) / `#/success` |
-| `#/success`    | «К счету»                              | reset to `#/`                                       |
+| From           | Control                                | Goes to                                                                                     |
+| -------------- | -------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `#/`           | «+ 400 000 ₽ с улучшением условий ›»   | push `#/conditions` (shared transition)                                                     |
+| `#/`           | «Залог авто» card / «+»                | toggles the pledge (same flag as on conditions)                                             |
+| `#/`           | «Дальше»                               | КН: `#/tariffs`; ОК: `#/review`                                                             |
+| `#/conditions` | «Дальше»                               | КН: `#/tariffs` (owner, 2026-10-26), but `#/review` when «Тарифы» are below; ОК: `#/review` |
+| `#/tariffs`    | «Выбрать» (Универсальный, Минимальный) | sets the tariff, push `#/review`                                                            |
+| `#/tariffs`    | «Выбрать» («Ваши условия»)             | push `#/conditions` (slide: no shared amount); `#/review` when «Условия» are below          |
+| `#/review`     | «Дальше» (pledge) / «Получить деньги»  | `#/documents` / `#/success`                                                                 |
+| `#/documents`  | «Загрузить» / «Получить деньги»        | `#/upload` (back marks both uploaded) / `#/success`                                         |
+| `#/success`    | «К счету»                              | reset to `#/`                                                                               |
 
 Deep links (`defaultPath`): `#/conditions`, `#/tariffs` → `[credit, it]` (`#/tariffs` in ОК falls back to `#/`); the rest follow the product's main path
 (КН `#/ → #/tariffs → #/review → #/documents`, ОК `#/ → #/conditions → #/review → #/documents`), `#/success` on top

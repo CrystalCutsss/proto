@@ -262,7 +262,7 @@ export function startNavigation(viewport: HTMLElement): void {
     push([screen]);
   }
 
-  const next = () => forward(top().screen.next?.());
+  const next = () => forward(top().screen.next?.(pages.slice(0, -1).map((page) => page.screen.route)));
 
   function back(): void {
     if (pages.length < 2 || !top().screen.canGoBack) return;

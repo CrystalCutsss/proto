@@ -15,9 +15,10 @@ export interface Screen {
   html(): string;
   /** Wire interactive parts after the markup is in place. */
   mount?(root: HTMLElement): void;
-  /** Route that «next» pushes (may depend on the state); null: nothing to push. Controls with `data-push`
-   *  push their own route instead (components.ts `pushRoute`). */
-  next?(): string | null;
+  /** Route that «next» pushes (may depend on the state and on `below`, the routes of the pages under this one,
+   *  bottom first); null: nothing to push. Controls with `data-push` push their own route instead
+   *  (components.ts `pushRoute`). */
+  next?(below: readonly string[]): string | null;
   /** Release tweens and observers before the page leaves the DOM. */
   unmount?(root: HTMLElement): void;
   /** Re-render state-dependent parts; called on the page below before it is uncovered (pop, drag start). */

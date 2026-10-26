@@ -1,11 +1,12 @@
 // #/tariffs — «Варианты платежа» (КН only, after «Дальше» on #/): a horizontal snap slider of tariff cards.
 // «Выбрать» sets the tariff, which drives the payment on #/review (owner, 2026-10-25), and pushes #/review;
-// on «Ваши условия» it opens #/conditions. Texts follow Figma «Тарифы» 90:5528 (owner, 2026-10-26): both packages
+// on «Ваши условия» it opens #/conditions, or #/review when «Условия» are already below (КН: #/ → «Условия» →
+// «Тарифы», owner 2026-10-26). Texts follow Figma «Тарифы» 90:5528 (owner, 2026-10-26): both packages
 // carry the same three bullets, «Ваши условия» one plain line without a check.
 // The card payments follow the current amount (they are drawn at the base 4 000 000 ₽), as on #/review.
 // The prototype says «Пакет» wherever the design said «Тариф» (owner, 2026-10-25); the code keeps `tariff`.
 import { formatPerMonth, monthlyPayment, type Tariff } from '../calc';
-import { bottomBlock, mask, pushRoute, topBars } from '../components';
+import { bottomBlock, mask, topBars } from '../components';
 import { icon } from '../icons';
 import { choice, state } from '../state';
 import type { Screen } from './types';
@@ -19,7 +20,6 @@ interface TariffCard {
   /** Plain text instead of the check list («Ваши условия»). */
   note?: string;
   button: string;
-  route: string;
   badge?: string;
 }
 
@@ -35,7 +35,6 @@ const CARDS: TariffCard[] = [
     subtitle: 'Пакет «Универсальный»',
     bullets: PACKAGE_BULLETS,
     button: 'Выбрать',
-    route: '#/review',
     badge: 'Часто выбирают',
   },
   {
@@ -43,7 +42,6 @@ const CARDS: TariffCard[] = [
     subtitle: 'Пакет «Минимальный»',
     bullets: PACKAGE_BULLETS,
     button: 'Выбрать',
-    route: '#/review',
   },
   {
     id: 'custom',
@@ -52,7 +50,6 @@ const CARDS: TariffCard[] = [
     bullets: [],
     note: 'Сможете самостоятельно настроить все условия по&nbsp;платежу',
     button: 'Выбрать',
-    route: '#/conditions',
   },
 ];
 
@@ -85,7 +82,7 @@ const card = (c: TariffCard) => `
     </ul>`
     }
     <div class="tariff__footer">
-      <button type="button" class="button button--primary button--m" ${pushRoute(c.route)} data-tariff="${c.id}"
+      <button type="button" class="button button--primary button--m" data-action="next" data-tariff="${c.id}"
         aria-describedby="tariff-${c.id}"><span class="button__label">${c.button}</span></button>
     </div>
   </section>`;
@@ -101,6 +98,9 @@ export const tariffs: Screen = {
       <div class="tariffs" role="list" tabindex="0" aria-label="Пакеты">${CARDS.map(card).join('')}</div>
     </div>
     ${bottomBlock({})}`,
+
+  next: (below) =>
+    state.tariff === 'custom' && !below.includes('#/conditions') ? '#/conditions' : '#/review',
 
   beforeAction(control) {
     const tariff = control.dataset.tariff as Tariff | undefined;

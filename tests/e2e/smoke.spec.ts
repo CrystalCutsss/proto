@@ -388,9 +388,21 @@ test('credit-activation v4: КН goes through the packages, ОК straight to the
     'true',
   );
   await expect(top.locator('[data-amount]')).toHaveText('4 100 000 ₽');
+  // КН: «Дальше» on «Условия» opens «Тарифы»; «Ваши условия» → «Выбрать» then goes on to the review.
   await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/tariffs$/);
+  await top.getByRole('button', { name: 'Выбрать' }).last().click();
   await expect(page).toHaveURL(/#\/review$/);
   await expect(legal).toBeVisible();
+
+  // Through «Тарифы» first: «Ваши условия» opens «Условия», whose «Дальше» goes straight to the review.
+  await page.goto('/p/credit-activation/v4/?shell=0&product=kn#/');
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/tariffs$/);
+  await top.getByRole('button', { name: 'Выбрать' }).last().click();
+  await expect(page).toHaveURL(/#\/conditions$/);
+  await top.getByRole('button', { name: 'Дальше' }).click();
+  await expect(page).toHaveURL(/#\/review$/);
 
   // ОК: «Кредит» shows the fee and no pledge card; on «Условия» a lower fee lowers the payment and turns its chip
   // positive; «Дальше» on «Кредит» goes straight to the review, which shows the fee.

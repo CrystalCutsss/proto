@@ -68,7 +68,7 @@ of `#/review`, `#/upload` on top of `#/documents`.
   chip turns positive when the fee is below 2,5 %. «Условия выбраны» draws «2,5%» positive with the pledge (Q1).
 - Payment: 17 713,05 ₽ per 4 000 000 ₽ at 2,5 % (header chip), proportional to the amount and to (1 + fee), so a
   fee cut lowers it (Q8); its chip turns positive when it is below the offer's payment. A КН tariff replaces it with
-  33 500 / 17 500 ₽ per 4 000 000 ₽ (cards), scaled by the amount only; «Ваши условия» keeps the formula. The tariff cards show their payment at the current amount. «Платеж в месяц» on `#/`
+  17 713,05 / 33 500 ₽ per 4 000 000 ₽ (cards), scaled by the amount only; «Ваши условия» keeps the formula. The tariff cards show their payment at the current amount. «Платеж в месяц» on `#/`
   shows the formula value, not the drawn 193 500 ₽ (Q2).
 - ОК shows «Комиссия» on `#/` and a «Комиссия» row on `#/review` (v2); КН shows the package row in «Залог и условия».
 
@@ -127,9 +127,10 @@ of `#/review`, `#/upload` on top of `#/documents`.
   check list (16 px `check-small` in accent-2, py 6, 12 px gap; the texts are body-l (owner, 2026-10-25) and the
   check sits on the middle of the first line's x-height, 1 px higher for optical balance; 32 px below the list); footer px 20 pb 20 medium yellow button. «Часто выбирают» badge
   (accent-2, on-dark, ui-s-bold, 28 px high) at top −14, left 20 of the first card.
-- Cards: «33 500 ₽/мес» «Пакет «Универсальный»» (drawn bullets) · «17 500 ₽/мес» «Пакет «Минимальный»» ·
-  «Ваши условия» «Выбираете сами»; every card ends with «Выбрать». Bullets of cards 2–3 are Lorem ipsum in the
-  frame: placeholders (Q5).
+- Cards (texts as drawn, owner 2026-10-26): «17 713 ₽/мес» «Пакет «Универсальный»» and «33 500 ₽/мес» «Пакет
+  «Минимальный»», both with «Ставка ниже на 15% — сэкономите 10 541 ₽» / «Бесплатное обслуживание счета для бизнеса» /
+  «Без комиссии за досрочное погашение» (Q5) · «Ваши условия» «Выбираете сами» with one body-l line without a check,
+  «Сможете самостоятельно настроить все условия по платежу»; every card ends with «Выбрать».
 
 ### `#/review`, `#/documents`, `#/upload`, `#/success`
 
@@ -142,7 +143,7 @@ and «Пакет «…»» (briefcase) for a КН package, no «Пакет «В�
 - Q2. «Платеж в месяц» on «Кредит» draws 193 500 ₽; v4 shows the formula value (17 713 ₽ at 4 млн).
 - Q3. No TUI token for the iOS 26 liquid glass; a white disc with a provisional small shadow.
 - Q4. Second «Снизить комиссию» text: typo in the frame («Поддержтвать обороте»), fixed.
-- Q5. Bullets of «Минимальный» and «Ваши условия» are placeholders.
+- Q5. «Минимальный» costs more than «Универсальный» (33 500 against 17 713 ₽) and repeats its bullets, as drawn.
 - Q6. The new iOS 26 app bar is used on every screen (review, documents, upload had text «Закрыть» in V4).
 - Q7. A deep link to `#/documents` builds a review underneath with nothing chosen (no pledge), so back shows the
   no-pledge review; the in-app path always arrives with the pledge.

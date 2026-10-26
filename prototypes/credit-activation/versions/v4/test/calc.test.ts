@@ -79,13 +79,14 @@ describe('payment', () => {
     expect(paymentTone(choice({ check: true, feeCuts: ['one'] }))).toBe('neutral');
   });
 
-  it('a КН tariff sets it: 33 500 / 17 500 ₽ at the base amount, scaled; «Свои условия» keeps the formula', () => {
-    expect(monthlyPayment(choice({ tariff: 'universal' }))).toBe(33_500);
-    expect(monthlyPayment(choice({ tariff: 'minimal' }))).toBe(17_500);
-    expect(monthlyPayment(choice({ tariff: 'universal', check: true }))).toBe(34_337.5);
+  it('a КН tariff sets it: 17 713,05 / 33 500 ₽ at the base amount, scaled; «Ваши условия» keeps the formula', () => {
+    expect(monthlyPayment(choice({ tariff: 'universal' }))).toBe(17_713.05);
+    expect(monthlyPayment(choice({ tariff: 'minimal' }))).toBe(33_500);
+    expect(monthlyPayment(choice({ tariff: 'minimal', check: true }))).toBe(34_337.5);
     expect(monthlyPayment(choice({ tariff: 'custom' }))).toBe(17_713.05);
-    expect(monthlyPayment(choice({ tariff: 'universal', feeCuts: ['one'] }))).toBe(33_500);
-    expect(formatPerMonth(tariffPayment('universal'))).toBe(`33${NBSP}500${NBSP}₽/мес`);
+    expect(monthlyPayment(choice({ tariff: 'universal', feeCuts: ['one'] }))).toBe(17_713.05);
+    expect(formatPerMonth(tariffPayment('universal'))).toBe(`17${NBSP}713${NBSP}₽/мес`);
+    expect(formatPerMonth(tariffPayment('minimal'))).toBe(`33${NBSP}500${NBSP}₽/мес`);
   });
 });
 

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   AMOUNT,
   BASE_CHOICE,
+  clampAmount,
   BASE_FEE,
   type Choice,
   fee,
@@ -14,6 +15,8 @@ import {
   monthlyPayment,
   paymentTone,
   tariffPayment,
+  limitAmount,
+  MIN_AMOUNT,
   totalAmount,
 } from '../src/calc';
 import { parseProduct } from '../src/config';
@@ -23,7 +26,14 @@ const choice = (over: Partial<Choice> = {}): Choice => ({ ...BASE_CHOICE, ...ove
 
 describe('defaults', () => {
   it('nothing is chosen', () => {
-    expect(BASE_CHOICE).toEqual({ pledge: false, check: false, statement: false, feeCuts: [], tariff: null });
+    expect(BASE_CHOICE).toEqual({
+      pledge: false,
+      check: false,
+      statement: false,
+      feeCuts: [],
+      tariff: null,
+      requested: null,
+    });
   });
 
   it('the offer is 4 000 000 ₽, 2,5% and 17 713 ₽ / мес, as the header of #/conditions draws it', () => {
@@ -44,6 +54,16 @@ describe('amount', () => {
 
   it('the statement and the fee cuts change no amount', () => {
     expect(totalAmount(choice({ statement: true, feeCuts: ['one', 'half'] }))).toBe(AMOUNT.initial);
+  });
+
+  it('an exact amount stays within [MIN_AMOUNT, limit] and the payment follows it', () => {
+    expect(clampAmount(2_500_000, BASE_CHOICE)).toBe(2_500_000);
+    expect(clampAmount(9_000_000, BASE_CHOICE)).toBe(AMOUNT.initial);
+    expect(clampAmount(9_000_000, choice({ pledge: true }))).toBe(4_200_000);
+    expect(clampAmount(5, BASE_CHOICE)).toBe(MIN_AMOUNT);
+    expect(totalAmount(choice({ requested: 2_000_000 }))).toBe(2_000_000);
+    expect(limitAmount(choice({ requested: 2_000_000 }))).toBe(AMOUNT.initial);
+    expect(monthlyPayment(choice({ requested: 2_000_000 }))).toBe(8_856.53);
   });
 });
 

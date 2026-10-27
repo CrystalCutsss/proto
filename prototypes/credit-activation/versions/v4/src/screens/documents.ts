@@ -1,7 +1,7 @@
 // #/documents — «Загрузите документы»: always the two documents (as v3). The «Загрузить» badges push
-// #/upload; after «Загрузить» there both show «Загружено». Reached from #/review with the pledge (v2 fork,
-// owner 2026-10-25): «Получить деньги» with the legal line → #/success, without waiting for the upload (v3).
-import { LEGAL, bottomBlock, primaryButton, pushRoute, topBars } from '../components';
+// #/upload; after «Загрузить» there both show «Загружено». Shown right after the options and packages (#/conditions,
+// #/tariffs), before #/review (owner, 2026-10-27): «Дальше» → #/review, without waiting for the upload (v3).
+import { bottomBlock, primaryButton, pushRoute, topBars } from '../components';
 import { state } from '../state';
 import type { Screen } from './types';
 
@@ -36,9 +36,9 @@ export const documents: Screen = {
       <h1 class="large-title large-title--docs t-heading-l">Загрузите документы</h1>
       <div class="cards">${DOCS.map(docCard).join('')}</div>
     </div>
-    ${bottomBlock({ button: primaryButton('Получить деньги', 'next'), legalBelow: LEGAL })}`,
+    ${bottomBlock({ button: primaryButton('Дальше', 'next') })}`,
 
-  next: () => '#/success',
+  next: () => '#/review',
 
   refresh(root) {
     root.querySelectorAll<HTMLElement>('[data-doc-status]').forEach((el) => {

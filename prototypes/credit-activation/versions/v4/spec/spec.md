@@ -44,21 +44,22 @@ the screens v4 keeps.
 
 ## Navigation
 
-| From           | Control                                | Goes to                                                                                     |
-| -------------- | -------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `#/`           | «+ 400 000 ₽ с улучшением условий ›»   | push `#/conditions` (shared transition)                                                     |
-| `#/`           | «Залог авто» card / «+»                | toggles the pledge (same flag as on conditions)                                             |
-| `#/`           | «Дальше»                               | КН: `#/tariffs`; ОК: `#/review`                                                             |
-| `#/conditions` | «Дальше»                               | КН: `#/tariffs` (owner, 2026-10-26), but `#/review` when «Тарифы» are below; ОК: `#/review` |
-| `#/tariffs`    | «Выбрать» (Универсальный, Минимальный) | sets the tariff, push `#/review`                                                            |
-| `#/tariffs`    | «Выбрать» («Ваши условия»)             | push `#/conditions` (slide: no shared amount); `#/review` when «Условия» are below          |
-| `#/review`     | «Дальше» (pledge) / «Получить деньги»  | `#/documents` / `#/success`                                                                 |
-| `#/documents`  | «Загрузить» / «Получить деньги»        | `#/upload` (back marks both uploaded) / `#/success`                                         |
-| `#/success`    | «К счету»                              | reset to `#/`                                                                               |
+| From           | Control                                                                  | Goes to                                                                                           |
+| -------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `#/`           | КН «+ До 4,5 млн ₽ с условиями», ОК «+ 400 000 ₽ с улучшением условий ›» | push `#/conditions` (shared transition)                                                           |
+| `#/`           | КН: the amount or its chevron                                            | numeric keyboard; the typed amount is kept within [100 000 ₽, limit] on blur / Enter (Q10)        |
+| `#/`           | «Залог авто» card / «+»                                                  | toggles the pledge (same flag as on conditions)                                                   |
+| `#/`           | «Дальше»                                                                 | КН: `#/tariffs`; ОК: `#/review`                                                                   |
+| `#/conditions` | «Дальше»                                                                 | КН: `#/tariffs` (owner, 2026-10-26), but `#/documents` when «Тарифы» are below; ОК: `#/documents` |
+| `#/tariffs`    | «Выбрать» (Универсальный, Минимальный)                                   | sets the tariff, push `#/documents`                                                               |
+| `#/tariffs`    | «Выбрать» («Ваши условия»)                                               | push `#/conditions` (slide: no shared amount); `#/documents` when «Условия» are below             |
+| `#/documents`  | «Загрузить» / «Дальше»                                                   | `#/upload` (back marks both uploaded) / `#/review` (owner, 2026-10-27)                            |
+| `#/review`     | «Получить деньги»                                                        | `#/success` (never back to the documents)                                                         |
+| `#/success`    | «К счету»                                                                | reset to `#/`                                                                                     |
 
 Deep links (`defaultPath`): `#/conditions`, `#/tariffs` → `[credit, it]` (`#/tariffs` in ОК falls back to `#/`); the rest follow the product's main path
-(КН `#/ → #/tariffs → #/review → #/documents`, ОК `#/ → #/conditions → #/review → #/documents`), `#/success` on top
-of `#/review`, `#/upload` on top of `#/documents`.
+(КН `#/ → #/tariffs → #/documents → #/review`, ОК `#/ → #/conditions → #/documents → #/review`), `#/success` on
+top of `#/review`, `#/upload` on top of `#/documents`.
 
 ## Calculations (`src/calc.ts`, unit-tested)
 
@@ -79,8 +80,12 @@ of `#/review`, `#/upload` on top of `#/documents`.
 - iOS 26 app bar: one 44 px glass circle on the left with `close-ios26` (17.3 px glyph) → «Закрыть». The bar is
   98 px (status 44 + 44 + 10). Glass: white disc + provisional small shadow (no TUI token, Q3).
 - `tui-header` pt 12: «Одобрили кредит / ИП Константинопольский К. К.» heading-s centred; 20 px; amount
-  numbers-2xl (57 px), `data-shared="amount"`.
-- `tui-inline-hint`: 30 × 12 tail (neutral-1) pointing at the amount, body 44 px neutral-1 radius 22, px 10: `plus`
+  numbers-2xl (57 px), `data-shared="amount"`. КН (frame 105:6556): the amount with a 32 px chevron box (7 × 16
+  glyph, text-primary), the row inset 32 px on the left so the amount stays centred; a transparent numeric input
+  over both brings up the numeric keyboard and shows the typed digits in the amount's place.
+- КН hint (frame 105:6556): elevated variant — tail and body elevation-1 (white) with the small shadow (0 5 20,
+  provisional, no TUI token), «До 4,5 млн ₽ с условиями», no chevron; pressed it only scales.
+- `tui-inline-hint` (ОК): 30 × 12 tail (neutral-1) pointing at the amount, body 44 px neutral-1 radius 22, px 10: `plus`
   24 px (18 px glyph, action), label body-m px 6, chevron 7 × 16 tertiary. Pressed: the whole bubble, tail included, scales to 0,98
   and takes the pressed fill (hover: the hover fill).
 - Info cards (pt 8 + 16, 72 px; caption ui-s secondary, value heading-s). КН: «Срок / 5 лет ›», «Платеж в месяц /
@@ -123,19 +128,24 @@ of `#/review`, `#/upload` on top of `#/documents`.
 
 - App bar back + close; `tui-header [large]` px 16 py 8: heading-l. 20 px.
 - Horizontal snap slider (`scroll-snap-type: x mandatory`), 300 px cards, 16 px gap and inset, equal heights:
-  neutral-1-on-base, radius 24; header pt 28 px 20 pb 12: payment heading-l / subtitle body-l (8 px), «?» 22 px centred on the payment line;
-  check list (16 px `check-small` in accent-2, py 6, 12 px gap; the texts are body-l (owner, 2026-10-25) and the
+  neutral-1-on-base, radius 24, 20 px under the title; header pt 28 px 20 pb 12: payment heading-l / subtitle body-l
+  (8 px, 2 px under it), «?» 22 px centred on the payment line;
+  check list (4 px between the items, frame 105:6347; 16 px `check-small` in accent-2, py 6, 12 px gap; the texts are body-l (owner, 2026-10-25) and the
   check sits on the middle of the first line's x-height, 1 px higher for optical balance; 32 px below the list); footer px 20 pb 20 medium yellow button. «Часто выбирают» badge
   (accent-2, on-dark, ui-s-bold, 28 px high) at top −14, left 20 of the first card.
 - Cards (texts as drawn, owner 2026-10-26): «17 713 ₽/мес» «Пакет «Универсальный»» and «33 500 ₽/мес» «Пакет
   «Минимальный»», both with «Ставка ниже на 15% — сэкономите 10 541 ₽» / «Бесплатное обслуживание счета для бизнеса» /
   «Без комиссии за досрочное погашение» (Q5) · «Ваши условия» «Выбираете сами» with one body-l line without a check,
-  «Сможете самостоятельно настроить все условия по платежу»; every card ends with «Выбрать».
+  «Сможете самостоятельно настроить все условия по платежу и дополнительным опциям»; every card ends with
+  «Выбрать». Frame 105:6347 swaps the payments (Универсальный 33 500, Минимальный 17 500 ₽); v4 keeps 17 713 /
+  33 500 until the owner confirms (Q11).
 
 ### `#/review`, `#/documents`, `#/upload`, `#/success`
 
 As v3 (references `03`–`07`), with: v4 app bar; payment from the tariff; rows «Снижение комиссии» for the fee cards
-and «Пакет «…»» (briefcase) for a КН package, no «Пакет «Все включено»»; ОК «Комиссия» row; the button fork above.
+and «Пакет «…»» (briefcase) for a КН package, no «Пакет «Все включено»»; ОК «Комиссия» row. The documents come
+right after the options and packages, before the review (owner, 2026-10-27): `#/documents` «Дальше» → `#/review`,
+`#/review` always «Получить деньги» with the legal line → `#/success`.
 
 ## Questions (ledger)
 
@@ -145,8 +155,12 @@ and «Пакет «…»» (briefcase) for a КН package, no «Пакет «В�
 - Q4. Second «Снизить комиссию» text: typo in the frame («Поддержтвать обороте»), fixed.
 - Q5. «Минимальный» costs more than «Универсальный» (33 500 against 17 713 ₽) and repeats its bullets, as drawn.
 - Q6. The new iOS 26 app bar is used on every screen (review, documents, upload had text «Закрыть» in V4).
-- Q7. A deep link to `#/documents` builds a review underneath with nothing chosen (no pledge), so back shows the
-  no-pledge review; the in-app path always arrives with the pledge.
+- Q7. Closed (owner, 2026-10-27): the documents now come before the review, so a deep link to `#/documents`
+  builds `#/` and the packages (КН) or the conditions (ОК) underneath.
 - Q8. The design has no rule for a falling payment; v4 makes it proportional to (1 + fee): «Снизить комиссию»
   −1 pp gives 17 540,24 ₽ (chip green), the pledge still raises it (18 507,98 ₽ at 4,2 млн and 2,0 %).
 - Q9. «Кредит ОК» draws «Комиссия 2,9%»; v4 shows the offer's 2,5 % (the same number as the conditions chip).
+- Q10. The exact amount on «Кредит» (КН) has no drawn bounds; v4 keeps it within [100 000 ₽, current limit] and
+  keeps it when a condition raises the limit. «Кредит ОК» draws no chevron, so ОК's amount is not editable.
+- Q11. Frame 105:6347 draws «Универсальный» 33 500 ₽ and «Минимальный» 17 500 ₽ (swapped against «Тарифы»
+  90:5528 of 2026-10-26); the payments were not part of the request, v4 keeps 17 713 / 33 500.

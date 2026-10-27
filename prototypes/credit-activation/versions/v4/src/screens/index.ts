@@ -25,10 +25,10 @@ export function screenFor(hash: string): Screen {
 }
 
 /**
- * Main scenario of the product (owner, 2026-10-25): КН #/ → #/tariffs → #/review, ОК #/ → #/conditions →
- * #/review; then #/documents (with the pledge) and #/success.
+ * Main scenario of the product (owner, 2026-10-25): КН #/ → #/tariffs, ОК #/ → #/conditions; then #/documents
+ * right after the options and packages, #/review and #/success (owner, 2026-10-27).
  */
-const MAIN: readonly Screen[] = [credit, product === 'kn' ? tariffs : conditions, review, documents, success];
+const MAIN: readonly Screen[] = [credit, product === 'kn' ? tariffs : conditions, documents, review, success];
 
 /** Default path to a screen along the main scenario; #/upload sits on top of #/documents, #/success on #/review. */
 export function defaultPath(target: Screen): Screen[] {

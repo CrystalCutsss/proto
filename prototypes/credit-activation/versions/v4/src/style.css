@@ -28,6 +28,12 @@ body.ds-root {
 
   /* provisional: no TUI token for the iOS 26 liquid glass. A white disc with the small drop shadow (0 5 20). */
   --shadow-glass: 0 calc(var(--ds-space-1) * 1.25) var(--ds-space-5) var(--ds-color-black-black-alpha-10);
+
+  /* provisional: no TUI shadow token. Shadow/Small (0 5 20 black 10 %) as a drop-shadow filter, so the tail of
+     the elevated hint casts it too (filter blur is half the design radius). */
+  --shadow-small-filter: drop-shadow(
+    0 calc(var(--ds-space-1) * 1.25) calc(var(--ds-space-5) / 2) var(--ds-color-black-black-alpha-10)
+  );
   --side: var(--ds-space-4);
   --bar-height: 44px;
 
@@ -616,8 +622,59 @@ body.ds-root {
   white-space: nowrap;
 }
 
+/* КН: the amount and its chevron (32 px box, 7 × 16 glyph) centred together with the amount alone: the row is
+   inset 32 px on the left (frame «Кредит КН»). The numeric input lies over both, transparent until it has focus;
+   then it shows the typed digits in the amount's place. The row may use the side gutters: amount + chevron box +
+   inset reach 364 px with the fallback font. */
+.offer__amount:has(.amount-field) {
+  padding-inline: 0;
+}
+
+.amount-field {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-left: var(--ds-space-8);
+}
+
+.amount-field__chevron {
+  width: var(--ds-space-8);
+  height: var(--ds-space-8);
+  color: var(--ds-text-primary);
+  mask-size: 7px 16px;
+}
+
+.amount-field__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: center;
+  color: var(--ds-text-primary);
+  background: transparent;
+  opacity: 0;
+  caret-color: var(--ds-text-action);
+  cursor: pointer;
+  outline: none;
+}
+
+.amount-field__input:focus {
+  opacity: 1;
+  cursor: text;
+}
+
+.amount-field:focus-within > :not(.amount-field__input) {
+  visibility: hidden;
+}
+
 /* «+ 400 000 ₽ с улучшением условий ›»: tui-inline-hint, a 12 px tail pointing up at the amount, then the 44 px body. */
 .hint {
+  --hint-fill: var(--ds-background-neutral-1);
+  --hint-fill-hover: var(--ds-state-background-neutral-1-hover);
+  --hint-fill-pressed: var(--ds-state-background-neutral-1-pressed);
+
   display: flex;
   justify-content: center;
   padding: 0 var(--side);
@@ -642,7 +699,7 @@ body.ds-root {
 .hint__tail {
   width: 30px;
   height: 12px;
-  color: var(--ds-background-neutral-1);
+  color: var(--hint-fill);
   transition: color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
 }
 
@@ -653,17 +710,17 @@ body.ds-root {
   min-height: var(--bar-height);
   padding: 0 calc(var(--ds-space-5) / 2);
   border-radius: calc(var(--bar-height) / 2);
-  background: var(--ds-background-neutral-1);
+  background: var(--hint-fill);
   transition: background-color var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
 }
 
 @media (hover: hover) {
   .hint__button:hover .hint__body {
-    background: var(--ds-state-background-neutral-1-hover);
+    background: var(--hint-fill-hover);
   }
 
   .hint__button:hover .hint__tail {
-    color: var(--ds-state-background-neutral-1-hover);
+    color: var(--hint-fill-hover);
   }
 }
 
@@ -672,11 +729,11 @@ body.ds-root {
 }
 
 .hint__button:active .hint__body {
-  background: var(--ds-state-background-neutral-1-pressed);
+  background: var(--hint-fill-pressed);
 }
 
 .hint__button:active .hint__tail {
-  color: var(--ds-state-background-neutral-1-pressed);
+  color: var(--hint-fill-pressed);
 }
 
 /* tui-ic-service / plus in the 24 px accessory box (an 18 px glyph at 3 px), action colour as drawn. */
@@ -689,6 +746,18 @@ body.ds-root {
 
 .hint__label {
   padding: var(--ds-space-3) calc(var(--ds-space-1) * 1.5);
+}
+
+/* КН «+ До 4,5 млн ₽ с условиями»: the elevated variant, a white bubble (no state fills: the press only scales it)
+   with the small shadow and no chevron. */
+.hint--elevated {
+  --hint-fill: var(--ds-background-elevation-1);
+  --hint-fill-hover: var(--ds-background-elevation-1);
+  --hint-fill-pressed: var(--ds-background-elevation-1);
+}
+
+.hint--elevated .hint__button {
+  filter: var(--shadow-small-filter);
 }
 
 .hint__chevron {
@@ -956,7 +1025,7 @@ body.ds-root {
 
 /* ---------- #/tariffs ---------- */
 
-.large-title--tariffs {
+.large-title.large-title--tariffs {
   padding: var(--ds-space-2) var(--side);
 }
 
@@ -1018,6 +1087,11 @@ body.ds-root {
   gap: var(--ds-space-2);
 }
 
+/* tui-header [card]: the subheader box adds 2 px under its line (Figma «Тарифы» 105:6347). */
+.tariff__titles > p {
+  padding-bottom: calc(var(--ds-space-1) / 2);
+}
+
 /* The «?» sits on the middle of the payment line (owner, 2026-10-25): its box is one heading-l line high. */
 .tariff__hint {
   display: flex;
@@ -1026,7 +1100,10 @@ body.ds-root {
 }
 
 .tariff__bullets {
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: var(--ds-space-1);
   margin: 0;
   padding: 0 var(--ds-space-5) var(--ds-space-8);
   list-style: none;

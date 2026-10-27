@@ -8,13 +8,13 @@
 // forward step from here starts a fresh branch, so a tariff chosen earlier is dropped (it belongs to #/tariffs).
 import { renderAmount, stopAmount } from '../amount';
 import {
-  clampAmount,
   fee,
   formatPercent,
   formatRub,
   limitAmount,
   monthlyPayment,
   PLEDGE_BONUS,
+  requestedFor,
   totalAmount,
 } from '../calc';
 import { product } from '../config';
@@ -129,10 +129,7 @@ function mountAmountField(root: HTMLElement): void {
   });
   input.addEventListener('blur', () => {
     const typed = Number(input.value.replace(/\D/g, ''));
-    if (typed) {
-      const amount = clampAmount(typed, choice());
-      state.requested = amount === limitAmount(choice()) ? null : amount;
-    }
+    if (typed) state.requested = requestedFor(typed, choice());
     input.value = groupDigits(String(totalAmount(choice())));
     render(root, false);
   });

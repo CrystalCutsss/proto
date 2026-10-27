@@ -42,7 +42,8 @@ export interface Choice {
   feeCuts: readonly FeeCut[];
   /** Tariff chosen on #/tariffs (КН); null until one is chosen. */
   tariff: Tariff | null;
-  /** Exact amount typed into «Сумма» on #/ (КН); null takes the whole limit. */
+  /** Exact amount typed into «Сумма» on #/, stored without what the conditions add (so they still add to it and
+   * take it away, owner 2026-10-27); null takes the base amount. */
   requested: number | null;
 }
 
@@ -56,20 +57,34 @@ export const BASE_CHOICE: Choice = {
   requested: null,
 };
 
+/** What the conditions add to the amount: the pledge and the data check. */
+const bonus = (c: Pick<Choice, 'pledge' | 'check'>): number =>
+  (c.pledge ? PLEDGE_BONUS : 0) + (c.check ? CHECK_BONUS : 0);
+
 /** Limit of the offer: the base amount plus what the conditions add. */
 export function limitAmount(c: Pick<Choice, 'pledge' | 'check'>): number {
-  return AMOUNT.initial + (c.pledge ? PLEDGE_BONUS : 0) + (c.check ? CHECK_BONUS : 0);
+  return AMOUNT.initial + bonus(c);
 }
 
-/** Amount of the credit: the typed exact amount, never above the current limit; the whole limit without one. */
+/**
+ * Amount of the credit: the typed amount (without the conditions) plus what the conditions add, within
+ * [MIN_AMOUNT, limit]; the whole limit without a typed amount. A condition switched on after typing raises it by
+ * its bonus, switched off lowers it again.
+ */
 export function totalAmount(c: Pick<Choice, 'pledge' | 'check'> & { requested?: number | null }): number {
-  const limit = limitAmount(c);
-  return c.requested == null ? limit : Math.min(c.requested, limit);
+  if (c.requested == null) return limitAmount(c);
+  return Math.min(Math.max(c.requested + bonus(c), MIN_AMOUNT), limitAmount(c));
 }
 
 /** A typed amount kept within [MIN_AMOUNT, limit]. */
 export const clampAmount = (value: number, c: Pick<Choice, 'pledge' | 'check'>): number =>
   Math.min(Math.max(Math.round(value), MIN_AMOUNT), limitAmount(c));
+
+/** `requested` for a typed amount: clamped, without the conditions' bonus; null when it is the whole limit. */
+export function requestedFor(typed: number, c: Pick<Choice, 'pledge' | 'check'>): number | null {
+  const amount = clampAmount(typed, c);
+  return amount === limitAmount(c) ? null : amount - bonus(c);
+}
 
 /**
  * Monthly payment in rubles, rounded to kopecks: 17 713,05 ₽ per 4 000 000 ₽ at the base fee 2,5 %, proportional

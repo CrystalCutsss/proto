@@ -98,7 +98,7 @@ top of `#/review`, `#/upload` on top of `#/documents`.
   … ›», 20 px gap. ОК: «Срок / 5 лет ›» | «Комиссия / 2,5%» (no chevron, the current fee), then the wide «Платеж в
   месяц / … ›»; 16 px gaps. The ОК frame draws 2,9 %; v4 shows the fee of the conditions (Q9).
 - Pledge card, КН only (pt 20): card-large white radius 24 shadow medium, py 16 px 20: «Залог авто» heading-m + «Изменить»
-  (body-l action, visual only); 16 px; «Mercedes-Benz W214» body-m; 12 px; badges «+200 000 ₽» «−0,5%»
+  (body-l action, visual only); 16 px; «Потребуется СТС Mercedes-Benz W214» body-m (owner, 2026-10-27); 12 px; badges «+200 000 ₽» «−0,5%»
   (neutral-1, ui-s-bold); `tui-labs-action` 56 px circle centred on the description and the badges, 16 px above the
   bottom edge (neutral-1, blue `plus` 18 px; on: positive-pale with
   green `check-pragmatic` 24 px).
@@ -110,7 +110,7 @@ top of `#/review`, `#/upload` on top of `#/documents`.
 - Conditions block (part of the sticky top bars, plain background): amount pt 8 pb 8 (`data-shared`), chips row
   (`tui-chip` 36 px, px 10, neutral-1, 8 px gap, glyph secondary, ui-s-bold): «5 лет» (calendar), fee (percent,
   positive-pale + positive when lowered), «17 713 ₽ / мес» (arrow; positive when the payment is below the offer's).
-- Wheel: option cards, 20 px apart (pt 20); ОК has all five, КН has no pledge card: «Залог авто» (ОК; drawn like КН's card on «Кредит» — «Изменить» in the title row, «Mercedes-Benz W214», +200 000 ₽, −0,5%), «Проверить данные» /
+- Wheel: option cards, 20 px apart (pt 20); ОК has all five, КН has no pledge card: «Залог авто» (ОК; drawn like КН's card on «Кредит» — «Изменить» in the title row, «Потребуется СТС Mercedes-Benz W214», +200 000 ₽, −0,5%), «Проверить данные» /
   «Занимает до 1 рабочего дня» (+100 000 ₽), «Предоставить выписку» / «По счетам из других банков» (До +10 000 000 ₽),
   «Снизить комиссию» / «За каждые 100 000 ₽, выплаченных сотрудникам в месяц» (% −1%, neutral-2), «Снизить
   комиссию» / «Поддерживайте оборот по счету для бизнеса в Т‑Банке от 46 789 ₽/мес» (% До −0,5%; the frame's

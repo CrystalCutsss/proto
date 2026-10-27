@@ -79,7 +79,7 @@ const knCards = () => `
       id: 'credit-pledge',
       choice: 'pledge',
       title: 'Залог авто',
-      description: 'Mercedes-Benz W214',
+      description: 'Потребуется СТС Mercedes-Benz W214',
       badges: badges(badge(`+${formatRub(PLEDGE_BONUS)}`), badge('−0,5%')),
       checked: state.pledge,
       link: 'Изменить',

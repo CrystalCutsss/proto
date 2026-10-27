@@ -6,12 +6,13 @@
 // «Дальше» goes to #/tariffs («Варианты платежа») in КН and straight to #/review in ОК.
 // «Платеж в месяц» is the formula value (as v3), not the drawn 193 500 ₽ (spec, Q2). Every
 // forward step from here starts a fresh branch, so a tariff chosen earlier is dropped (it belongs to #/tariffs).
-import { renderAmount, stopAmount } from '../amount';
+import { renderAmount, showMinimumToast, stopAmount, toastIfBelowMinimum } from '../amount';
 import {
   fee,
   formatPercent,
   formatRub,
   limitAmount,
+  MIN_AMOUNT,
   monthlyPayment,
   PLEDGE_BONUS,
   requestedFor,
@@ -108,7 +109,8 @@ function render(root: HTMLElement, animate: boolean): void {
 
 /**
  * The exact amount input: digits only while typing; a number above the limit is cut to it at once with the toast
- * «Можем выдать не больше …» (Figma tui-notification-toast 105:10434). On blur the amount is set without the count
+ * «Можем выдать не больше …» (Figma tui-notification-toast 105:10434), one below MIN_AMOUNT is raised to it on blur
+ * with «Можем выдать не меньше 100 000 ₽». On blur the amount is set without the count
  * animation (owner, 2026-10-27); Enter closes the keyboard.
  */
 function mountAmountField(root: HTMLElement): void {
@@ -130,6 +132,7 @@ function mountAmountField(root: HTMLElement): void {
   input.addEventListener('blur', () => {
     const typed = Number(input.value.replace(/\D/g, ''));
     if (typed) state.requested = requestedFor(typed, choice());
+    if (typed && typed < MIN_AMOUNT) showMinimumToast();
     input.value = groupDigits(String(totalAmount(choice())));
     render(root, false);
   });
@@ -168,6 +171,7 @@ export const credit: Screen = {
     onActivate(control, () => {
       state.pledge = !state.pledge;
       render(root, true);
+      toastIfBelowMinimum();
     });
   },
 };

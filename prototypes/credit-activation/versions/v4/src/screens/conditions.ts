@@ -6,7 +6,7 @@
 // КН has no pledge card here: its pledge lives on #/ (owner, 2026-10-25). The payment chip turns positive when the
 // payment goes below the offer's, like the fee chip. ОК's pledge card is drawn like the one on КН's #/: «Залог авто»
 // with «Изменить» in the title row.
-import { renderAmount, stopAmount } from '../amount';
+import { renderAmount, stopAmount, toastIfBelowMinimum } from '../amount';
 import {
   CHECK_BONUS,
   type FeeCut,
@@ -154,6 +154,7 @@ export const conditions: Screen = {
         toggle(key);
         setOptionChecked(control, isOn(key));
         renderHeader(root, true);
+        toastIfBelowMinimum();
       });
     });
     stopWheel.set(root, mountWheel(root));

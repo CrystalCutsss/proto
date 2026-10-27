@@ -1,9 +1,19 @@
 // The big amount (`[data-amount]`) on #/ and #/conditions: counts to the new total when a condition changes.
 import { duration, ease, gsap, prefersReducedMotion } from '@proto/motion';
-import { formatRub, totalAmount } from './calc';
+import { belowMinimum, formatRub, MIN_AMOUNT, totalAmount } from './calc';
 import { choice } from './state';
+import { showToast } from './toast';
 
 const shown = new WeakMap<HTMLElement, { value: number }>();
+
+/** The toast «Можем выдать не меньше 100 000 ₽» (owner, 2026-10-27). */
+export const showMinimumToast = (): void => showToast(`Можем выдать не меньше ${formatRub(MIN_AMOUNT)}`);
+
+/** After a condition was switched: the toast when the floor now holds the amount up (it changed by less than the
+ * condition's badge). */
+export function toastIfBelowMinimum(): void {
+  if (belowMinimum(choice())) showMinimumToast();
+}
 
 /** Stop a running count on a page that leaves the DOM. */
 export function stopAmount(root: HTMLElement): void {

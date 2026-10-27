@@ -166,7 +166,8 @@ right after the options and packages, before the review (owner, 2026-10-27): `#/
 - Q8. The design has no rule for a falling payment; v4 makes it proportional to (1 + fee): «Снизить комиссию»
   −1 pp gives 17 540,24 ₽ (chip green), the pledge still raises it (18 507,98 ₽ at 4,2 млн and 2,0 %).
 - Q9. «Кредит ОК» draws «Комиссия 2,9%»; v4 shows the offer's 2,5 % (the same number as the conditions chip).
-- Q10. The exact amount on «Кредит» has no drawn lower bound; v4 keeps it at 100 000 ₽ or more. The conditions
+- Q10. The exact amount on «Кредит» has no drawn lower bound; v4 keeps it at 100 000 ₽ or more; when a typed amount below it is raised, or switching a condition off
+  stops at it, the toast says «Можем выдать не меньше 100 000 ₽» (owner, 2026-10-27). The conditions
   still change a typed amount (owner, 2026-10-27): it is stored without their bonuses, so the pledge adds
   200 000 ₽ to it and the check 100 000 ₽, and switching them off takes the bonus away again. «Кредит ОК» draws no chevron and the old bubble; v4 gives ОК both of КН's (owner,
   2026-10-27). The toast's limit is the current one (4 000 000 ₽ without conditions; the frame says 450 000 ₽).

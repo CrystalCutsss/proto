@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   AMOUNT,
   BASE_CHOICE,
+  belowMinimum,
   clampAmount,
   BASE_FEE,
   type Choice,
@@ -77,9 +78,12 @@ describe('amount', () => {
     expect(totalAmount(choice({ requested: withPledge }))).toBe(2_800_000);
     // The whole limit typed means no exact amount; the floor holds after a condition is switched off.
     expect(requestedFor(4_200_000, choice({ pledge: true }))).toBeNull();
-    expect(totalAmount(choice({ requested: requestedFor(150_000, choice({ pledge: true })) }))).toBe(
-      MIN_AMOUNT,
-    );
+    const small = requestedFor(150_000, choice({ pledge: true }));
+    expect(totalAmount(choice({ requested: small }))).toBe(MIN_AMOUNT);
+    // That is when the toast «Можем выдать не меньше 100 000 ₽» shows.
+    expect(belowMinimum(choice({ requested: small }))).toBe(true);
+    expect(belowMinimum(choice({ requested: small, pledge: true }))).toBe(false);
+    expect(belowMinimum(BASE_CHOICE)).toBe(false);
   });
 });
 

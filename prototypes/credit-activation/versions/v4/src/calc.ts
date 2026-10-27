@@ -76,6 +76,10 @@ export function totalAmount(c: Pick<Choice, 'pledge' | 'check'> & { requested?: 
   return Math.min(Math.max(c.requested + bonus(c), MIN_AMOUNT), limitAmount(c));
 }
 
+/** Whether the floor holds the amount up: the typed amount plus the conditions would be below MIN_AMOUNT. */
+export const belowMinimum = (c: Pick<Choice, 'pledge' | 'check'> & { requested?: number | null }): boolean =>
+  c.requested != null && c.requested + bonus(c) < MIN_AMOUNT;
+
 /** A typed amount kept within [MIN_AMOUNT, limit]. */
 export const clampAmount = (value: number, c: Pick<Choice, 'pledge' | 'check'>): number =>
   Math.min(Math.max(Math.round(value), MIN_AMOUNT), limitAmount(c));

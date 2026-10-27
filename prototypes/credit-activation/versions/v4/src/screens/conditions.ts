@@ -1,8 +1,8 @@
 // #/conditions — «Условия»: the conditions block (amount + chips «5 лет», fee, payment) stays under the bars
 // while the «Барабан условий» scrolls under it and under «Дальше» like an iOS picker wheel (wheel.ts). A tap
 // anywhere on a card or on its «+» toggles it; the header recalculates at once («Условия выбраны»).
-// Opened from #/ with the shared-header transition (nav.ts). «Дальше» pushes #/review; in КН it first pushes
-// #/tariffs unless «Тарифы» are already below (reached through «Ваши условия») (owner, 2026-10-26).
+// Opened from #/ with the shared-header transition (nav.ts). «Дальше» pushes #/documents (owner, 2026-10-27); in
+// КН it first pushes #/tariffs unless «Тарифы» are already below (reached through «Ваши условия») (2026-10-26).
 // КН has no pledge card here: its pledge lives on #/ (owner, 2026-10-25). The payment chip turns positive when the
 // payment goes below the offer's, like the fee chip. ОК's pledge card is drawn like the one on КН's #/: «Залог авто»
 // with «Изменить» in the title row.
@@ -138,7 +138,7 @@ export const conditions: Screen = {
     </div>
     ${bottomBlock({ button: primaryButton('Дальше', 'next') })}`,
 
-  next: (below) => (product === 'kn' && !below.includes('#/tariffs') ? '#/tariffs' : '#/review'),
+  next: (below) => (product === 'kn' && !below.includes('#/tariffs') ? '#/tariffs' : '#/documents'),
 
   refresh(root) {
     root.querySelectorAll<HTMLElement>('.option__control').forEach((control) => {

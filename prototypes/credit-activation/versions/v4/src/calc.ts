@@ -4,6 +4,9 @@
 
 export const AMOUNT = { initial: 4_000_000 } as const;
 
+/** Smallest exact amount the client can type into «Сумма» on #/ (КН); provisional, not drawn (spec, Q10). */
+export const MIN_AMOUNT = 100_000;
+
 /** Amount the pledge adds (badge «+200 000 ₽» on #/ and #/conditions). */
 export const PLEDGE_BONUS = 200_000;
 /** Amount «Проверить данные» adds (badge «+100 000 ₽»). */
@@ -39,6 +42,8 @@ export interface Choice {
   feeCuts: readonly FeeCut[];
   /** Tariff chosen on #/tariffs (КН); null until one is chosen. */
   tariff: Tariff | null;
+  /** Exact amount typed into «Сумма» on #/ (КН); null takes the whole limit. */
+  requested: number | null;
 }
 
 /** The offer before any choice. */
@@ -48,11 +53,23 @@ export const BASE_CHOICE: Choice = {
   statement: false,
   feeCuts: [],
   tariff: null,
+  requested: null,
 };
 
-export function totalAmount(c: Pick<Choice, 'pledge' | 'check'>): number {
+/** Limit of the offer: the base amount plus what the conditions add. */
+export function limitAmount(c: Pick<Choice, 'pledge' | 'check'>): number {
   return AMOUNT.initial + (c.pledge ? PLEDGE_BONUS : 0) + (c.check ? CHECK_BONUS : 0);
 }
+
+/** Amount of the credit: the typed exact amount, never above the current limit; the whole limit without one. */
+export function totalAmount(c: Pick<Choice, 'pledge' | 'check'> & { requested?: number | null }): number {
+  const limit = limitAmount(c);
+  return c.requested == null ? limit : Math.min(c.requested, limit);
+}
+
+/** A typed amount kept within [MIN_AMOUNT, limit]. */
+export const clampAmount = (value: number, c: Pick<Choice, 'pledge' | 'check'>): number =>
+  Math.min(Math.max(Math.round(value), MIN_AMOUNT), limitAmount(c));
 
 /**
  * Monthly payment in rubles, rounded to kopecks: 17 713,05 ₽ per 4 000 000 ₽ at the base fee 2,5 %, proportional
@@ -60,7 +77,9 @@ export function totalAmount(c: Pick<Choice, 'pledge' | 'check'>): number {
  * down, its chip then turns positive). A chosen tariff's payment (17 713,05 / 33 500 ₽ per 4 000 000 ₽) follows the
  * amount only; «Ваши условия» keeps the formula.
  */
-export function monthlyPayment(c: Pick<Choice, 'pledge' | 'check' | 'feeCuts' | 'tariff'>): number {
+export function monthlyPayment(
+  c: Pick<Choice, 'pledge' | 'check' | 'feeCuts' | 'tariff'> & { requested?: number | null },
+): number {
   const byAmount = totalAmount(c) / PAYMENT.amount;
   const value =
     c.tariff && c.tariff !== 'custom'
@@ -85,7 +104,9 @@ export type Tone = 'neutral' | 'positive';
 export const feeTone = (c: Choice): Tone => (feeLowered(c) ? 'positive' : 'neutral');
 
 export const paymentTone = (c: Choice): Tone =>
-  monthlyPayment(c) < monthlyPayment({ ...BASE_CHOICE, tariff: c.tariff }) ? 'positive' : 'neutral';
+  monthlyPayment(c) < monthlyPayment({ ...BASE_CHOICE, tariff: c.tariff, requested: c.requested })
+    ? 'positive'
+    : 'neutral';
 
 // ---------- formats (ru-RU, non-breaking spaces) ----------
 

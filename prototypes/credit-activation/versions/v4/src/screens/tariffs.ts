@@ -1,7 +1,7 @@
 // #/tariffs — «Варианты платежа» (КН only, after «Дальше» on #/): a horizontal snap slider of tariff cards.
-// «Выбрать» sets the tariff, which drives the payment on #/review (owner, 2026-10-25), and pushes #/review;
-// on «Ваши условия» it opens #/conditions, or #/review when «Условия» are already below (КН: #/ → «Условия» →
-// «Тарифы», owner 2026-10-26). Texts follow Figma «Тарифы» 90:5528 (owner, 2026-10-26): both packages
+// «Выбрать» sets the tariff, which drives the payment on #/review (owner, 2026-10-25), and pushes #/documents
+// (documents right after the options and packages, owner 2026-10-27); on «Ваши условия» it opens #/conditions,
+// or #/documents when «Условия» are already below (КН: #/ → «Условия» → «Тарифы», owner 2026-10-26). Texts follow Figma «Тарифы» 90:5528 (owner, 2026-10-26): both packages
 // carry the same three bullets, «Ваши условия» one plain line without a check.
 // The card payments follow the current amount (they are drawn at the base 4 000 000 ₽), as on #/review.
 // The prototype says «Пакет» wherever the design said «Тариф» (owner, 2026-10-25); the code keeps `tariff`.
@@ -48,7 +48,7 @@ const CARDS: TariffCard[] = [
     title: 'Ваши условия',
     subtitle: 'Выбираете сами',
     bullets: [],
-    note: 'Сможете самостоятельно настроить все условия по&nbsp;платежу',
+    note: 'Сможете самостоятельно настроить все условия по&nbsp;платежу и&nbsp;дополнительным опциям',
     button: 'Выбрать',
   },
 ];
@@ -100,7 +100,7 @@ export const tariffs: Screen = {
     ${bottomBlock({})}`,
 
   next: (below) =>
-    state.tariff === 'custom' && !below.includes('#/conditions') ? '#/conditions' : '#/review',
+    state.tariff === 'custom' && !below.includes('#/conditions') ? '#/conditions' : '#/documents',
 
   beforeAction(control) {
     const tariff = control.dataset.tariff as Tariff | undefined;

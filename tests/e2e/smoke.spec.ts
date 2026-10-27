@@ -346,14 +346,14 @@ test('credit-activation v3: the heavy path through documents and the direct path
   await expect(page).toHaveURL(/#\/documents$/);
 });
 
-test('credit-activation v4: КН goes through the packages, ОК straight to the review; condition cards toggle', async ({
+test('credit-activation v4: КН goes through the packages and the documents, ОК straight to the review', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   const top = page.locator('section:not([inert])');
   const legal = top.getByText(/Нажимая «Получить деньги»/);
 
-  // КН: «Кредит» → «Варианты платежа» → «Выбрать» → review with the tariff; the pledge forks to the documents.
+  // КН: «Кредит» → «Варианты платежа» → «Выбрать» → documents → review with the tariff → success.
   await page.goto('/p/credit-activation/v4/?shell=0&product=kn#/');
   await top.getByRole('checkbox', { name: /Залог авто/ }).click();
   await expect(top.getByText('4 200 000 ₽')).toBeVisible();
@@ -363,23 +363,41 @@ test('credit-activation v4: КН goes through the packages, ОК straight to the
   // The card's payment follows the amount (4,2 млн with the pledge) and the review shows the same value.
   await expect(top.getByRole('heading', { name: '18\u00a0599\u00a0₽/мес' })).toBeVisible();
   await top.getByRole('button', { name: 'Выбрать' }).first().click();
+  await expect(page).toHaveURL(/#\/documents$/);
+  await expect(legal).toHaveCount(0);
+  await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/review$/);
   // The tariff card says «Пакет «Универсальный»» too, so look on the review screen only.
   const review = page.locator('[data-route="#/review"]');
   await expect(review.getByText('Пакет «Универсальный»')).toBeVisible();
   await expect(top.getByText('18\u00a0598,70\u00a0₽')).toBeVisible();
   await expect(top.getByText('Комиссия', { exact: true })).toHaveCount(0);
-  await expect(legal).toHaveCount(0);
-  await top.getByRole('button', { name: 'Дальше' }).click();
-  await expect(page).toHaveURL(/#\/documents$/);
+  // The review ends the flow: no way back to the documents from here.
+  await expect(legal).toBeVisible();
   await top.getByRole('button', { name: 'Получить деньги' }).click();
   await expect(page).toHaveURL(/#\/success$/);
   await top.getByRole('button', { name: 'К счету' }).click();
   await expect(page).toHaveURL(/#\/$/);
 
-  // «400 000 ₽ с улучшением условий» → «Условия» (КН: no pledge card, it lives on «Кредит»): a tap on a card toggles
-  // it and recalculates the header.
-  await top.getByRole('button', { name: /улучшением условий/ }).click();
+  // КН: a tap on the amount brings up the numeric input; an exact amount is kept within the limit.
+  const amountInput = top.getByRole('textbox', { name: /Сумма кредита/ });
+  await expect(amountInput).toHaveAttribute('inputmode', 'numeric');
+  // A tap on the chevron lands on the input laid over the amount and the chevron.
+  await expect(page.locator('.viewport')).not.toHaveClass(/is-busy/);
+  await expect(page.locator('.page')).toHaveCount(1);
+  const chevron = await top.locator('.amount-field__chevron').boundingBox();
+  await page.mouse.click(chevron!.x + chevron!.width / 2, chevron!.y + chevron!.height / 2);
+  await expect(amountInput).toBeFocused();
+  await amountInput.fill('2500000');
+  await amountInput.press('Enter');
+  await expect(top.locator('[data-amount]')).toHaveText('2 500 000 ₽');
+  await amountInput.fill('9000000');
+  await amountInput.press('Enter');
+  await expect(top.locator('[data-amount]')).toHaveText('4 000 000 ₽');
+
+  // «До 4,5 млн ₽ с условиями» → «Условия» (КН: no pledge card, it lives on «Кредит»): a tap on a card toggles it
+  // and recalculates the header.
+  await top.getByRole('button', { name: /с условиями/ }).click();
   await expect(page).toHaveURL(/#\/conditions$/);
   await expect(top.getByRole('checkbox', { name: /залог/ })).toHaveCount(0);
   await top.getByRole('checkbox', { name: /Проверить данные/ }).click();
@@ -388,21 +406,20 @@ test('credit-activation v4: КН goes through the packages, ОК straight to the
     'true',
   );
   await expect(top.locator('[data-amount]')).toHaveText('4 100 000 ₽');
-  // КН: «Дальше» on «Условия» opens «Тарифы»; «Ваши условия» → «Выбрать» then goes on to the review.
+  // КН: «Дальше» on «Условия» opens «Тарифы»; «Ваши условия» → «Выбрать» then goes on to the documents.
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/tariffs$/);
   await top.getByRole('button', { name: 'Выбрать' }).last().click();
-  await expect(page).toHaveURL(/#\/review$/);
-  await expect(legal).toBeVisible();
+  await expect(page).toHaveURL(/#\/documents$/);
 
-  // Through «Тарифы» first: «Ваши условия» opens «Условия», whose «Дальше» goes straight to the review.
+  // Through «Тарифы» first: «Ваши условия» opens «Условия», whose «Дальше» goes straight to the documents.
   await page.goto('/p/credit-activation/v4/?shell=0&product=kn#/');
   await top.getByRole('button', { name: 'Дальше' }).click();
   await expect(page).toHaveURL(/#\/tariffs$/);
   await top.getByRole('button', { name: 'Выбрать' }).last().click();
   await expect(page).toHaveURL(/#\/conditions$/);
   await top.getByRole('button', { name: 'Дальше' }).click();
-  await expect(page).toHaveURL(/#\/review$/);
+  await expect(page).toHaveURL(/#\/documents$/);
 
   // ОК: «Кредит» shows the fee and no pledge card; on «Условия» a lower fee lowers the payment and turns its chip
   // positive; «Дальше» on «Кредит» goes straight to the review, which shows the fee.
@@ -435,7 +452,7 @@ test('credit-activation v4: the shared-header transition to the conditions and b
 }) => {
   await page.goto('/p/credit-activation/v4/?shell=0#/');
   const top = page.locator('section:not([inert])');
-  await top.getByRole('button', { name: /улучшением условий/ }).click();
+  await top.getByRole('button', { name: /с условиями/ }).click();
   await expect(page).toHaveURL(/#\/conditions$/);
   await expect(page.locator('.viewport')).not.toHaveClass(/is-busy/);
   // After the push the conditions page is opaque again and its faded parts are fully shown.

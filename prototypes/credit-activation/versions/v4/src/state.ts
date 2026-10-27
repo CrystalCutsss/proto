@@ -13,6 +13,8 @@ export interface FlowState {
   feeCuts: readonly FeeCut[];
   /** Tariff chosen on #/tariffs (КН). */
   tariff: Tariff | null;
+  /** Exact amount typed into «Сумма» on #/ (КН); null takes the whole limit. */
+  requested: number | null;
   /** Both documents uploaded on #/upload. */
   docsUploaded: boolean;
   /** Names of the files chosen in the file field. */
@@ -35,5 +37,6 @@ export function choice(): Choice {
     statement: state.statement,
     feeCuts: state.feeCuts,
     tariff: state.tariff,
+    requested: state.requested,
   };
 }

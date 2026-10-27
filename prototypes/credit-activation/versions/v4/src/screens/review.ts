@@ -1,6 +1,6 @@
 // #/review — «Проверка условий»: the amount, the payment (the КН tariff's when one is chosen), the conditions that
-// are on and the account. Forks as v2 (owner, 2026-10-25): with the pledge «Дальше» → #/documents (СТС),
-// without it «Получить деньги» with the legal line → #/success. ОК shows its fee row (v2); КН does not.
+// are on and the account. The documents come before it now (owner, 2026-10-27), so it always ends the flow:
+// «Получить деньги» with the legal line → #/success. ОК shows its fee row (v2); КН does not.
 // «Залог и условия» lists what is on; it is left out only when nothing is.
 import { fee, formatPercent, formatRub, formatRubKopecks, monthlyPayment, totalAmount } from '../calc';
 import { product } from '../config';
@@ -90,12 +90,8 @@ export const review: Screen = {
         </section>
       </div>
     </div>
-    ${
-      state.pledge
-        ? bottomBlock({ button: primaryButton('Дальше', 'next') })
-        : bottomBlock({ button: primaryButton('Получить деньги', 'next'), legalBelow: LEGAL })
-    }`;
+    ${bottomBlock({ button: primaryButton('Получить деньги', 'next'), legalBelow: LEGAL })}`;
   },
 
-  next: () => (state.pledge ? '#/documents' : '#/success'),
+  next: () => '#/success',
 };

@@ -33,5 +33,9 @@ export function renderAmount(root: HTMLElement, animate = true): void {
     onUpdate: () => {
       el.textContent = formatRub(Math.round(proxy.value / 1000) * 1000);
     },
+    // The count runs in whole thousands; it lands on the exact total (a typed amount need not be round).
+    onComplete: () => {
+      el.textContent = formatRub(target);
+    },
   });
 }

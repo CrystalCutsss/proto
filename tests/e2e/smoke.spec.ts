@@ -414,9 +414,9 @@ test('credit-activation v4: КН goes through the packages and the documents, О
   await expect(top.locator('[data-amount]')).toHaveText('4 000 000 ₽');
   await expect(page.locator('.keyboard')).not.toHaveClass(/is-open/);
 
-  // «До 4,5 млн ₽ с условиями» → «Условия» (КН: no pledge card, it lives on «Кредит»): a tap on a card toggles it
+  // «До 4,5 млн ₽ с улучшением условий» → «Условия» (КН: no pledge card, it lives on «Кредит»): a tap on a card toggles it
   // and recalculates the header.
-  await top.getByRole('button', { name: /с условиями/ }).click();
+  await top.getByRole('button', { name: /улучшением условий/ }).click();
   await expect(page).toHaveURL(/#\/conditions$/);
   await expect(top.getByRole('checkbox', { name: /залог/ })).toHaveCount(0);
   await top.getByRole('checkbox', { name: /Проверить данные/ }).click();
@@ -446,7 +446,7 @@ test('credit-activation v4: КН goes through the packages and the documents, О
   await expect(top.getByText('Комиссия', { exact: true })).toBeVisible();
   await expect(top.getByRole('checkbox', { name: /Залог авто/ })).toHaveCount(0);
   await expect(top.getByRole('textbox', { name: /Сумма кредита/ })).toBeVisible();
-  await top.getByRole('button', { name: /с условиями/ }).click();
+  await top.getByRole('button', { name: /улучшением условий/ }).click();
   await expect(top.getByRole('checkbox', { name: /Залог авто/ })).toBeVisible();
   await expect(top.getByText('Изменить')).toBeVisible();
   await top
@@ -472,7 +472,7 @@ test('credit-activation v4: the shared-header transition to the conditions and b
 }) => {
   await page.goto('/p/credit-activation/v4/?shell=0#/');
   const top = page.locator('section:not([inert])');
-  await top.getByRole('button', { name: /с условиями/ }).click();
+  await top.getByRole('button', { name: /улучшением условий/ }).click();
   await expect(page).toHaveURL(/#\/conditions$/);
   await expect(page.locator('.viewport')).not.toHaveClass(/is-busy/);
   // After the push the conditions page is opaque again and its faded parts are fully shown.

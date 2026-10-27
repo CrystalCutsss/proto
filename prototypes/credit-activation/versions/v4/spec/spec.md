@@ -44,18 +44,18 @@ the screens v4 keeps.
 
 ## Navigation
 
-| From           | Control                                                    | Goes to                                                                                           |
-| -------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `#/`           | «+ До 4,5 млн ₽ с условиями» (КН and ОК, owner 2026-10-27) | push `#/conditions` (shared transition)                                                           |
-| `#/`           | The amount or its chevron (КН and ОК)                      | numeric keyboard; above the limit: cut to it + toast; set on blur / Enter without the count (Q10) |
-| `#/`           | «Залог авто» card / «+»                                    | toggles the pledge (same flag as on conditions)                                                   |
-| `#/`           | «Дальше»                                                   | КН: `#/tariffs`; ОК: `#/review`                                                                   |
-| `#/conditions` | «Дальше»                                                   | КН: `#/tariffs` (owner, 2026-10-26), but `#/documents` when «Тарифы» are below; ОК: `#/documents` |
-| `#/tariffs`    | «Выбрать» (Универсальный, Минимальный)                     | sets the tariff, push `#/documents`                                                               |
-| `#/tariffs`    | «Выбрать» («Ваши условия»)                                 | push `#/conditions` (slide: no shared amount); `#/documents` when «Условия» are below             |
-| `#/documents`  | «Загрузить» / «Дальше»                                     | `#/upload` (back marks both uploaded) / `#/review` (owner, 2026-10-27)                            |
-| `#/review`     | «Получить деньги»                                          | `#/success` (never back to the documents)                                                         |
-| `#/success`    | «К счету»                                                  | reset to `#/`                                                                                     |
+| From           | Control                                                             | Goes to                                                                                           |
+| -------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `#/`           | «+ До 4,5 млн ₽ с улучшением условий» (КН and ОК, owner 2026-10-27) | push `#/conditions` (shared transition)                                                           |
+| `#/`           | The amount or its chevron (КН and ОК)                               | numeric keyboard; above the limit: cut to it + toast; set on blur / Enter without the count (Q10) |
+| `#/`           | «Залог авто» card / «+»                                             | toggles the pledge (same flag as on conditions)                                                   |
+| `#/`           | «Дальше»                                                            | КН: `#/tariffs`; ОК: `#/review`                                                                   |
+| `#/conditions` | «Дальше»                                                            | КН: `#/tariffs` (owner, 2026-10-26), but `#/documents` when «Тарифы» are below; ОК: `#/documents` |
+| `#/tariffs`    | «Выбрать» (Универсальный, Минимальный)                              | sets the tariff, push `#/documents`                                                               |
+| `#/tariffs`    | «Выбрать» («Ваши условия»)                                          | push `#/conditions` (slide: no shared amount); `#/documents` when «Условия» are below             |
+| `#/documents`  | «Загрузить» / «Дальше»                                              | `#/upload` (back marks both uploaded) / `#/review` (owner, 2026-10-27)                            |
+| `#/review`     | «Получить деньги»                                                   | `#/success` (never back to the documents)                                                         |
+| `#/success`    | «К счету»                                                           | reset to `#/`                                                                                     |
 
 Deep links (`defaultPath`): `#/conditions`, `#/tariffs` → `[credit, it]` (`#/tariffs` in ОК falls back to `#/`); the rest follow the product's main path
 (КН `#/ → #/tariffs → #/documents → #/review`, ОК `#/ → #/conditions → #/documents → #/review`), `#/success` on
@@ -91,7 +91,7 @@ top of `#/review`, `#/upload` on top of `#/documents`.
   under the status bar, elevation-3 pill radius 24, alert-warning 24 px, body-m, medium shadow. The amount is set on
   blur / Enter without the count animation (owner, 2026-10-27).
 - Hint (frame 105:6556, КН and ОК): elevated variant — tail and body elevation-1 (white) with the small shadow (0 5 20,
-  provisional, no TUI token), «До 4,5 млн ₽ с условиями», no chevron; pressed it only scales.
+  provisional, no TUI token), «До 4,5 млн ₽ с улучшением условий» (owner, 2026-10-27), no chevron; pressed it only scales.
 - `tui-inline-hint` geometry: 30 × 12 tail pointing at the amount, body 44 px radius 22, px 10: `plus` 24 px
   (18 px glyph, action), label body-m px 6. Pressed: the whole bubble, tail included, scales to 0,98.
 - Info cards (pt 8 + 16, 72 px; caption ui-s secondary, value heading-s). КН: «Срок / 5 лет ›», «Платеж в месяц /

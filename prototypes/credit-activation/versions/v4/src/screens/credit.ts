@@ -1,5 +1,5 @@
-// #/ — «Кредит»: the approved offer and the hint «До 4,5 млн ₽ с условиями» that opens #/conditions with the
-// shared-header transition. Both products show the amount with a chevron that takes an exact amount from the
+// #/ — «Кредит»: the approved offer and the hint «До 4,5 млн ₽ с улучшением условий» that opens #/conditions
+// with the shared-header transition. Both products show the amount with a chevron that takes an exact amount from the
 // numeric keyboard, and the КН bubble (owner, 2026-10-27). Two states (frames «Кредит КН» / «Кредит ОК»): КН shows
 // «Срок», «Платеж в месяц» and the pledge card «Залог авто» (the same flag as on #/conditions, where КН has no
 // pledge card); ОК shows «Срок», «Комиссия» and a wide «Платеж в месяц» and no pledge card (owner, 2026-10-25).
@@ -45,7 +45,7 @@ const hint = () => `
       ${mask('hint-tail.svg', 'hint__tail')}
       <span class="hint__body">
         ${mask('plus.svg', 'hint__plus')}
-        <span class="hint__label t-body-m">До&nbsp;4,5&nbsp;млн&nbsp;₽ с&nbsp;условиями</span>
+        <span class="hint__label t-body-m">До&nbsp;4,5&nbsp;млн&nbsp;₽ с&nbsp;улучшением условий</span>
       </span>
     </button>
   </div>`;

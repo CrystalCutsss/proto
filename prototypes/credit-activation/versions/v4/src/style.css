@@ -748,7 +748,7 @@ body.ds-root {
   padding: var(--ds-space-3) calc(var(--ds-space-1) * 1.5);
 }
 
-/* КН «+ До 4,5 млн ₽ с условиями»: the elevated variant, a white bubble (no state fills: the press only scales it)
+/* КН «+ До 4,5 млн ₽ с улучшением условий»: the elevated variant, a white bubble (no state fills: the press only scales it)
    with the small shadow and no chevron. */
 .hint--elevated {
   --hint-fill: var(--ds-background-elevation-1);

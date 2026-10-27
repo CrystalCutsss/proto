@@ -17,6 +17,7 @@ import {
   tariffPayment,
   limitAmount,
   MIN_AMOUNT,
+  requestedFor,
   totalAmount,
 } from '../src/calc';
 import { parseProduct } from '../src/config';
@@ -64,6 +65,21 @@ describe('amount', () => {
     expect(totalAmount(choice({ requested: 2_000_000 }))).toBe(2_000_000);
     expect(limitAmount(choice({ requested: 2_000_000 }))).toBe(AMOUNT.initial);
     expect(monthlyPayment(choice({ requested: 2_000_000 }))).toBe(8_856.53);
+  });
+
+  it('the conditions still add to a typed amount and take it away again', () => {
+    // 2 500 000 ₽ typed with nothing on; the pledge adds 200 000 ₽, the check 100 000 ₽.
+    const requested = requestedFor(2_500_000, BASE_CHOICE);
+    expect(totalAmount(choice({ requested, pledge: true }))).toBe(2_700_000);
+    expect(totalAmount(choice({ requested, pledge: true, check: true }))).toBe(2_800_000);
+    // Typed with the pledge on: switching it off takes its 200 000 ₽ away.
+    const withPledge = requestedFor(3_000_000, choice({ pledge: true }));
+    expect(totalAmount(choice({ requested: withPledge }))).toBe(2_800_000);
+    // The whole limit typed means no exact amount; the floor holds after a condition is switched off.
+    expect(requestedFor(4_200_000, choice({ pledge: true }))).toBeNull();
+    expect(totalAmount(choice({ requested: requestedFor(150_000, choice({ pledge: true })) }))).toBe(
+      MIN_AMOUNT,
+    );
   });
 });
 

@@ -46,7 +46,7 @@ const ALL_CARDS: { key: Key; title: string; description: string; badges: string;
   {
     key: 'pledge',
     title: 'Залог авто',
-    description: 'Mercedes-Benz W214',
+    description: 'Потребуется СТС Mercedes-Benz W214',
     badges: badges(badge(`+${formatRub(PLEDGE_BONUS)}`), badge('−0,5%')),
     link: 'Изменить',
   },

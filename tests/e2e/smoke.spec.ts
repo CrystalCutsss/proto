@@ -393,6 +393,11 @@ test('credit-activation v4: КН goes through the packages and the documents, О
   await amountInput.fill('2500000');
   await amountInput.press('Enter');
   await expect(top.locator('[data-amount]')).toHaveText('2 500 000 ₽');
+  // The conditions still change a typed amount: the pledge adds its 200 000 ₽ and takes them away again.
+  await top.getByRole('checkbox', { name: /Залог авто/ }).click();
+  await expect(top.locator('[data-amount]')).toHaveText('2 700 000 ₽');
+  await top.getByRole('checkbox', { name: /Залог авто/ }).click();
+  await expect(top.locator('[data-amount]')).toHaveText('2 500 000 ₽');
   // Above the limit: cut to it with the toast «Можем выдать не больше …».
   await amountInput.fill('9000000');
   await expect(page.locator('.toast')).toContainText('Можем выдать не больше 4\u00a0000\u00a0000\u00a0₽');

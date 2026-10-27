@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="tui-ic-fixed-color / alert-warning">
+<path id="Background" d="M1.6746 16.4739L9.41726 3.37085C10.5784 1.40576 13.4216 1.40576 14.5828 3.37085L22.3255 16.4739C23.5072 18.4737 22.0656 21 19.7427 21L4.25739 21.0001C1.93449 21.0001 0.492873 18.4737 1.6746 16.4739Z" fill-rule="evenodd" clip-rule="evenodd" fill="url(#paint0_linear_0_3508)"/>
+<path id="Foreground" d="M10.75 18.4999H12.25C12.8023 18.4999 13.25 18.0522 13.25 17.4999V15.4999H11.75C11.1978 15.4999 10.75 15.9476 10.75 16.4999V18.4999ZM10.75 13.9999H12.25C12.8023 13.9999 13.25 13.5522 13.25 12.9999V7.49993H11.75C11.1978 7.49993 10.75 7.94764 10.75 8.49993V13.9999Z" fill-rule="evenodd" clip-rule="evenodd" fill="white"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_3508" x1="5.1609" y1="5.37032" x2="17.2333" y2="18.954" gradientUnits="userSpaceOnUse">
+<stop stop-color="#EF8007"/>
+<stop offset="1" stop-color="#EF8007" stop-opacity="0.7"/>
+</linearGradient>
+</defs>
+</svg>

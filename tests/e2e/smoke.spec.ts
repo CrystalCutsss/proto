@@ -381,19 +381,24 @@ test('credit-activation v4: КН goes through the packages and the documents, О
 
   // КН: a tap on the amount brings up the numeric input; an exact amount is kept within the limit.
   const amountInput = top.getByRole('textbox', { name: /Сумма кредита/ });
-  await expect(amountInput).toHaveAttribute('inputmode', 'numeric');
+  // Outside a device the drawn iOS keyboard opens instead of the system one.
+  await expect(amountInput).toHaveAttribute('inputmode', 'none');
   // A tap on the chevron lands on the input laid over the amount and the chevron.
   await expect(page.locator('.viewport')).not.toHaveClass(/is-busy/);
   await expect(page.locator('.page')).toHaveCount(1);
   const chevron = await top.locator('.amount-field__chevron').boundingBox();
   await page.mouse.click(chevron!.x + chevron!.width / 2, chevron!.y + chevron!.height / 2);
   await expect(amountInput).toBeFocused();
+  await expect(page.locator('.keyboard')).toHaveClass(/is-open/);
   await amountInput.fill('2500000');
   await amountInput.press('Enter');
   await expect(top.locator('[data-amount]')).toHaveText('2 500 000 ₽');
+  // Above the limit: cut to it with the toast «Можем выдать не больше …».
   await amountInput.fill('9000000');
+  await expect(page.locator('.toast')).toContainText('Можем выдать не больше 4\u00a0000\u00a0000\u00a0₽');
   await amountInput.press('Enter');
   await expect(top.locator('[data-amount]')).toHaveText('4 000 000 ₽');
+  await expect(page.locator('.keyboard')).not.toHaveClass(/is-open/);
 
   // «До 4,5 млн ₽ с условиями» → «Условия» (КН: no pledge card, it lives on «Кредит»): a tap on a card toggles it
   // and recalculates the header.
@@ -426,7 +431,8 @@ test('credit-activation v4: КН goes through the packages and the documents, О
   await page.goto('/p/credit-activation/v4/?shell=0&product=ok#/');
   await expect(top.getByText('Комиссия', { exact: true })).toBeVisible();
   await expect(top.getByRole('checkbox', { name: /Залог авто/ })).toHaveCount(0);
-  await top.getByRole('button', { name: /улучшением условий/ }).click();
+  await expect(top.getByRole('textbox', { name: /Сумма кредита/ })).toBeVisible();
+  await top.getByRole('button', { name: /с условиями/ }).click();
   await expect(top.getByRole('checkbox', { name: /Залог авто/ })).toBeVisible();
   await expect(top.getByText('Изменить')).toBeVisible();
   await top

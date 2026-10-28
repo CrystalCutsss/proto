@@ -94,7 +94,7 @@ top of `#/review`, `#/upload` on top of `#/documents`.
   provisional, no TUI token), «До 4,5 млн ₽ с улучшением условий» (owner, 2026-10-27), no chevron; pressed it only scales.
   On load (mount of «Кредит») a metallic glint sweeps once across the body from left to right (owner, 2026-10-28):
   a band as wide as the body, transparent → neutral-1-pressed → elevation-1 → neutral-1-pressed → transparent at
-  left to right, moved by GSAP from xPercent −100 to 100 (2 × slowest, after moderate, productive ease); none under reduced
+  left to right, moved by GSAP from xPercent −100 to 100, ending fully past the right edge so only the white fill is left (2 × slowest, after moderate, productive ease); none under reduced
   motion. No Figma frame draws it.
 - `tui-inline-hint` geometry: 30 × 12 tail pointing at the amount, body 44 px radius 22, px 10: `plus` 24 px
   (18 px glyph, action), label body-m px 6. Pressed: the whole bubble, tail included, scales to 0,98.

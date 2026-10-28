@@ -151,7 +151,7 @@ function shineHint(root: HTMLElement): void {
   if (!band || prefersReducedMotion()) return;
   shine = gsap.fromTo(
     band,
-    { xPercent: -100 },
+    { x: 0, xPercent: -100 }, // x: 0 drops the CSS translateX(-100%) GSAP would otherwise keep as a pixel offset
     { xPercent: 100, duration: duration.slowest * 2, delay: duration.moderate, ease: ease.productive },
   );
 }

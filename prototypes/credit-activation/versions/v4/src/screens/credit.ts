@@ -6,6 +6,7 @@
 // «Дальше» goes to #/tariffs («Варианты платежа») in КН and straight to #/review in ОК.
 // «Платеж в месяц» is the formula value (as v3), not the drawn 193 500 ₽ (spec, Q2). Every
 // forward step from here starts a fresh branch, so a tariff chosen earlier is dropped (it belongs to #/tariffs).
+import { duration, ease, gsap, prefersReducedMotion } from '@proto/motion';
 import { renderAmount, showMinimumToast, stopAmount, toastIfBelowMinimum } from '../amount';
 import {
   fee,
@@ -44,6 +45,7 @@ const hint = () => `
     <button type="button" class="hint__button" ${pushRoute('#/conditions')}>
       ${mask('hint-tail.svg', 'hint__tail')}
       <span class="hint__body">
+        <span class="hint__shine" aria-hidden="true"></span>
         ${mask('plus.svg', 'hint__plus')}
         <span class="hint__label t-body-m">До&nbsp;4,5&nbsp;млн&nbsp;₽ с&nbsp;улучшением условий</span>
       </span>
@@ -62,7 +64,7 @@ const amountField = () => `
   <div class="offer__amount">
     <div class="amount-field">
       <span class="t-number-2xl" data-shared="amount" data-amount aria-hidden="true">${formatRub(totalAmount(choice()))}</span>
-      ${mask('chevron-right-service.svg', 'amount-field__chevron')}
+      ${mask('chevron-right-service.svg', 'amount-field__chevron', 'data-fade="early"')}
       <input class="amount-field__input t-number-2xl" type="text" inputmode="numeric" enterkeyhint="done"
         autocomplete="off" aria-label="Сумма кредита, ₽" value="${groupDigits(String(totalAmount(choice())))}" />
     </div>
@@ -138,6 +140,22 @@ function mountAmountField(root: HTMLElement): void {
   });
 }
 
+let shine: gsap.core.Tween | null = null;
+
+/**
+ * A metallic glint over the bubble when the screen loads (owner, 2026-10-28): a light band sweeps once across the
+ * bubble's fill from left to right. Skipped under reduced motion.
+ */
+function shineHint(root: HTMLElement): void {
+  const band = root.querySelector<HTMLElement>('.hint__shine');
+  if (!band || prefersReducedMotion()) return;
+  shine = gsap.fromTo(
+    band,
+    { xPercent: -100 },
+    { xPercent: 100, duration: duration.slowest * 2, delay: duration.moderate, ease: ease.productive },
+  );
+}
+
 export const credit: Screen = {
   route: '#/',
   label: 'Одобрили кредит',
@@ -158,7 +176,11 @@ export const credit: Screen = {
     state.tariff = null;
   },
 
-  unmount: stopAmount,
+  unmount(root) {
+    stopAmount(root);
+    shine?.kill();
+    shine = null;
+  },
 
   refresh(root) {
     render(root, false);
@@ -166,6 +188,7 @@ export const credit: Screen = {
 
   mount(root) {
     mountAmountField(root);
+    shineHint(root);
     const control = root.querySelector<HTMLElement>('.option__control');
     if (!control) return;
     onActivate(control, () => {

@@ -30,8 +30,8 @@ export function statusBar(): string {
     </div>`;
 }
 
-export function mask(name: string, className: string): string {
-  return `<span class="mask ${className}" style="${maskStyle(name)}" aria-hidden="true"></span>`;
+export function mask(name: string, className: string, attrs = ''): string {
+  return `<span class="mask ${className}" style="${maskStyle(name)}" aria-hidden="true"${attrs ? ` ${attrs}` : ''}></span>`;
 }
 
 type AppBarSlot = 'back' | 'close' | 'dismiss' | null;

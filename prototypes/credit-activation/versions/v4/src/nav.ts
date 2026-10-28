@@ -13,6 +13,7 @@ const EDGE = 20; // px from the left edge where a back swipe may start
 const SLOP = 8; // px of movement before a gesture is recognised
 const PARALLAX = -30; // xPercent of the screen below the top one
 const FLICK = 0.5; // px/ms: a faster rightward release completes the pop
+const EARLY = 0.95; // progress at which the early fades of a shared transition are gone (the amount barely moved)
 const SHARED_SHIFT = 12; // px the fading content of a shared-transition screen travels while it fades
 
 interface Page {
@@ -121,7 +122,8 @@ export function startNavigation(viewport: HTMLElement): void {
   /**
    * Shared-element transition (#/ ↔ #/conditions): no slide. The shared element (the amount) moves from its place
    * on `lower` to its place on `upper`; `lower`'s `[data-fade]` parts fade out first, then `upper`'s fade in
-   * (rising a little), so the two never overlap at full strength. The bottom blocks (the same «Дальше») stay put.
+   * (rising a little), so the two never overlap at full strength. `[data-fade="early"]` parts of `lower` (the amount's
+   * chevron) are gone before the amount starts to move. The bottom blocks (the same «Дальше») stay put.
    * Progress 0: `upper` is shown; 1: `lower` is shown.
    */
   function shared(lower: Page, upper: Page, from: HTMLElement, to: HTMLElement): Draw {
@@ -135,7 +137,8 @@ export function startNavigation(viewport: HTMLElement): void {
     const b = textRect(to);
     const dx = a.left + a.width / 2 - (b.left + b.width / 2);
     const dy = a.top - b.top;
-    const lowerFades = [...lower.el.querySelectorAll<HTMLElement>('[data-fade]')];
+    const lowerFades = [...lower.el.querySelectorAll<HTMLElement>('[data-fade]:not([data-fade="early"])')];
+    const earlyFades = [...lower.el.querySelectorAll<HTMLElement>('[data-fade="early"]')];
     const upperFades = [...upper.el.querySelectorAll<HTMLElement>('[data-fade]')];
     const rising = upperFades.filter((el) => !el.closest('.top-bars'));
     const clamp = gsap.utils.clamp(0, 1);
@@ -145,6 +148,7 @@ export function startNavigation(viewport: HTMLElement): void {
       gsap.set(upperFades, { opacity: clamp(1 - p * 2) });
       gsap.set(rising, { y: SHARED_SHIFT * p });
       gsap.set(lowerFades, { opacity: clamp((p - 0.5) * 2) });
+      gsap.set(earlyFades, { opacity: clamp((p - EARLY) / (1 - EARLY)) });
     };
   }
 

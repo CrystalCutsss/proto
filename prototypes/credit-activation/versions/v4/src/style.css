@@ -704,6 +704,9 @@ body.ds-root {
 }
 
 .hint__body {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
   gap: calc(var(--ds-space-1) / 2);
   align-items: center;
@@ -758,6 +761,24 @@ body.ds-root {
 
 .hint--elevated .hint__button {
   filter: var(--shadow-small-filter);
+}
+
+/* The metallic glint of the bubble on load (credit.ts): a grey–white–grey band, as wide as the bubble, that GSAP
+   moves from off the left edge to off the right one. The content stays above it (.hint__body isolates). */
+.hint__shine {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    var(--ds-state-background-neutral-1-pressed),
+    var(--ds-background-elevation-1),
+    var(--ds-state-background-neutral-1-pressed),
+    transparent
+  );
+  transform: translateX(-100%);
+  pointer-events: none;
 }
 
 /* «Срок» and «Платеж в месяц»: two 72 px neutral cards, 20 px apart, 16 px under the hint (+ 8). */

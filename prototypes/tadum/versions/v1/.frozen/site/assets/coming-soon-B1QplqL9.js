@@ -1,0 +1,1 @@
+import{u as e,j as s}from"./index-BpoS2wzU.js";function n(){const{t}=e();return s.jsxs("section",{className:"flex flex-col gap-2 py-8 text-center",children:[s.jsx("h1",{className:"text-xl font-semibold",children:t("stub.coming_soon.title")}),s.jsx("p",{className:"text-sm text-muted-foreground",children:t("stub.coming_soon.body")})]})}export{n as C};

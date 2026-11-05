@@ -1,0 +1,1 @@
+import{j as r,d as n}from"./index-BpoS2wzU.js";const a="Tadum";function s({className:t}){return r.jsx("span",{dir:"ltr",translate:"no",className:n("font-wordmark text-xl font-semibold tracking-tight",t),children:a})}export{s as W};

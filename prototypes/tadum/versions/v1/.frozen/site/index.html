@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#090b0c" />
+    <link rel="icon" type="image/svg+xml" href="/p/tadum/v1/icons/icon.svg" />
+    <title>Tadum</title>
+    <script>
+      // Тема до загрузки бандла, чтобы не было вспышки. Ключ — как в src/shared/lib/storage.ts.
+      (function () {
+        try {
+          var v = localStorage.getItem('tadum:/p/tadum/v1/:theme');
+          var dark = v === 'dark' || ((v === null || v === 'system') && matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
+    <script type="module" crossorigin src="/p/tadum/v1/assets/index-BpoS2wzU.js"></script>
+    <link rel="stylesheet" crossorigin href="/p/tadum/v1/assets/index-DYheq4_W.css">
+  <link rel="manifest" href="/p/tadum/v1/manifest.webmanifest" crossorigin="use-credentials"><script id="vite-plugin-pwa:register-sw" src="/p/tadum/v1/registerSW.js"></script>    <meta name="robots" content="noindex, nofollow">
+    <meta name="proto:prototype" content="tadum">
+    <meta name="proto:version" content="v1">
+    <script type="module" src="/_shell/loader.js" data-proto-shell></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

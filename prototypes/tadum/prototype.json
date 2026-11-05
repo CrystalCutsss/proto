@@ -1,0 +1,11 @@
+{
+  "$schema": "../../packages/registry/schemas/prototype.schema.json",
+  "title": "Tadum — кабинеты клиента и поставщика",
+  "description": "B2B-портал для KSA: заявка на торговый лимит, документы и статус клиента, кабинет поставщика. Арабский (RTL) и английский, мок-данные с персонами. Собирается в репозитории tadum и публикуется сюда замороженной версией.",
+  "owner": "Кирилл",
+  "tags": ["tadum", "b2b", "rtl", "pwa"],
+  "status": "active",
+  "platform": "mobile",
+  "defaultVersion": "latest",
+  "separatePassword": true
+}

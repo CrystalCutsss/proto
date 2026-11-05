@@ -5,7 +5,8 @@
   "owner": "Кирилл",
   "tags": ["tadum", "b2b", "rtl", "pwa"],
   "status": "active",
-  "platform": "mobile",
+  "platform": "desktop",
+  "platforms": ["desktop", "mobile"],
   "defaultVersion": "latest",
   "separatePassword": true
 }

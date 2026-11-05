@@ -100,6 +100,21 @@ describe('buildRegistry', () => {
     expect(validateMetadata('prototype', proto({ platform: 'tablet' }))[0]?.pointer).toBe('/platform');
   });
 
+  it('lists the platforms the viewer can switch between, default first (ADR-0025)', () => {
+    put('prototypes/demo/prototype.json', proto());
+    addVersion('demo', 'v1');
+    expect(buildRegistry(root).prototypes[0]?.platforms).toEqual(['desktop']);
+
+    put('prototypes/demo/prototype.json', proto({ platform: 'desktop', platforms: ['mobile', 'desktop'] }));
+    expect(buildRegistry(root).prototypes[0]?.platforms).toEqual(['desktop', 'mobile']);
+
+    put('prototypes/demo/prototype.json', proto({ platform: 'desktop', platforms: ['mobile'] }));
+    expect(fail().issues.map((i) => `${i.pointer} ${i.message}`)).toContain(
+      '/platforms must include platform "desktop"',
+    );
+    expect(validateMetadata('prototype', proto({ platforms: ['tablet'] }))[0]?.pointer).toBe('/platforms/0');
+  });
+
   it('keeps menu axes and checks their ids', () => {
     put('prototypes/demo/prototype.json', proto());
     const axes = [

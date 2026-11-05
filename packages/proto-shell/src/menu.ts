@@ -1,8 +1,9 @@
 // Scenario/version menu shared by the viewer and the installed-app shell: two <ds-segmented> controls. A version
 // with menu axes (version.json → axes) gets one captioned control per axis instead, plus the captioned version
 // control when the prototype has several versions. A version without axes that follows a version with them shows
-// that version's axes greyed out (disabled): they work only there (ADR-0024).
-import type { Axis, RegistryPrototype, RegistryVersion, Scenario } from '@proto/registry';
+// that version's axes greyed out (disabled): they work only there (ADR-0024). A prototype with several platforms
+// gets an «Экран» control (Компьютер / Телефон) at the end, when the caller handles it (ADR-0025).
+import type { Axis, Platform, RegistryPrototype, RegistryVersion, Scenario } from '@proto/registry';
 import { defineElements, type DsSegmented } from '@proto/ui';
 
 export const HIDDEN_KEY = 'proto-shell:hidden';
@@ -17,6 +18,8 @@ export interface MenuHandlers {
   scenario(id: string): void;
   version(version: string): void;
   axis(id: string, value: string): void;
+  /** Screen switch of a prototype with several platforms; without it the menu shows no «Экран» control. */
+  screen?(platform: Platform): void;
 }
 
 export interface MenuState {
@@ -27,7 +30,15 @@ export interface MenuState {
   axes: Record<string, string>;
   /** Items to show on greyed-out axes of another version (the last choice there); default: first items. */
   keptAxes?: Record<string, string>;
+  /** Screen the viewer shows now (one of proto.platforms). */
+  screen?: Platform;
 }
+
+/** Labels of the «Экран» control. */
+export const SCREEN_LABEL: Record<Platform, string> = { desktop: 'Компьютер', mobile: 'Телефон' };
+
+/** Whether the menu offers the «Экран» control for this prototype. */
+export const hasScreenSwitch = (proto: RegistryPrototype) => (proto.platforms?.length ?? 1) > 1;
 
 /** Scenario to select in `version`: the one with the same id, else the version's first. */
 export function pickScenario(version: RegistryVersion, id: string | null): Scenario {
@@ -84,8 +95,10 @@ export function createMenu(handlers: MenuHandlers) {
   nav.setAttribute('aria-label', 'Сценарий и версия');
   const scenario = segmented('Сценарий', 'scenario');
   const version = segmented('Версия', 'version');
+  const screen = segmented('Экран', 'screen');
   scenario.addEventListener('change', () => handlers.scenario(scenario.value));
   version.addEventListener('change', () => handlers.version(version.value));
+  screen.addEventListener('change', () => handlers.screen?.(screen.value as Platform));
   let layoutKey: string | null = null;
   let axisControls = new Map<string, DsSegmented>();
 
@@ -94,14 +107,16 @@ export function createMenu(handlers: MenuHandlers) {
     { axes, disabled, from }: ReturnType<typeof menuAxes>,
     versions: boolean,
     scenarios: boolean,
+    screens: boolean,
   ) {
-    const key = JSON.stringify({ axes, disabled, from, versions, scenarios });
+    const key = JSON.stringify({ axes, disabled, from, versions, scenarios, screens });
     if (key === layoutKey) return;
     layoutKey = key;
     axisControls = new Map();
     const keep = [...nav.children].filter((c) => c.matches('.proto-menu-collapse'));
+    const screenGroup = screens ? [captioned('Экран', screen)] : [];
     if (!axes.length) {
-      nav.replaceChildren(scenario, version, ...keep);
+      nav.replaceChildren(scenario, version, ...screenGroup, ...keep);
       return;
     }
     const groups = axes.map((a) => {
@@ -120,14 +135,25 @@ export function createMenu(handlers: MenuHandlers) {
     });
     // A later version's own scenarios stay selectable next to the greyed-out axes.
     const own = disabled && scenarios ? [captioned('Сценарий', scenario)] : [];
-    nav.replaceChildren(...groups, ...own, ...(versions ? [captioned('Версия', version)] : []), ...keep);
+    nav.replaceChildren(
+      ...groups,
+      ...own,
+      ...(versions ? [captioned('Версия', version)] : []),
+      ...screenGroup,
+      ...keep,
+    );
   }
 
   return {
     element: nav,
-    update({ proto, version: v, scenario: s, axes, keptAxes = {} }: MenuState) {
+    update({ proto, version: v, scenario: s, axes, keptAxes = {}, screen: current }: MenuState) {
       const shown = menuAxes(proto, v);
-      build(shown, proto.versions.length > 1, v.scenarios.length > 1);
+      const screens = Boolean(handlers.screen) && hasScreenSwitch(proto);
+      build(shown, proto.versions.length > 1, v.scenarios.length > 1, screens);
+      if (screens) {
+        screen.items = proto.platforms.map((p) => ({ value: p, label: SCREEN_LABEL[p] }));
+        screen.value = current ?? proto.platform;
+      }
       version.items = proto.versions.map((x) => ({ value: x.version, label: x.version }));
       version.value = v.version;
       scenario.items = v.scenarios.map((x) => ({ value: x.id, label: x.title }));

@@ -35,7 +35,7 @@ export class RegistryError extends Error {
 }
 
 /** Query parameters the loader and the viewer use themselves: never axis ids. */
-export const RESERVED_AXES = new Set(['v', 's', 'bars', 'shell', 'proto-display']);
+export const RESERVED_AXES = new Set(['v', 's', 'bars', 'shell', 'proto-display', 'screen']);
 
 /** Scenario listed for a version without `scenarios`: its start screen. */
 export const DEFAULT_SCENARIO = { id: 'main', title: 'Основной' };
@@ -145,6 +145,15 @@ export function buildRegistry(repoRoot) {
     }
     const meta = readJson(protoFile, rel(protoFile), issues);
     if (meta === undefined || !schemaIssues(validatePrototype, meta, rel(protoFile), issues)) continue;
+    const platform = meta.platform ?? 'desktop';
+    if (meta.platforms && !meta.platforms.includes(platform)) {
+      issues.push({
+        file: rel(protoFile),
+        pointer: '/platforms',
+        message: `must include platform "${platform}"`,
+      });
+      continue;
+    }
 
     const versionsDir = join(dir, 'versions');
     const names = existsSync(versionsDir)
@@ -274,7 +283,8 @@ export function buildRegistry(repoRoot) {
       designSource: meta.designSource ?? null,
       defaultVersion: /** @type {string} */ (defaultVersion),
       separatePassword: meta.separatePassword ?? false,
-      platform: meta.platform ?? 'desktop',
+      platform,
+      platforms: [platform, ...(meta.platforms ?? []).filter((/** @type {string} */ x) => x !== platform)],
       updated:
         versions
           .map((v) => v.date)

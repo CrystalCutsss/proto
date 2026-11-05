@@ -29,6 +29,7 @@ const p = (slug: string, over: Partial<RegistryPrototype> = {}): RegistryPrototy
   defaultVersion: 'v1',
   separatePassword: false,
   platform: 'desktop',
+  platforms: ['desktop'],
   updated: '2026-10-01',
   path: `/p/${slug}/`,
   versions: [version('v1')],

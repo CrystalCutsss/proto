@@ -12,7 +12,8 @@ let count = 0;
 
 export function createVariants(handlers: MenuHandlers) {
   const id = `proto-variants-title-${++count}`;
-  const menu = createMenu(handlers);
+  // Phones always show the prototype full-screen: no «Экран» switch in the sheet (ADR-0025).
+  const menu = createMenu({ ...handlers, screen: undefined });
   menu.element.classList.add('proto-menu--sheet');
   menu.element.setAttribute('aria-label', 'Варианты прототипа');
 

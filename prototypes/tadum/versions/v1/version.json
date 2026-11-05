@@ -15,14 +15,7 @@
     "Меню просмотрщика: оси «Персона» (вход и пять ключевых персон) и «Язык» открывают нужное состояние без ввода номера; остальные персоны — в демо-панели"
   ],
   "routing": "history",
-  "routes": [
-    "/login",
-    "/c/home",
-    "/c/documents",
-    "/c/help",
-    "/s/home",
-    "/s/help"
-  ],
+  "routes": ["/login", "/c/home", "/c/documents", "/c/help", "/s/home", "/s/help"],
   "axes": [
     {
       "id": "persona",

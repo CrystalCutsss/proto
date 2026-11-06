@@ -32,6 +32,13 @@
       "enum": ["mobile", "desktop"],
       "default": "desktop"
     },
+    "platforms": {
+      "description": "Screens the viewer can switch between on a wide screen; the first view is \"platform\". With both, the menu gets an «Экран» control (Компьютер / Телефон) and the choice goes into the viewer URL as ?screen= (ADR-0025). Without it: only \"platform\".",
+      "type": "array",
+      "items": { "enum": ["mobile", "desktop"] },
+      "minItems": 1,
+      "uniqueItems": true
+    },
     "separatePassword": {
       "description": "Protect this prototype with its own password (Phase 5, ADR-0006).",
       "type": "boolean",

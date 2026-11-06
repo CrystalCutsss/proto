@@ -5,11 +5,13 @@
 //   - mobile prototypes on a phone screen (PHONE_MEDIA): the whole screen, the design's system bars hidden
 //     (?bars=0), and no menu.
 // Elsewhere the bottom menu switches scenario and version (or the version's menu axes, passed to the iframe as
-// query parameters); the viewer URL follows the iframe's screen.
+// query parameters); the viewer URL follows the iframe's screen. A prototype with several platforms also gets an
+// «Экран» control on a wide screen (Компьютер: whole window / Телефон: mockup), kept in the URL as ?screen=
+// (ADR-0025).
 import '@proto/ui/ui.css';
 import './menu.css';
 import './viewer.css';
-import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
+import type { Platform, RegistryPrototype, RegistryVersion } from '@proto/registry';
 import bezelUrl from '../assets/iphone-air-space-black/frame.png?url';
 import maskUrl from '../assets/iphone-air-space-black/mask.png?url';
 import {
@@ -39,6 +41,8 @@ const slug = /^\/p\/([a-z0-9-]+)\/?/.exec(location.pathname)?.[1] ?? '';
 
 let proto: RegistryPrototype;
 let version: RegistryVersion;
+/** Platform the viewer shows now: proto.platform, or another of proto.platforms chosen in the menu (ADR-0025). */
+let screen: Platform;
 let scenarioId: string;
 /** Chosen menu axis items of the version (empty without axes). */
 let axes: Record<string, string> = {};
@@ -54,6 +58,14 @@ const handlers = {
   },
   version: onVersion,
   axis: onAxis,
+  screen(p: Platform) {
+    if (!proto.platforms.includes(p) || p === screen) return;
+    // Moving the iframe into or out of the mockup reloads it from its src attribute: keep the current screen.
+    const key = currentScreen();
+    screen = p;
+    layout();
+    navigate(key);
+  },
 };
 const menu = createMenu(handlers);
 // Phones have no menu: they get the floating variants button with the same controls instead (ADR-0023).
@@ -78,7 +90,7 @@ function onAxis(id: string, value: string) {
 }
 
 const isPhone = () => matchMedia(PHONE_MEDIA).matches;
-const mode = () => (proto.platform === 'mobile' && !isPhone() ? 'device' : 'full');
+const mode = () => (screen === 'mobile' && !isPhone() ? 'device' : 'full');
 
 /** Screen shown in the iframe, as a routes key ("#/cart" or "/cart"). */
 function currentScreen(): string {
@@ -93,16 +105,24 @@ function currentScreen(): string {
 }
 
 function frameSearch() {
-  return axisSearch(axes, proto.platform === 'mobile' && mode() === 'full' ? { bars: '0' } : {});
+  return axisSearch(axes, screen === 'mobile' && mode() === 'full' ? { bars: '0' } : {});
 }
 
 function syncUrl(key = currentScreen()) {
   const kept = menuAxes(proto, version).disabled ? keptAxes : {};
-  history.replaceState(null, '', viewerUrl(slug, version.version, scenarioId, key, axes, kept));
+  history.replaceState(null, '', withScreen(viewerUrl(slug, version.version, scenarioId, key, axes, kept)));
   document.title = `${proto.title} · ${version.version}`;
-  const state = { proto, version, scenario: pickScenario(version, scenarioId), axes, keptAxes };
+  const state = { proto, version, scenario: pickScenario(version, scenarioId), axes, keptAxes, screen };
   menu.update(state);
   variants.update(state);
+}
+
+/** The chosen screen in the viewer URL, only when it is not the prototype's default. */
+function withScreen(url: string) {
+  if (screen === proto.platform) return url;
+  const u = new URL(url, location.origin);
+  u.searchParams.set('screen', screen);
+  return `${u.pathname}${u.search}${u.hash}`;
 }
 
 function navigate(key: string) {
@@ -147,7 +167,7 @@ function layout() {
       stage.replaceChildren(frame);
     }
     // Bars are shown in the mockup and hidden on a phone screen: reload with the right flag.
-    if (frame.src && proto.platform === 'mobile') navigate(currentScreen());
+    if (frame.src && screen === 'mobile') navigate(currentScreen());
   }
   if (m === 'device') {
     const styles = getComputedStyle(body);
@@ -240,6 +260,8 @@ async function start() {
   if (!found) return fail('Прототип не найден.');
   proto = found;
   const params = new URLSearchParams(location.search);
+  const asked = params.get('screen') as Platform | null;
+  screen = asked && (proto.platforms ?? []).includes(asked) ? asked : proto.platform;
   version =
     proto.versions.find((v) => v.version === params.get('v')) ??
     proto.versions.find((v) => v.version === proto.defaultVersion) ??

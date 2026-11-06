@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
-import { menuAxes, menuSummary } from '../src/menu.ts';
+import { hasScreenSwitch, menuAxes, menuSummary, SCREEN_LABEL } from '../src/menu.ts';
 
 const axis = {
   id: 'docs',
@@ -43,5 +43,20 @@ describe('menuSummary', () => {
     const state = { proto: proto(v2), version: v2, scenario: v2.scenarios[0]!, axes: { docs: 'two' } };
     expect(menuSummary(state)).toBe('2 дока');
     expect(menuSummary({ ...state, proto: proto(v('v1'), v2) })).toBe('2 дока · v2');
+  });
+});
+
+describe('screen switch (ADR-0025)', () => {
+  const p = (platforms?: string[]) => ({ platform: 'desktop', platforms }) as unknown as RegistryPrototype;
+
+  it('is offered only for a prototype with several platforms', () => {
+    expect(hasScreenSwitch(p(['desktop', 'mobile']))).toBe(true);
+    expect(hasScreenSwitch(p(['desktop']))).toBe(false);
+    // Registry written before ADR-0025 (no platforms): no switch.
+    expect(hasScreenSwitch(p())).toBe(false);
+  });
+
+  it('labels the screens in Russian', () => {
+    expect(SCREEN_LABEL).toEqual({ desktop: 'Компьютер', mobile: 'Телефон' });
   });
 });

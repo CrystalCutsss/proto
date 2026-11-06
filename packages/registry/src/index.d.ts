@@ -63,6 +63,8 @@ export interface RegistryPrototype {
   separatePassword: boolean;
   /** How the viewer shows the prototype (ADR-0020). */
   platform: Platform;
+  /** Screens the viewer can switch between, `platform` first (ADR-0025); one item: no switch. */
+  platforms: Platform[];
   /** Latest version date, YYYY-MM-DD. */
   updated: string;
   /** Site path, always /p/<slug>/ */

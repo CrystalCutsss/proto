@@ -1,7 +1,7 @@
 /* Menu over every prototype (ADR-0020, ADR-0026): a floating button in the bottom-right corner opens one row of
    tui-segmented controls ("Сценарий" and "Версия", or one captioned control per menu axis) on black glass to its
    left; a second click collapses it. Used by the viewer page and, inside Shadow DOM, by the shell of an installed
-   web app. */
+   web app. --proto-menu-lift raises both above the prototype's own floating button in that corner (cornerLift). */
 .proto-menu {
   --proto-menu-toggle-size: var(--ds-space-12);
 
@@ -10,7 +10,7 @@
   right: calc(
     env(safe-area-inset-right, 0) + var(--ds-space-4) + var(--proto-menu-toggle-size) + var(--ds-space-2)
   );
-  bottom: calc(env(safe-area-inset-bottom, 0) + var(--ds-space-4));
+  bottom: calc(env(safe-area-inset-bottom, 0) + var(--ds-space-4) + var(--proto-menu-lift, 0px));
   display: flex;
   flex-wrap: nowrap;
   gap: var(--ds-space-2);
@@ -82,7 +82,7 @@
   position: fixed;
   z-index: 2147483000;
   right: calc(env(safe-area-inset-right, 0) + var(--ds-space-4));
-  bottom: calc(env(safe-area-inset-bottom, 0) + var(--ds-space-4));
+  bottom: calc(env(safe-area-inset-bottom, 0) + var(--ds-space-4) + var(--proto-menu-lift, 0px));
   display: inline-flex;
   align-items: center;
   justify-content: center;

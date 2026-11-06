@@ -16,6 +16,7 @@ import bezelUrl from '../assets/iphone-air-space-black/frame.png?url';
 import maskUrl from '../assets/iphone-air-space-black/mask.png?url';
 import {
   createMenu,
+  followCornerLift,
   loadRegistryPrototype,
   menuAxes,
   menuToggle,
@@ -165,6 +166,7 @@ function layout() {
     } else if (m === 'full' && device) {
       stage.replaceChildren(frame);
     }
+    syncLift();
     // Bars are shown in the mockup and hidden on a phone screen: reload with the right flag.
     if (frame.src && screen === 'mobile') navigate(currentScreen());
   }
@@ -228,6 +230,23 @@ function syncSafeArea() {
   }
 }
 
+let stopLift: (() => void) | null = null;
+
+/**
+ * On the whole window the prototype's own floating button may sit in the menu button's corner (Tadum's «Demo» in
+ * English): raise the menu button above it (ADR-0026). In the mockup the prototype is inside the phone: no lift.
+ */
+function syncLift() {
+  stopLift?.();
+  stopLift = null;
+  try {
+    const doc = frame.contentDocument;
+    if (doc?.documentElement && mode() === 'full') stopLift = followCornerLift(doc, body);
+  } catch {
+    // cross-origin (should not happen)
+  }
+}
+
 function watchFrame() {
   frame.addEventListener('load', () => {
     syncPageBackground();
@@ -240,6 +259,7 @@ function watchFrame() {
       win.addEventListener('popstate', update);
       toggle.listen(win);
       update();
+      syncLift();
     } catch {
       // cross-origin (should not happen): the URL then follows menu choices only
     }

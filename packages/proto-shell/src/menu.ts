@@ -202,6 +202,75 @@ export function menuToggle(menu: HTMLElement) {
   };
 }
 
+/**
+ * How far to raise the menu button so it sits above the prototype's own floating control in the bottom-right
+ * corner (Tadum's «Demo» in English), stacked with a small gap (ADR-0026). Looks under the button's resting place
+ * in `doc`, which covers the same viewport (the prototype's frame on the whole window, or the page itself): a
+ * fixed element there, smaller than half the screen, lifts the button above its top edge. 0 when the corner is free.
+ */
+export function cornerLift(doc: Document, exclude?: Element): number {
+  const view = doc.defaultView;
+  if (!view) return 0;
+  // Resting place of the button (menu.css): --ds-space-4 from the edges, a --ds-space-12 square; --ds-space-2 gap.
+  const inset = 16;
+  const size = 48;
+  const gap = 8;
+  const { innerWidth: w, innerHeight: h } = view;
+  const xs = [w - inset - size + 2, w - inset - size / 2, w - inset - 2];
+  const ys = [h - inset - size + 2, h - inset - size / 2, h - inset - 2];
+  let top = Infinity;
+  for (const x of xs)
+    for (const y of ys)
+      for (const el of doc.elementsFromPoint(x, y)) {
+        if (exclude?.contains(el)) continue;
+        const fixed = fixedAncestor(el);
+        if (!fixed) continue;
+        const r = fixed.getBoundingClientRect();
+        if (r.height > h / 2 || r.width > w / 2) continue;
+        top = Math.min(top, r.top);
+      }
+  return top === Infinity ? 0 : Math.max(0, Math.ceil(h - top + gap - inset));
+}
+
+function fixedAncestor(el: Element | null): Element | null {
+  for (; el && el !== el.ownerDocument.documentElement; el = el.parentElement) {
+    const position = el.ownerDocument.defaultView!.getComputedStyle(el).position;
+    if (position === 'fixed' || position === 'sticky') return el;
+  }
+  return null;
+}
+
+/** Keep --proto-menu-lift on `target` in step with the prototype in `doc` (renders, route changes, resizes). */
+export function followCornerLift(doc: Document, target: HTMLElement, exclude?: Element) {
+  let queued = false;
+  const update = () => {
+    queued = false;
+    const lift = cornerLift(doc, exclude);
+    if (lift) target.style.setProperty('--proto-menu-lift', `${lift}px`);
+    else target.style.removeProperty('--proto-menu-lift');
+  };
+  const schedule = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(update);
+  };
+  const observer = new MutationObserver(schedule);
+  // Classes and hidden only: style attributes change on every animation frame.
+  observer.observe(doc.documentElement, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: ['class', 'hidden'],
+  });
+  doc.defaultView?.addEventListener('resize', schedule);
+  schedule();
+  return () => {
+    observer.disconnect();
+    doc.defaultView?.removeEventListener('resize', schedule);
+    target.style.removeProperty('--proto-menu-lift');
+  };
+}
+
 export async function loadRegistryPrototype(slug: string) {
   const res = await fetch('/registry.json', { cache: 'no-cache', credentials: 'same-origin' });
   if (!res.ok) throw new Error(`registry.json: HTTP ${res.status}`);

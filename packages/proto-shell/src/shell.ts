@@ -4,7 +4,14 @@
 import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
 import tokensCss from 'virtual:shell-tokens';
 import menuCss from './menu.css?inline';
-import { createMenu, loadRegistryPrototype, menuAxes, menuToggle, pickScenario } from './menu.ts';
+import {
+  createMenu,
+  followCornerLift,
+  loadRegistryPrototype,
+  menuAxes,
+  menuToggle,
+  pickScenario,
+} from './menu.ts';
 import shellCss from './shell.css?inline';
 import { createVariants } from './variants.ts';
 import { axisValues, currentContext, screenUrl, targetUrl } from './switch.ts';
@@ -83,6 +90,8 @@ class ProtoShell extends HTMLElement {
     toggle.listen(window);
     theme.append(menu.element, toggle.button, ...variants.elements);
     this.#root.append(theme);
+    // Above the prototype's own floating button in the same corner, if it has one.
+    followCornerLift(document, theme, this);
   }
 }
 

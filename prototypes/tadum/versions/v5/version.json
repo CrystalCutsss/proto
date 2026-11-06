@@ -1,0 +1,37 @@
+{
+  "$schema": "../../../../packages/registry/schemas/version.schema.json",
+  "version": "v5",
+  "title": "кнопка темы в шапке, меню витрины без «Demo»",
+  "date": "2026-11-06",
+  "author": "Claude",
+  "status": "frozen",
+  "changelog": [
+    "В шапке кабинета после языка, через разделитель, — кнопка темы светлая / тёмная, как на ui.shadcn.com",
+    "У контейнера контента — тень, как в shadcn sidebar-08",
+    "В блоке «Have a question?» у кнопок меньше скругление, WhatsApp — белые иконка и текст",
+    "Кнопки «Demo» и демо-панели больше нет: сценарии и роли выбираются только в меню витрины",
+    "Меню витрины в стиле shadcn: один раздел «Сценарии и роли» — вход по номеру, поставщик, клиент и поставщик"
+  ],
+  "routing": "history",
+  "routes": ["/login", "/c/home", "/c/documents", "/c/help", "/s/home", "/s/documents", "/s/help"],
+  "axes": [
+    {
+      "id": "persona",
+      "title": "Сценарии и роли",
+      "items": [
+        {
+          "id": "login",
+          "title": "Вход по номеру"
+        },
+        {
+          "id": "supplier-active",
+          "title": "Поставщик"
+        },
+        {
+          "id": "dual-active",
+          "title": "Клиент и поставщик"
+        }
+      ]
+    }
+  ]
+}

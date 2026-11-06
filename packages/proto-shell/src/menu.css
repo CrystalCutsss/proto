@@ -1,33 +1,60 @@
-/* Bottom menu over every prototype (ADR-0020): two tui-segmented controls, "Сценарий" and "Версия", on black
-   glass, or one captioned control per menu axis of the version. Used by the viewer page and, inside Shadow DOM, by the shell of an installed web app. */
+/* Menu over every prototype (ADR-0020, ADR-0026): a floating button in the bottom-right corner opens one row of
+   tui-segmented controls ("Сценарий" and "Версия", or one captioned control per menu axis) on black glass to its
+   left; a second click collapses it. Used by the viewer page and, inside Shadow DOM, by the shell of an installed
+   web app. */
 .proto-menu {
+  --proto-menu-toggle-size: var(--ds-space-12);
+
   position: fixed;
   z-index: 2147483000;
+  right: calc(
+    env(safe-area-inset-right, 0) + var(--ds-space-4) + var(--proto-menu-toggle-size) + var(--ds-space-2)
+  );
   bottom: calc(env(safe-area-inset-bottom, 0) + var(--ds-space-4));
-  left: 50%;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: var(--ds-space-2);
-  align-items: center;
-  justify-content: center;
-  max-width: calc(100vw - 2 * var(--ds-space-4));
+  align-items: flex-end;
+  box-sizing: border-box;
+  max-width: calc(100vw - 3 * var(--ds-space-4) - var(--proto-menu-toggle-size));
   padding: var(--ds-space-2);
+  overflow-x: auto;
   border-radius: var(--ds-radius-l);
   color: var(--ds-text-primary);
   background: var(--ds-background-overlay-glass-on-light);
   backdrop-filter: blur(16px);
-  transform: translateX(-50%);
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  transform-origin: right bottom;
   transition:
     opacity var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard),
     transform var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
+}
+
+.proto-menu::-webkit-scrollbar {
+  display: none;
+}
+
+@starting-style {
+  .proto-menu:not([hidden]) {
+    opacity: 0;
+    transform: translateX(var(--ds-space-2)) scale(0.96);
+  }
 }
 
 .proto-menu[hidden] {
   display: none;
 }
 
-.proto-menu ds-segmented {
-  min-width: 0;
+/* One row: the controls keep their width and the whole row scrolls when the window is too narrow. Compact items
+   (the component's own custom properties) keep a long axis such as «Персона» within a desktop window. */
+.proto-menu > * {
+  flex: none;
+}
+
+.proto-menu:not(.proto-menu--sheet) ds-segmented {
+  --seg-item-size: var(--ds-space-10);
+  --seg-item-padding: var(--ds-space-3);
 }
 
 /* Menu axes: a caption above each control, all groups in one panel. */
@@ -51,55 +78,36 @@
   color: var(--ds-text-tertiary);
 }
 
-/* The version control keeps its size; a long scenario list scrolls instead. */
-.proto-menu ds-segmented[data-menu='version'] {
-  flex: none;
-}
-
-.proto-menu-collapse,
-.proto-menu-pill {
+.proto-menu-toggle {
+  position: fixed;
+  z-index: 2147483000;
+  right: calc(env(safe-area-inset-right, 0) + var(--ds-space-4));
+  bottom: calc(env(safe-area-inset-bottom, 0) + var(--ds-space-4));
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: var(--ds-space-12);
+  height: var(--ds-space-12);
+  padding: 0;
   border: 0;
-  font-family: var(--ds-typography-ui-m-font-family);
-  font-size: var(--ds-typography-ui-m-font-size);
-  line-height: var(--ds-typography-ui-m-line-height);
-  color: var(--ds-text-primary);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.proto-menu-collapse {
-  min-width: var(--ds-space-10);
-  min-height: calc(var(--ds-space-12) + var(--ds-space-1));
-  border-radius: var(--ds-radius-m);
-  background: transparent;
-}
-
-.proto-menu-pill {
-  position: fixed;
-  z-index: 2147483000;
-  bottom: calc(env(safe-area-inset-bottom, 0) + var(--ds-space-2));
-  left: 50%;
-  padding: var(--ds-space-1) var(--ds-space-3);
   border-radius: var(--ds-radius-full);
+  color: var(--ds-text-primary);
   background: var(--ds-background-overlay-glass-on-light);
   backdrop-filter: blur(16px);
-  transform: translateX(-50%);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--ds-animation-duration-fast) var(--ds-animation-curve-productive-standard);
 }
 
-.proto-menu-pill[hidden] {
-  display: none;
-}
-
-.proto-menu-collapse:hover,
-.proto-menu-pill:hover {
+.proto-menu-toggle:hover {
   background: var(--ds-state-background-overlay-glass-on-light-hover);
 }
 
-.proto-menu-collapse:focus-visible,
-.proto-menu-pill:focus-visible {
+.proto-menu-toggle:active {
+  transform: scale(0.94);
+}
+
+.proto-menu-toggle:focus-visible {
   outline: var(--ds-border-width-focus) solid var(--ds-border-focus);
 }
 
@@ -108,7 +116,7 @@
    sync with PHONE_MEDIA in menu.ts. */
 @media (width <= 500px), (pointer: coarse) and (height <= 500px) {
   .proto-menu,
-  .proto-menu-pill {
+  .proto-menu-toggle {
     display: none;
   }
 
@@ -208,6 +216,7 @@
   gap: var(--ds-space-3);
   max-width: none;
   padding: 0;
+  overflow: visible;
   background: none;
   backdrop-filter: none;
   transform: none;
@@ -215,6 +224,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .proto-menu,
+  .proto-menu-toggle,
   .proto-variants-fab {
     transition: none;
   }

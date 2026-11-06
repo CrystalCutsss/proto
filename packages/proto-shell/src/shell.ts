@@ -4,15 +4,7 @@
 import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
 import tokensCss from 'virtual:shell-tokens';
 import menuCss from './menu.css?inline';
-import {
-  collapsible,
-  createMenu,
-  hideShortcut,
-  loadRegistryPrototype,
-  menuAxes,
-  menuSummary,
-  pickScenario,
-} from './menu.ts';
+import { createMenu, loadRegistryPrototype, menuAxes, menuToggle, pickScenario } from './menu.ts';
 import shellCss from './shell.css?inline';
 import { createVariants } from './variants.ts';
 import { axisValues, currentContext, screenUrl, targetUrl } from './switch.ts';
@@ -86,8 +78,10 @@ class ProtoShell extends HTMLElement {
     this.#root.innerHTML = `<style>${tokensCss.replaceAll(':root', ':host')}${shellCss}${menuCss}</style>`;
     const theme = document.createElement('div');
     theme.dataset.dsTheme = 'night';
-    hideShortcut(menu.element, [window]);
-    theme.append(menu.element, collapsible(menu.element, menuSummary(state)), ...variants.elements);
+    // Tablets and desktops: the menu opens from a floating button in the bottom-right corner (ADR-0026).
+    const toggle = menuToggle(menu.element);
+    toggle.listen(window);
+    theme.append(menu.element, toggle.button, ...variants.elements);
     this.#root.append(theme);
   }
 }

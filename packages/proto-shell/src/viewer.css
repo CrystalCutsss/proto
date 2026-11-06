@@ -40,7 +40,7 @@
 /* Phone screen: no menu (menu.css); the prototype fills the screen down to the bottom edge. Safe-area insets
    do not reach into the iframe, so viewer.ts hands them over as --proto-safe-area-inset-* (loader.js). */
 .viewer[data-phone] .viewer-frame {
-  height: calc(100% - var(--viewer-menu-space, 0px));
+  height: 100%;
   border-radius: 0;
 }
 
@@ -71,7 +71,6 @@
 .viewer[data-mode='device'] .viewer-stage {
   display: grid;
   place-items: center;
-  bottom: var(--viewer-menu-space, 0);
 }
 
 .viewer-device {

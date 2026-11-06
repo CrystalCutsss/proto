@@ -1,12 +1,7 @@
 // Phone screens get no bottom menu (ADR-0021). A version with menu axes, or a later version that shows them greyed
 // out, gets a small floating button in the bottom-right corner there instead; it opens a modal sheet with the same
 // captioned axis controls and the version control (ADR-0023, ADR-0024).
-import { createMenu, menuAxes, type MenuHandlers, type MenuState } from './menu.ts';
-
-/** Sliders glyph drawn with currentColor (no asset, no CDN). */
-const ICON = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
-  stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"/><circle cx="16" cy="7" r="2.5"/>
-  <circle cx="10" cy="17" r="2.5"/></svg>`;
+import { createMenu, MENU_ICON, menuAxes, type MenuHandlers, type MenuState } from './menu.ts';
 
 let count = 0;
 
@@ -22,7 +17,7 @@ export function createVariants(handlers: MenuHandlers) {
   fab.className = 'proto-variants-fab';
   fab.setAttribute('aria-label', 'Варианты прототипа');
   fab.setAttribute('aria-haspopup', 'dialog');
-  fab.innerHTML = ICON;
+  fab.innerHTML = MENU_ICON;
 
   const dialog = document.createElement('dialog');
   dialog.className = 'proto-variants';

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
-import { hasScreenSwitch, menuAxes, menuSummary, SCREEN_LABEL } from '../src/menu.ts';
+import { hasScreenSwitch, menuAxes, menuSummary, menuToggle, SCREEN_LABEL } from '../src/menu.ts';
 
 const axis = {
   id: 'docs',
@@ -57,6 +57,32 @@ describe('screen switch (ADR-0025)', () => {
   });
 
   it('labels the screens in Russian', () => {
-    expect(SCREEN_LABEL).toEqual({ desktop: 'Компьютер', mobile: 'Телефон' });
+    expect(SCREEN_LABEL).toEqual({ desktop: 'ПК', mobile: 'Телефон' });
+  });
+});
+
+describe('menuToggle (ADR-0026)', () => {
+  it('starts collapsed, and the button opens and closes the menu', () => {
+    const menu = document.createElement('nav');
+    const { button } = menuToggle(menu);
+    expect(menu.hidden).toBe(true);
+    expect(button.getAttribute('aria-expanded')).toBe('false');
+    expect(button.getAttribute('aria-controls')).toBe(menu.id);
+    button.click();
+    expect(menu.hidden).toBe(false);
+    expect(button.getAttribute('aria-expanded')).toBe('true');
+    button.click();
+    expect(menu.hidden).toBe(true);
+  });
+
+  it('toggles on Alt+Shift+H in a listened window', () => {
+    const menu = document.createElement('nav');
+    menuToggle(menu).listen(window);
+    const press = () =>
+      window.dispatchEvent(new KeyboardEvent('keydown', { altKey: true, shiftKey: true, code: 'KeyH' }));
+    press();
+    expect(menu.hidden).toBe(false);
+    press();
+    expect(menu.hidden).toBe(true);
   });
 });

@@ -2,11 +2,10 @@
 // with menu axes (version.json → axes) gets one captioned control per axis instead, plus the captioned version
 // control when the prototype has several versions. A version without axes that follows a version with them shows
 // that version's axes greyed out (disabled): they work only there (ADR-0024). A prototype with several platforms
-// gets an «Экран» control (Компьютер / Телефон) at the end, when the caller handles it (ADR-0025).
+// gets an «Экран» control (ПК / Телефон) at the end, when the caller handles it (ADR-0025). On wide screens the
+// menu is one row next to a floating button in the bottom-right corner and starts collapsed (ADR-0026).
 import type { Axis, Platform, RegistryPrototype, RegistryVersion, Scenario } from '@proto/registry';
 import { defineElements, type DsSegmented } from '@proto/ui';
-
-export const HIDDEN_KEY = 'proto-shell:hidden';
 
 /**
  * Mobile browser: a phone screen in portrait or landscape. There the viewer shows a mobile prototype
@@ -35,7 +34,7 @@ export interface MenuState {
 }
 
 /** Labels of the «Экран» control. */
-export const SCREEN_LABEL: Record<Platform, string> = { desktop: 'Компьютер', mobile: 'Телефон' };
+export const SCREEN_LABEL: Record<Platform, string> = { desktop: 'ПК', mobile: 'Телефон' };
 
 /** Whether the menu offers the «Экран» control for this prototype. */
 export const hasScreenSwitch = (proto: RegistryPrototype) => (proto.platforms?.length ?? 1) > 1;
@@ -113,10 +112,9 @@ export function createMenu(handlers: MenuHandlers) {
     if (key === layoutKey) return;
     layoutKey = key;
     axisControls = new Map();
-    const keep = [...nav.children].filter((c) => c.matches('.proto-menu-collapse'));
     const screenGroup = screens ? [captioned('Экран', screen)] : [];
     if (!axes.length) {
-      nav.replaceChildren(scenario, version, ...screenGroup, ...keep);
+      nav.replaceChildren(scenario, version, ...screenGroup);
       return;
     }
     const groups = axes.map((a) => {
@@ -140,7 +138,6 @@ export function createMenu(handlers: MenuHandlers) {
       ...own,
       ...(versions ? [captioned('Версия', version)] : []),
       ...screenGroup,
-      ...keep,
     );
   }
 
@@ -164,61 +161,45 @@ export function createMenu(handlers: MenuHandlers) {
   };
 }
 
-const sessionGet = (key: string) => {
-  try {
-    return sessionStorage.getItem(key);
-  } catch {
-    return null;
-  }
-};
-const sessionSet = (key: string, value: string | null) => {
-  try {
-    if (value === null) sessionStorage.removeItem(key);
-    else sessionStorage.setItem(key, value);
-  } catch {
-    // storage may be blocked; hiding then lasts until reload
-  }
-};
+/** Sliders glyph drawn with currentColor (no asset, no CDN): the menu button here and on phones (variants.ts). */
+export const MENU_ICON = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+  stroke-linecap="round" aria-hidden="true"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"/><circle cx="16" cy="7" r="2.5"/>
+  <circle cx="10" cy="17" r="2.5"/></svg>`;
+const CLOSE_ICON = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+  stroke-linecap="round" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17"/></svg>`;
 
-/** Show or hide the menu; the choice lasts for the browser session. */
-export function setMenuHidden(menu: HTMLElement, hidden: boolean) {
-  menu.hidden = hidden;
-  sessionSet(HIDDEN_KEY, hidden ? '1' : null);
-}
-
-/** Alt+Shift+H hides and shows the menu. */
-export function hideShortcut(menu: HTMLElement, targets: (Window | null | undefined)[]) {
-  menu.hidden = sessionGet(HIDDEN_KEY) === '1';
-  const onKey = (e: KeyboardEvent) => {
-    if (e.altKey && e.shiftKey && e.code === 'KeyH') setMenuHidden(menu, !menu.hidden);
-  };
-  for (const t of targets) t?.addEventListener('keydown', onKey as EventListener);
-}
+let menuCount = 0;
 
 /**
- * Touch screens have no shortcut: a collapse button at the end of the menu hides it, and a small pill with the current
- * scenario and version brings it back. Used by the installed-app shell, where the menu covers the page.
+ * Floating button in the bottom-right corner that opens the menu next to it and closes it again (ADR-0026). The
+ * menu starts collapsed on every page load; Alt+Shift+H toggles it too, from the page and from the prototype's frame.
  */
-export function collapsible(menu: HTMLElement, summary: string) {
-  const collapse = document.createElement('button');
-  collapse.type = 'button';
-  collapse.className = 'proto-menu-collapse';
-  collapse.setAttribute('aria-label', 'Свернуть меню');
-  collapse.textContent = '⌄';
-  const pill = document.createElement('button');
-  pill.type = 'button';
-  pill.className = 'proto-menu-pill';
-  pill.setAttribute('aria-label', 'Показать меню сценария и версии');
-  pill.textContent = `${summary} ⌃`;
-  menu.append(collapse);
-  collapse.addEventListener('click', () => setMenuHidden(menu, true));
-  pill.addEventListener('click', () => setMenuHidden(menu, false));
-  const sync = () => {
-    pill.hidden = !menu.hidden;
+export function menuToggle(menu: HTMLElement) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'proto-menu-toggle';
+  button.setAttribute('aria-label', 'Меню прототипа');
+  menu.id ||= `proto-menu-${++menuCount}`;
+  button.setAttribute('aria-controls', menu.id);
+  const setOpen = (open: boolean) => {
+    menu.hidden = !open;
+    button.setAttribute('aria-expanded', String(open));
+    button.innerHTML = open ? CLOSE_ICON : MENU_ICON;
   };
-  new MutationObserver(sync).observe(menu, { attributes: true, attributeFilter: ['hidden'] });
-  sync();
-  return pill;
+  const isOpen = () => button.getAttribute('aria-expanded') === 'true';
+  setOpen(false);
+  button.addEventListener('click', () => setOpen(!isOpen()));
+  const onKey = (e: KeyboardEvent) => {
+    if (e.altKey && e.shiftKey && e.code === 'KeyH') setOpen(!isOpen());
+  };
+  return {
+    button,
+    setOpen,
+    /** Listen for Alt+Shift+H in another window (the prototype's frame after each load). */
+    listen(target: Window | null | undefined) {
+      target?.addEventListener('keydown', onKey as EventListener);
+    },
+  };
 }
 
 export async function loadRegistryPrototype(slug: string) {

@@ -1,4 +1,7 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+/** The viewer menu starts collapsed: open it with the floating button (ADR-0026). */
+const openMenu = (page: Page) => page.getByRole('button', { name: 'Меню прототипа' }).click();
 
 test('main lists prototype cards without search or filters', async ({ page }) => {
   const registry = await (await page.request.get('/registry.json')).json();
@@ -59,6 +62,21 @@ test('desktop prototypes fill the window; the menu switches versions keeping kno
   expect(await frame.boundingBox()).toEqual({ x: 0, y: 0, width: 1280, height: 800 });
   await expect(page.locator('.viewer-bezel')).toHaveCount(0);
 
+  // The menu starts collapsed; the button in the bottom-right corner opens it in one row and closes it again.
+  const menu = page.getByRole('navigation', { name: 'Сценарий и версия' });
+  const toggle = page.getByRole('button', { name: 'Меню прототипа' });
+  await expect(menu).toBeHidden();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  const corner = (await toggle.boundingBox())!;
+  expect(1280 - corner.x - corner.width).toBeLessThanOrEqual(24);
+  expect(800 - corner.y - corner.height).toBeLessThanOrEqual(24);
+  await toggle.click();
+  await expect(menu).toBeVisible();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await toggle.click();
+  await expect(menu).toBeHidden();
+  await toggle.click();
+
   const version = page.getByRole('radiogroup', { name: 'Версия' });
   await expect(page.getByRole('radiogroup', { name: 'Сценарий' }).getByRole('radio')).toHaveText([
     'Основной',
@@ -71,6 +89,7 @@ test('desktop prototypes fill the window; the menu switches versions keeping kno
 
   await page.goto('/p/demo-basic/?v=v2#/settings');
   await expect(page.frameLocator('iframe').locator('h1')).toHaveText('Настройки');
+  await openMenu(page);
   await version.getByRole('radio', { name: 'v1' }).click();
   await expect(page).toHaveURL(/\?v=v1&s=main$/);
 });
@@ -91,6 +110,7 @@ test('mobile prototypes sit in the iPhone mockup with their status bar on a wide
     375, 812,
   ]);
 
+  await openMenu(page);
   const scenario = page.getByRole('radiogroup', { name: 'Сценарий' });
   await scenario.getByRole('radio', { name: 'Успех' }).click();
   await expect(page).toHaveURL(/\?v=v1&s=success#\/success$/);
@@ -103,7 +123,13 @@ test('a version with menu axes shows one captioned control per axis and the vers
   await page.goto('/p/credit-activation/?v=v2');
   await expect(page).toHaveURL(/\?v=v2&product=kn&pledge=auto&docs=one$/);
   const menu = page.getByRole('navigation', { name: 'Сценарий и версия' });
+  await openMenu(page);
   await expect(menu.locator('.proto-menu-caption')).toHaveText(['Сценарий', 'Залог', 'Документы', 'Версия']);
+  // All controls in one row.
+  const tops = await menu
+    .locator('ds-segmented')
+    .evaluateAll((els) => els.map((el) => el.getBoundingClientRect().bottom));
+  expect(new Set(tops).size).toBe(1);
   await expect(page.getByRole('radiogroup', { name: 'Версия' }).getByRole('radio')).toHaveText([
     'v1',
     'v2',
@@ -137,6 +163,7 @@ test('a version with menu axes shows one captioned control per axis and the vers
   await expect(product.getByRole('radio', { name: 'КН' })).toBeDisabled();
   // A reload keeps the greyed-out choice.
   await page.reload();
+  await openMenu(page);
   await expect(product.getByRole('radio', { name: 'ОК' })).toHaveAttribute('aria-checked', 'true');
   await page.getByRole('radiogroup', { name: 'Версия' }).getByRole('radio', { name: 'v2' }).click();
   await expect(page).toHaveURL(/\?v=v2&product=ok&pledge=auto&docs=two$/);
@@ -145,6 +172,7 @@ test('a version with menu axes shows one captioned control per axis and the vers
   // A version opened directly keeps its axis values on the way to the viewer.
   await page.goto('/p/credit-activation/v2/?pledge=both#/options');
   await expect(page).toHaveURL(/\?v=v2&product=kn&pledge=both&docs=one#\/options$/);
+  await openMenu(page);
   await expect(
     page.getByRole('radiogroup', { name: 'Залог' }).getByRole('radio', { name: '2 залога' }),
   ).toHaveAttribute('aria-checked', 'true');
@@ -185,14 +213,15 @@ test('on a phone a version with menu axes gets a floating variants button and sh
   await sheet.getByRole('button', { name: 'Готово' }).click();
   await expect(sheet).toBeHidden();
 
-  // Versions before any axes keep no button; wide screens keep the bottom menu instead.
+  // Versions before any axes keep no button; wide screens keep the corner menu button instead.
   await page.goto('/p/credit-activation/?v=v1');
   await expect(page.locator('iframe')).toBeVisible();
   await expect(fab).toBeHidden();
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/p/credit-activation/?v=v2');
-  await expect(page.getByRole('radiogroup', { name: 'Залог' })).toBeVisible();
   await expect(fab).toBeHidden();
+  await openMenu(page);
+  await expect(page.getByRole('radiogroup', { name: 'Залог' })).toBeVisible();
 });
 
 test.describe('a phone in landscape', () => {
@@ -222,7 +251,7 @@ test('an installed web app hides the design bars; the menu is collapsible on tab
   await expect(page.locator('.status-bar').first()).toBeHidden();
   await expect(page.locator('proto-shell')).toBeAttached();
   await expect(page.getByRole('navigation', { name: 'Сценарий и версия' })).toBeHidden();
-  await expect(page.getByRole('button', { name: 'Показать меню сценария и версии' })).toBeHidden();
+  await expect(page.getByRole('button', { name: 'Меню прототипа' })).toBeHidden();
 
   await page.setViewportSize({ width: 820, height: 1180 });
   await page.goto('/p/credit-activation/v1/?proto-display=standalone#/');
@@ -230,16 +259,20 @@ test('an installed web app hides the design bars; the menu is collapsible on tab
   await expect(page.locator('html')).toHaveAttribute('data-proto-display', 'standalone');
   await expect(page.locator('.status-bar').first()).toBeHidden();
   const version = page.getByRole('radiogroup', { name: 'Версия' });
+  await expect(version).toBeHidden();
+  await openMenu(page);
   await expect(version.getByRole('radio', { name: 'v1' })).toHaveAttribute('aria-checked', 'true');
   await page.getByRole('radiogroup', { name: 'Сценарий' }).getByRole('radio', { name: 'Условия' }).click();
   await expect(page).toHaveURL(/\/v1\/\?proto-display=standalone&s=conditions#\/conditions$/);
-  await page.getByRole('button', { name: 'Свернуть меню' }).click();
+  // The next page starts collapsed again; the button opens and closes the menu.
   await expect(version).toBeHidden();
-  await page.getByRole('button', { name: 'Показать меню сценария и версии' }).click();
+  await openMenu(page);
   await expect(version).toBeVisible();
+  await openMenu(page);
+  await expect(version).toBeHidden();
 });
 
-test('?shell=0 keeps the bare version page and Alt+Shift+H hides the menu', async ({ page }) => {
+test('?shell=0 keeps the bare version page and Alt+Shift+H toggles the menu', async ({ page }) => {
   await page.goto('/p/demo-basic/v2/?shell=0');
   await expect(page.locator('h1')).toBeVisible();
   await page.waitForTimeout(1000);
@@ -247,9 +280,15 @@ test('?shell=0 keeps the bare version page and Alt+Shift+H hides the menu', asyn
 
   await page.goto('/p/demo-basic/');
   const menu = page.getByRole('navigation', { name: 'Сценарий и версия' });
+  await expect(page.locator('iframe')).toBeAttached();
+  await expect(menu).toBeHidden();
+  await page.keyboard.press('Alt+Shift+KeyH');
   await expect(menu).toBeVisible();
   await page.keyboard.press('Alt+Shift+KeyH');
   await expect(menu).toBeHidden();
+  // Every page load starts with the menu collapsed.
+  await page.keyboard.press('Alt+Shift+KeyH');
+  await expect(menu).toBeVisible();
   await page.reload();
   await expect(page.locator('iframe')).toBeAttached();
   await expect(menu).toBeHidden();

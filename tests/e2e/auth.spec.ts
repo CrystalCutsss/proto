@@ -13,8 +13,9 @@ test('a deep link asks for the password and returns to the same page', async ({ 
 
   await page.getByLabel('Пароль').fill(AUTH_PASSWORD);
   await page.getByRole('button', { name: 'Войти' }).click();
-  // Back on the version, which moves into the viewer with its menu.
+  // Back on the version, which moves into the viewer with its menu button.
   await expect(page).toHaveURL(/\/p\/demo-basic\/\?v=v2&s=main$/);
+  await page.getByRole('button', { name: 'Меню прототипа' }).click();
   await expect(page.getByRole('navigation', { name: 'Сценарий и версия' })).toBeVisible();
 
   const cookies = await page.context().cookies();

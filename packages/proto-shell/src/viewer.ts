@@ -4,9 +4,9 @@
 //     with the system bars drawn by the design;
 //   - mobile prototypes on a phone screen (PHONE_MEDIA): the whole screen, the design's system bars hidden
 //     (?bars=0), and no menu.
-// Elsewhere the bottom menu switches scenario and version (or the version's menu axes, passed to the iframe as
+// Elsewhere the menu (a floating button in the bottom-right corner, ADR-0026) switches scenario and version (or the version's menu axes, passed to the iframe as
 // query parameters); the viewer URL follows the iframe's screen. A prototype with several platforms also gets an
-// «Экран» control on a wide screen (Компьютер: whole window / Телефон: mockup), kept in the URL as ?screen=
+// «Экран» control on a wide screen (ПК: whole window / Телефон: mockup), kept in the URL as ?screen=
 // (ADR-0025).
 import '@proto/ui/ui.css';
 import './menu.css';
@@ -16,9 +16,9 @@ import bezelUrl from '../assets/iphone-air-space-black/frame.png?url';
 import maskUrl from '../assets/iphone-air-space-black/mask.png?url';
 import {
   createMenu,
-  hideShortcut,
   loadRegistryPrototype,
   menuAxes,
+  menuToggle,
   PHONE_MEDIA,
   pickScenario,
 } from './menu.ts';
@@ -68,6 +68,8 @@ const handlers = {
   },
 };
 const menu = createMenu(handlers);
+// Wide screens: the menu opens from a floating button in the bottom-right corner, collapsed at first (ADR-0026).
+const toggle = menuToggle(menu.element);
 // Phones have no menu: they get the floating variants button with the same controls instead (ADR-0023).
 const variants = createVariants(handlers);
 
@@ -143,9 +145,6 @@ function layout() {
   body.toggleAttribute('data-phone', isPhone());
   syncPageBackground();
   syncSafeArea();
-  // No space for a menu that is hidden (Alt+Shift+H) or not shown at all (mobile browsers, menu.css).
-  const menuSpace = menu.element.getClientRects().length ? menu.element.offsetHeight + 32 : 0;
-  body.style.setProperty('--viewer-menu-space', `${menuSpace}px`);
   if (body.dataset.mode !== m) {
     body.dataset.mode = m;
     body.classList.toggle('ds-stage', m === 'device');
@@ -173,7 +172,7 @@ function layout() {
     const styles = getComputedStyle(body);
     const deviceHeight = parseFloat(styles.getPropertyValue('--device-height')) || 871;
     const deviceWidth = parseFloat(styles.getPropertyValue('--device-width')) || 433;
-    const scale = Math.min(1, (innerHeight - menuSpace - 32) / deviceHeight, (innerWidth - 32) / deviceWidth);
+    const scale = Math.min(1, (innerHeight - 32) / deviceHeight, (innerWidth - 32) / deviceWidth);
     body.style.setProperty('--device-scale', String(Math.max(0.3, scale)));
   }
 }
@@ -239,7 +238,7 @@ function watchFrame() {
       const update = () => syncUrl();
       win.addEventListener('hashchange', update);
       win.addEventListener('popstate', update);
-      hideShortcut(menu.element, [win]);
+      toggle.listen(win);
       update();
     } catch {
       // cross-origin (should not happen): the URL then follows menu choices only
@@ -277,15 +276,12 @@ async function start() {
   frame.title = proto.title;
   frame.allow = 'clipboard-write; fullscreen';
   watchFrame();
-  document.body.append(menu.element, ...variants.elements, safeArea);
-  hideShortcut(menu.element, [window]);
+  document.body.append(menu.element, toggle.button, ...variants.elements, safeArea);
+  toggle.listen(window);
   stage.replaceChildren(frame);
   layout();
   navigate(key);
   addEventListener('resize', layout);
-  new MutationObserver(layout).observe(menu.element, { attributes: true, attributeFilter: ['hidden'] });
-  // The menu's height changes when its controls are rebuilt (menu axes) or wrap.
-  new ResizeObserver(() => layout()).observe(menu.element);
 }
 
 start().catch((err: Error) => fail(`Не удалось открыть прототип: ${err.message}`));

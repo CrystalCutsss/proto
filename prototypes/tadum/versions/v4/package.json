@@ -1,0 +1,14 @@
+{
+  "name": "@proto/tadum--v4",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Замороженная сборка из репозитория tadum (pnpm run release:proto). Исходников здесь нет.",
+  "scripts": {
+    "build": "proto-frozen-build",
+    "typecheck": "proto-frozen-build --check"
+  },
+  "devDependencies": {
+    "@proto/build-kit": "workspace:*"
+  }
+}

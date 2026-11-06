@@ -97,9 +97,10 @@ test('desktop prototypes fill the window; the menu switches versions keeping kno
 test("the menu button keeps its corner below the prototype's own button (Tadum «Demo»)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const toggle = page.getByRole('button', { name: 'Меню прототипа' });
-  // English: since Tadum v3 «Demo» sits above the menu button's corner (owner, 2026-11-06), so the button stays
+  // English: in Tadum v3–v4 «Demo» sits above the menu button's corner (owner, 2026-11-06), so the button stays
   // in place and «Demo» stacks above it; cornerLift (ADR-0026) still lifts the button over anything in the corner.
-  await page.goto('/p/tadum/?lang=en');
+  // Pinned to v4: from v5 Tadum has no «Demo» button (ADR-0027) and /p/tadum/ opens the latest version.
+  await page.goto('/p/tadum/?v=v4&lang=en');
   const demo = page.frameLocator('iframe').getByRole('button', { name: 'Demo' });
   await expect(demo).toBeVisible();
   await expect.poll(async () => 900 - ((await toggle.boundingBox())!.y + 48)).toBe(16);
@@ -124,7 +125,7 @@ test("the menu button keeps its corner below the prototype's own button (Tadum �
   await expect(menu).toBeHidden();
   await expect(demo).toBeVisible();
   // Arabic: «Demo» is in the bottom-left corner, the menu button stays in its own.
-  await page.goto('/p/tadum/?lang=ar');
+  await page.goto('/p/tadum/?v=v4&lang=ar');
   await expect(page.frameLocator('iframe').locator('[dir="rtl"]').first()).toBeAttached();
   await expect.poll(async () => 900 - ((await toggle.boundingBox())!.y + 48)).toBe(16);
 });

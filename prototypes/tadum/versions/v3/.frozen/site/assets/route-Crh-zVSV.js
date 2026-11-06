@@ -1,0 +1,1 @@
+import{j as t,l as o}from"./index-2UPOCr8K.js";import{a as i}from"./cabinet-layout-CjGcjt6W.js";import"./sheet-Dpziw5lb.js";import"./use-switch-language-CoQaV7ge.js";import"./support-bar-bexaNh3w.js";import"./wordmark-Cz2JdQqc.js";import"./ltr-DXR67S40.js";const l=()=>t.jsx(i,{family:"client",children:t.jsx(o,{})});export{l as component};

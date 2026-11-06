@@ -1,0 +1,1 @@
+import{j as t,c as o}from"./index-Qgx7Pd9f.js";import{a as p}from"./cabinet-layout-CG-O27hs.js";import"./use-switch-theme-BJkWoSln.js";import"./wordmark-DmurBRdt.js";import"./ltr-CqY9yyET.js";const e=()=>t.jsx(p,{family:"supplier",children:t.jsx(o,{})});export{e as component};

@@ -1,0 +1,1 @@
+const s={length:4,ttl_ms:3e5,max_attempts:5,resend_after_ms:4e4,rate_limit:{max_requests:3,window_ms:6e5}},_=720*60*6e4,t=2e3,e=1e4,a={min_ms:300,max_ms:800,slow_factor:4};export{t as M,s as O,_ as S,a,e as b};

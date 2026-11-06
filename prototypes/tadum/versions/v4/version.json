@@ -1,0 +1,60 @@
+{
+  "$schema": "../../../../packages/registry/schemas/version.schema.json",
+  "version": "v4",
+  "title": "курсор в меню аккаунта, «Demo» на телефоне",
+  "date": "2026-11-06",
+  "author": "Claude",
+  "status": "frozen",
+  "changelog": [
+    "Пункты меню аккаунта (Client, Supplier, Settings, Sign out) — курсор «рука» при наведении",
+    "На телефоне (экран до 500 px) кнопка «Demo» стоит над круглой кнопкой вариантов Proto и не перекрывает её; на планшете и десктопе — как в v3"
+  ],
+  "routing": "history",
+  "routes": ["/login", "/c/home", "/c/documents", "/c/help", "/s/home", "/s/documents", "/s/help"],
+  "axes": [
+    {
+      "id": "persona",
+      "title": "Персона",
+      "items": [
+        {
+          "id": "login",
+          "title": "Вход по номеру"
+        },
+        {
+          "id": "client-new",
+          "title": "Клиент: новая заявка"
+        },
+        {
+          "id": "client-submitted",
+          "title": "Клиент: на проверке"
+        },
+        {
+          "id": "client-active",
+          "title": "Клиент: лимит активен"
+        },
+        {
+          "id": "supplier-active",
+          "title": "Поставщик"
+        },
+        {
+          "id": "dual-active",
+          "title": "Клиент и поставщик"
+        }
+      ]
+    },
+    {
+      "id": "lang",
+      "title": "Язык",
+      "items": [
+        {
+          "id": "en",
+          "title": "English"
+        },
+        {
+          "id": "ar",
+          "title": "العربية"
+        }
+      ]
+    }
+  ]
+}

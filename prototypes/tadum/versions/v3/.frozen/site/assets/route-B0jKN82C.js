@@ -1,0 +1,1 @@
+import{j as r}from"./index-2UPOCr8K.js";import{C as o}from"./cabinet-layout-CjGcjt6W.js";import"./sheet-Dpziw5lb.js";import"./use-switch-language-CoQaV7ge.js";import"./support-bar-bexaNh3w.js";import"./wordmark-Cz2JdQqc.js";import"./ltr-DXR67S40.js";const a=()=>r.jsx(o,{family:"supplier"});export{a as errorComponent};

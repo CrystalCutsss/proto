@@ -94,25 +94,27 @@ test('desktop prototypes fill the window; the menu switches versions keeping kno
   await expect(page).toHaveURL(/\?v=v1&s=main$/);
 });
 
-test("the menu button stacks above the prototype's own button in its corner (Tadum «Demo»)", async ({
-  page,
-}) => {
+test("the menu button keeps its corner below the prototype's own button (Tadum «Demo»)", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const toggle = page.getByRole('button', { name: 'Меню прототипа' });
-  // English: Tadum's «Demo» sits in the bottom-right corner; the menu button moves above it, aligned and apart.
+  // English: since Tadum v3 «Demo» sits above the menu button's corner (owner, 2026-11-06), so the button stays
+  // in place and «Demo» stacks above it; cornerLift (ADR-0026) still lifts the button over anything in the corner.
   await page.goto('/p/tadum/?lang=en');
   const demo = page.frameLocator('iframe').getByRole('button', { name: 'Demo' });
   await expect(demo).toBeVisible();
+  await expect.poll(async () => 900 - ((await toggle.boundingBox())!.y + 48)).toBe(16);
   await expect
     .poll(async () => {
       const [t, d] = [(await toggle.boundingBox())!, (await demo.boundingBox())!];
-      return t.y + t.height <= d.y && d.y - (t.y + t.height) <= 16;
+      return d.y + d.height <= t.y && t.y - (d.y + d.height) <= 40;
     })
     .toBe(true);
   await toggle.click();
   const menu = page.getByRole('navigation', { name: 'Сценарий и версия' });
   const [m, d] = [(await menu.boundingBox())!, (await demo.boundingBox())!];
-  expect(m.y + m.height).toBeLessThanOrEqual(d.y);
+  // The open menu row does not cover «Demo».
+  const overlaps = m.x < d.x + d.width && d.x < m.x + m.width && m.y < d.y + d.height && d.y < m.y + m.height;
+  expect(overlaps).toBe(false);
   // Arabic: «Demo» is in the bottom-left corner, the menu button stays in its own.
   await page.goto('/p/tadum/?lang=ar');
   await expect(page.frameLocator('iframe').locator('[dir="rtl"]').first()).toBeAttached();

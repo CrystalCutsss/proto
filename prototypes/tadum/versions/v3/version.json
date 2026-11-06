@@ -1,0 +1,61 @@
+{
+  "$schema": "../../../../packages/registry/schemas/version.schema.json",
+  "version": "v3",
+  "title": "витрина: английский и светлая тема по умолчанию",
+  "date": "2026-11-06",
+  "author": "Claude",
+  "status": "frozen",
+  "changelog": [
+    "Витрина открывается на английском и в светлой теме; в меню просмотрщика English — первый пункт оси «Язык»",
+    "Арабский и тёмная тема по-прежнему доступны: меню «Язык», переключатель языка в шапке, тема — в «Settings»",
+    "Кнопка «Demo» стоит над кнопкой меню оболочки Proto и не перекрывает её"
+  ],
+  "routing": "history",
+  "routes": ["/login", "/c/home", "/c/documents", "/c/help", "/s/home", "/s/documents", "/s/help"],
+  "axes": [
+    {
+      "id": "persona",
+      "title": "Персона",
+      "items": [
+        {
+          "id": "login",
+          "title": "Вход по номеру"
+        },
+        {
+          "id": "client-new",
+          "title": "Клиент: новая заявка"
+        },
+        {
+          "id": "client-submitted",
+          "title": "Клиент: на проверке"
+        },
+        {
+          "id": "client-active",
+          "title": "Клиент: лимит активен"
+        },
+        {
+          "id": "supplier-active",
+          "title": "Поставщик"
+        },
+        {
+          "id": "dual-active",
+          "title": "Клиент и поставщик"
+        }
+      ]
+    },
+    {
+      "id": "lang",
+      "title": "Язык",
+      "items": [
+        {
+          "id": "en",
+          "title": "English"
+        },
+        {
+          "id": "ar",
+          "title": "العربية"
+        }
+      ]
+    }
+  ]
+}

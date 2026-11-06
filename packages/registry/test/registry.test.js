@@ -100,6 +100,20 @@ describe('buildRegistry', () => {
     expect(validateMetadata('prototype', proto({ platform: 'tablet' }))[0]?.pointer).toBe('/platform');
   });
 
+  it('passes the viewer menu settings with defaults (ADR-0027)', () => {
+    put('prototypes/demo/prototype.json', proto());
+    addVersion('demo', 'v1');
+    expect(buildRegistry(root).prototypes[0]?.menu).toEqual({ versions: true, style: 'ds' });
+
+    put('prototypes/demo/prototype.json', proto({ menu: { versions: false, style: 'shadcn' } }));
+    expect(buildRegistry(root).prototypes[0]?.menu).toEqual({ versions: false, style: 'shadcn' });
+
+    expect(validateMetadata('prototype', proto({ menu: { style: 'material' } }))[0]?.pointer).toBe(
+      '/menu/style',
+    );
+    expect(validateMetadata('prototype', proto({ menu: { extra: true } }))[0]?.pointer).toBe('/menu');
+  });
+
   it('lists the platforms the viewer can switch between, default first (ADR-0025)', () => {
     put('prototypes/demo/prototype.json', proto());
     addVersion('demo', 'v1');

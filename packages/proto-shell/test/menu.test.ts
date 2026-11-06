@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
-import { hasScreenSwitch, menuAxes, menuSummary, menuToggle, SCREEN_LABEL } from '../src/menu.ts';
+import {
+  createMenu,
+  followPrototypeTheme,
+  hasScreenSwitch,
+  hasVersionSwitch,
+  menuAxes,
+  menuSummary,
+  menuToggle,
+  SCREEN_LABEL,
+  type MenuState,
+} from '../src/menu.ts';
 
 const axis = {
   id: 'docs',
@@ -84,5 +94,108 @@ describe('menuToggle (ADR-0026)', () => {
     expect(menu.hidden).toBe(false);
     press();
     expect(menu.hidden).toBe(true);
+  });
+});
+
+describe('menu settings of a prototype (ADR-0027)', () => {
+  const p2 = (menu?: RegistryPrototype['menu']) =>
+    ({ ...proto(v('v1', [axis]), v('v2', [axis])), menu }) as RegistryPrototype;
+
+  it('hides the version control when menu.versions is false', () => {
+    expect(hasVersionSwitch(p2())).toBe(true);
+    expect(hasVersionSwitch(p2({ versions: false, style: 'ds' }))).toBe(false);
+    expect(hasVersionSwitch(proto(v('v1')))).toBe(false);
+    const state = {
+      proto: p2({ versions: false, style: 'shadcn' }),
+      version: v('v2', [axis]),
+      scenario: {},
+      axes: { docs: 'two' },
+    };
+    expect(menuSummary(state as unknown as MenuState)).toBe('2 дока');
+  });
+
+  it('draws the shadcn menu as labelled radio groups without a version group', () => {
+    const p = p2({ versions: false, style: 'shadcn' });
+    const picked: string[] = [];
+    const menu = createMenu({
+      scenario() {},
+      version() {},
+      axis: (id, value) => picked.push(`${id}=${value}`),
+    });
+    menu.update({
+      proto: p,
+      version: p.versions[1]!,
+      scenario: p.versions[1]!.scenarios[0]!,
+      axes: { docs: 'one' },
+    });
+    const nav = menu.element;
+    expect(nav.classList.contains('proto-menu--shadcn')).toBe(true);
+    expect(nav.getAttribute('role')).toBe('menu');
+    expect([...nav.querySelectorAll('.proto-menu-caption')].map((c) => c.textContent)).toEqual(['Документы']);
+    const items = [...nav.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]')];
+    expect(items.map((i) => [i.textContent, i.getAttribute('aria-checked')])).toEqual([
+      ['1 док', 'true'],
+      ['2 дока', 'false'],
+    ]);
+    items[1]!.click();
+    expect(picked).toEqual(['docs=two']);
+    expect(items[1]!.getAttribute('aria-checked')).toBe('true');
+  });
+
+  it('keeps the classic segmented menu by default', () => {
+    const p = p2();
+    const menu = createMenu({ scenario() {}, version() {}, axis() {} });
+    menu.update({
+      proto: p,
+      version: p.versions[1]!,
+      scenario: p.versions[1]!.scenarios[0]!,
+      axes: { docs: 'one' },
+    });
+    expect(menu.element.classList.contains('proto-menu--shadcn')).toBe(false);
+    expect(menu.element.querySelectorAll('ds-segmented')).toHaveLength(2);
+  });
+
+  it('closes the shadcn menu on a pick, on Escape and on a press outside', () => {
+    const p = p2({ versions: false, style: 'shadcn' });
+    const menu = createMenu({ scenario() {}, version() {}, axis() {} });
+    menu.update({
+      proto: p,
+      version: p.versions[1]!,
+      scenario: p.versions[1]!.scenarios[0]!,
+      axes: { docs: 'one' },
+    });
+    const toggle = menuToggle(menu.element);
+    toggle.listen(window);
+    document.body.append(menu.element, toggle.button);
+    toggle.button.click();
+    expect(menu.element.hidden).toBe(false);
+    expect(document.activeElement?.textContent).toBe('1 док');
+    menu.element.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    expect(document.activeElement?.textContent).toBe('2 дока');
+    (document.activeElement as HTMLElement).click();
+    expect(menu.element.hidden).toBe(true);
+    toggle.button.click();
+    menu.element.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(menu.element.hidden).toBe(true);
+    toggle.button.click();
+    document.body.dispatchEvent(new Event('pointerdown', { bubbles: true, composed: true }));
+    expect(menu.element.hidden).toBe(true);
+    menu.element.remove();
+    toggle.button.remove();
+  });
+});
+
+describe('followPrototypeTheme (ADR-0027)', () => {
+  it('switches the targets to night tokens while the prototype root has .dark', async () => {
+    const target = document.createElement('div');
+    const stop = followPrototypeTheme(document, [target]);
+    expect(target.dataset.dsTheme).toBeUndefined();
+    document.documentElement.classList.add('dark');
+    await Promise.resolve();
+    expect(target.dataset.dsTheme).toBe('night');
+    document.documentElement.classList.remove('dark');
+    await Promise.resolve();
+    expect(target.dataset.dsTheme).toBeUndefined();
+    stop();
   });
 });

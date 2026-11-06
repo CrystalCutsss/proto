@@ -50,6 +50,13 @@ export interface RegistryVersion {
   path: string;
 }
 
+export interface PrototypeMenu {
+  /** false: no «Версия» control in the menu. */
+  versions: boolean;
+  /** ds: tui-segmented controls on glass; shadcn: a DropdownMenu-like list behind an outline button. */
+  style: 'ds' | 'shadcn';
+}
+
 export interface RegistryPrototype {
   slug: string;
   title: string;
@@ -65,6 +72,8 @@ export interface RegistryPrototype {
   platform: Platform;
   /** Screens the viewer can switch between, `platform` first (ADR-0025); one item: no switch. */
   platforms: Platform[];
+  /** Viewer menu settings (ADR-0027); buildRegistry always sets it, older registry.json files lack it. */
+  menu?: PrototypeMenu;
   /** Latest version date, YYYY-MM-DD. */
   updated: string;
   /** Site path, always /p/<slug>/ */

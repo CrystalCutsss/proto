@@ -1,0 +1,1 @@
+import{H as o}from"./help-screen-CyEmo73D.js";import"./index-C4bRzY4g.js";import"./support-bar-DEBOU7ow.js";import"./use-switch-language-PlZw1kKa.js";import"./use-switch-theme-BsBF9567.js";const i=o;export{i as component};

@@ -1,0 +1,1 @@
+import{u as o,j as s}from"./index-C4bRzY4g.js";function n(){const{t}=o();return s.jsxs("section",{className:"flex flex-col gap-2 text-start",children:[s.jsx("h1",{className:"text-xl font-semibold",children:t("stub.coming_soon.title")}),s.jsx("p",{className:"text-sm text-muted-foreground",children:t("stub.coming_soon.body")})]})}export{n as C};

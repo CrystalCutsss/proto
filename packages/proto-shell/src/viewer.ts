@@ -17,6 +17,8 @@ import maskUrl from '../assets/iphone-air-space-black/mask.png?url';
 import {
   createMenu,
   followCornerLift,
+  followPrototypeTheme,
+  isShadcnMenu,
   loadRegistryPrototype,
   menuAxes,
   menuToggle,
@@ -233,8 +235,7 @@ function syncSafeArea() {
 let stopLift: (() => void) | null = null;
 
 /**
- * On the whole window the prototype's own floating button may sit in the menu button's corner (Tadum's «Demo» in
- * English): raise the menu button above it (ADR-0026). In the mockup the prototype is inside the phone: no lift.
+ * On the whole window the prototype's own floating button may sit in the menu button's corner: raise the menu button above it (ADR-0026). In the mockup the prototype is inside the phone: no lift.
  */
 function syncLift() {
   stopLift?.();
@@ -242,6 +243,21 @@ function syncLift() {
   try {
     const doc = frame.contentDocument;
     if (doc?.documentElement && mode() === 'full') stopLift = followCornerLift(doc, body);
+  } catch {
+    // cross-origin (should not happen)
+  }
+}
+
+let stopTheme: (() => void) | null = null;
+
+/** The shadcn menu takes the prototype's light or dark theme (ADR-0027); the classic menu keeps its own. */
+function syncTheme() {
+  stopTheme?.();
+  stopTheme = null;
+  if (!isShadcnMenu(proto)) return;
+  try {
+    const doc = frame.contentDocument;
+    if (doc?.documentElement) stopTheme = followPrototypeTheme(doc, [menu.element, toggle.button]);
   } catch {
     // cross-origin (should not happen)
   }
@@ -260,6 +276,7 @@ function watchFrame() {
       toggle.listen(win);
       update();
       syncLift();
+      syncTheme();
     } catch {
       // cross-origin (should not happen): the URL then follows menu choices only
     }

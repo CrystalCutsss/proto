@@ -109,12 +109,20 @@ test("the menu button keeps its corner below the prototype's own button (Tadum �
       return d.y + d.height <= t.y && t.y - (d.y + d.height) <= 40;
     })
     .toBe(true);
+  // Tadum uses the shadcn menu (ADR-0027): a DropdownMenu that opens above its button, over the prototype like any
+  // popup (the row next to the button and its no-overlap rule are the classic menu's, ADR-0026). It stays inside the
+  // window, focuses the checked item and closes on Escape, giving the corner back to «Demo».
   await toggle.click();
-  const menu = page.getByRole('navigation', { name: 'Сценарий и версия' });
-  const [m, d] = [(await menu.boundingBox())!, (await demo.boundingBox())!];
-  // The open menu row does not cover «Demo».
-  const overlaps = m.x < d.x + d.width && d.x < m.x + m.width && m.y < d.y + d.height && d.y < m.y + m.height;
-  expect(overlaps).toBe(false);
+  const menu = page.getByRole('menu', { name: 'Сценарий и версия' });
+  await expect(menu).toBeVisible();
+  const [m, t] = [(await menu.boundingBox())!, (await toggle.boundingBox())!];
+  expect(m.y + m.height).toBeLessThanOrEqual(t.y);
+  expect(m.x).toBeGreaterThanOrEqual(0);
+  expect(m.x + m.width).toBeLessThanOrEqual(1440);
+  await expect(menu.getByRole('menuitemradio', { checked: true }).first()).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(menu).toBeHidden();
+  await expect(demo).toBeVisible();
   // Arabic: «Demo» is in the bottom-left corner, the menu button stays in its own.
   await page.goto('/p/tadum/?lang=ar');
   await expect(page.frameLocator('iframe').locator('[dir="rtl"]').first()).toBeAttached();

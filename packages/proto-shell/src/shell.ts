@@ -7,6 +7,8 @@ import menuCss from './menu.css?inline';
 import {
   createMenu,
   followCornerLift,
+  followPrototypeTheme,
+  isShadcnMenu,
   loadRegistryPrototype,
   menuAxes,
   menuToggle,
@@ -84,7 +86,9 @@ class ProtoShell extends HTMLElement {
     variants.update(state);
     this.#root.innerHTML = `<style>${tokensCss.replaceAll(':root', ':host')}${shellCss}${menuCss}</style>`;
     const theme = document.createElement('div');
-    theme.dataset.dsTheme = 'night';
+    // The classic menu is always night glass; the shadcn one follows the prototype's .dark (ADR-0027).
+    if (isShadcnMenu(p)) followPrototypeTheme(document, [theme]);
+    else theme.dataset.dsTheme = 'night';
     // Tablets and desktops: the menu opens from a floating button in the bottom-right corner (ADR-0026).
     const toggle = menuToggle(menu.element);
     toggle.listen(window);

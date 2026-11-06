@@ -222,6 +222,162 @@
   transform: none;
 }
 
+/* shadcn style (prototype.json → menu.style, ADR-0027): the button is an outline icon button and the menu a
+   DropdownMenu above it — a card with group labels, radio items with a check mark and separators between groups.
+   Day tokens by default; data-ds-theme="night" (followPrototypeTheme) when the prototype is dark. */
+
+/* The viewer page itself is night (viewer.html), so the shadcn menu pins the semantic tokens it uses to their Day
+   values, and to their Night values when the prototype is dark. */
+.proto-menu--shadcn,
+.proto-menu--shadcn ~ .proto-menu-toggle {
+  --ds-background-elevation-1: var(--ds-color-background-elevation-1-day-value);
+  --ds-background-neutral-1: var(--ds-color-background-neutral-1-day-value);
+  --ds-background-neutral-1-opaque: var(--ds-color-cool-grey-cool-gray-lighter-97);
+  --ds-border-normal: var(--ds-color-cool-grey-cool-gray-alpha-12);
+  --ds-text-primary: var(--ds-color-text-primary-day-value);
+  --ds-text-secondary: var(--ds-color-text-secondary-day-value);
+  --ds-text-tertiary: var(--ds-color-text-tertiary-day-value);
+}
+
+.proto-menu--shadcn[data-ds-theme='night'],
+.proto-menu--shadcn ~ .proto-menu-toggle[data-ds-theme='night'] {
+  --ds-background-elevation-1: var(--ds-color-background-elevation-1-night-value);
+  --ds-background-neutral-1: var(--ds-color-white-white-alpha-10);
+  --ds-background-neutral-1-opaque: var(--ds-color-black-black-lighter-20);
+  --ds-border-normal: var(--ds-color-border-normal-night-value);
+  --ds-text-primary: var(--ds-color-text-primary-night-value);
+  --ds-text-secondary: var(--ds-color-text-secondary-night-value);
+  --ds-text-tertiary: var(--ds-color-text-tertiary-night-value);
+}
+
+.proto-menu.proto-menu--shadcn:not(.proto-menu--sheet) {
+  right: calc(env(safe-area-inset-right, 0) + var(--ds-space-4));
+  bottom: calc(
+    env(safe-area-inset-bottom, 0) + var(--ds-space-4) + var(--proto-menu-toggle-size) + var(--ds-space-2) +
+      var(--proto-menu-lift, 0px)
+  );
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  min-width: calc(var(--ds-space-12) * 5);
+  max-width: calc(100vw - 2 * var(--ds-space-4));
+  max-height: calc(100vh - 3 * var(--ds-space-4) - var(--proto-menu-toggle-size));
+  padding: var(--ds-space-1);
+  overflow: hidden auto;
+  border: var(--ds-border-width-thin) solid var(--ds-border-normal);
+  border-radius: var(--ds-radius-m);
+  color: var(--ds-text-primary);
+  background: var(--ds-background-elevation-1);
+  backdrop-filter: none;
+  box-shadow: 0 var(--ds-shadow-popup-y-axis-day-value) var(--ds-shadow-popup-blur-day-value)
+    var(--ds-shadow-popup-color-day-value);
+}
+
+@starting-style {
+  .proto-menu.proto-menu--shadcn:not([hidden], .proto-menu--sheet) {
+    opacity: 0;
+    transform: translateY(var(--ds-space-2)) scale(0.96);
+  }
+}
+
+.proto-menu--shadcn .proto-menu-axis {
+  gap: 0;
+}
+
+/* Group label: DropdownMenuLabel. */
+.proto-menu--shadcn .proto-menu-caption {
+  padding: var(--ds-space-2);
+  font-family: var(--ds-typography-ui-s-bold-font-family);
+  font-size: var(--ds-typography-ui-s-bold-font-size);
+  font-weight: var(--ds-typography-ui-s-bold-font-weight);
+  line-height: var(--ds-typography-ui-s-bold-line-height);
+  color: var(--ds-text-secondary);
+}
+
+/* DropdownMenuSeparator between groups. */
+.proto-menu--shadcn .proto-menu-axis + .proto-menu-axis {
+  margin-top: var(--ds-space-1);
+  padding-top: var(--ds-space-1);
+  border-top: var(--ds-border-width-thin) solid var(--ds-border-normal);
+}
+
+.proto-menu--shadcn proto-menu-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* DropdownMenuRadioItem: the check mark sits at the start, the label after it. */
+.proto-menu-item {
+  display: flex;
+  gap: var(--ds-space-2);
+  align-items: center;
+  width: 100%;
+  padding: var(--ds-space-2);
+  border: 0;
+  border-radius: var(--ds-radius-s);
+  font-family: var(--ds-typography-ui-s-font-family);
+  font-size: var(--ds-typography-ui-s-font-size);
+  font-weight: var(--ds-typography-ui-s-font-weight);
+  line-height: var(--ds-typography-ui-s-line-height);
+  color: var(--ds-text-primary);
+  text-align: start;
+  white-space: nowrap;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+.proto-menu-item:hover,
+.proto-menu-item:focus-visible {
+  background: var(--ds-background-neutral-1);
+}
+
+.proto-menu-item[aria-disabled='true'] {
+  color: var(--ds-text-tertiary);
+  cursor: default;
+}
+
+.proto-menu-item[aria-disabled='true']:hover {
+  background: transparent;
+}
+
+.proto-menu-check {
+  display: inline-flex;
+  flex: none;
+  width: var(--ds-space-4);
+  height: var(--ds-space-4);
+  visibility: hidden;
+}
+
+.proto-menu-item[aria-checked='true'] .proto-menu-check {
+  visibility: visible;
+}
+
+/* Outline icon button (shadcn Button variant="outline" size="icon"): follows the menu in the DOM. */
+.proto-menu--shadcn ~ .proto-menu-toggle {
+  border: var(--ds-border-width-thin) solid var(--ds-border-normal);
+  border-radius: var(--ds-radius-m);
+  color: var(--ds-text-primary);
+  background: var(--ds-background-elevation-1);
+  backdrop-filter: none;
+  box-shadow: 0 var(--ds-shadow-popup-y-axis-day-value) var(--ds-shadow-popup-blur-day-value)
+    var(--ds-shadow-popup-color-day-value);
+}
+
+.proto-menu--shadcn ~ .proto-menu-toggle:hover,
+.proto-menu--shadcn ~ .proto-menu-toggle[aria-expanded='true'] {
+  background: var(--ds-background-neutral-1-opaque);
+}
+
+.proto-menu--shadcn ~ .proto-menu-toggle:active {
+  transform: none;
+}
+
+.proto-menu--shadcn ~ .proto-menu-toggle svg {
+  width: var(--ds-space-5);
+  height: var(--ds-space-5);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .proto-menu,
   .proto-menu-toggle,

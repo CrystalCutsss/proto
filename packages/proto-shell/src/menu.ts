@@ -4,8 +4,11 @@
 // that version's axes greyed out (disabled): they work only there (ADR-0024). A prototype with several platforms
 // gets an «Экран» control (ПК / Телефон) at the end, when the caller handles it (ADR-0025). On wide screens the
 // menu is one row next to a floating button in the bottom-right corner and starts collapsed (ADR-0026).
+// prototype.json → menu (ADR-0027): `versions: false` drops the version control; `style: "shadcn"` draws the same
+// groups as a shadcn DropdownMenu — captions become group labels, each control a list of radio items.
 import type { Axis, Platform, RegistryPrototype, RegistryVersion, Scenario } from '@proto/registry';
 import { defineElements, type DsSegmented } from '@proto/ui';
+import { defineMenuList, firstMenuItem, menuKeys } from './menu-list.ts';
 
 /**
  * Mobile browser: a phone screen in portrait or landscape. There the viewer shows a mobile prototype
@@ -36,6 +39,13 @@ export interface MenuState {
 /** Labels of the «Экран» control. */
 export const SCREEN_LABEL: Record<Platform, string> = { desktop: 'ПК', mobile: 'Телефон' };
 
+/** Whether the menu offers the «Версия» control: several versions and not switched off (ADR-0027). */
+export const hasVersionSwitch = (proto: RegistryPrototype) =>
+  proto.versions.length > 1 && proto.menu?.versions !== false;
+
+/** Whether the menu is drawn as a shadcn DropdownMenu (ADR-0027). */
+export const isShadcnMenu = (proto: RegistryPrototype) => proto.menu?.style === 'shadcn';
+
 /** Whether the menu offers the «Экран» control for this prototype. */
 export const hasScreenSwitch = (proto: RegistryPrototype) => (proto.platforms?.length ?? 1) > 1;
 
@@ -65,11 +75,12 @@ export function menuAxes(
 export function menuSummary({ proto, version, scenario, axes }: MenuState): string {
   if (!version.axes.length) return `${scenario.title} · ${version.version}`;
   const titles = version.axes.map((a) => a.items.find((i) => i.id === axes[a.id])?.title ?? '');
-  return [...titles, ...(proto.versions.length > 1 ? [version.version] : [])].join(' · ');
+  return [...titles, ...(hasVersionSwitch(proto) ? [version.version] : [])].join(' · ');
 }
 
-function segmented(label: string, key: string) {
-  const el = document.createElement('ds-segmented') as DsSegmented;
+/** A choice control: <ds-segmented>, or <proto-menu-list> in the shadcn menu (the same interface). */
+function segmented(label: string, key: string, shadcn = false) {
+  const el = document.createElement(shadcn ? 'proto-menu-list' : 'ds-segmented') as DsSegmented;
   el.setAttribute('label', label);
   el.dataset.menu = key;
   return el;
@@ -89,16 +100,25 @@ function captioned(title: string, control: DsSegmented) {
 
 export function createMenu(handlers: MenuHandlers) {
   defineElements();
+  defineMenuList();
   const nav = document.createElement('nav');
   nav.className = 'proto-menu';
   nav.setAttribute('aria-label', 'Сценарий и версия');
-  const scenario = segmented('Сценарий', 'scenario');
-  const version = segmented('Версия', 'version');
-  const screen = segmented('Экран', 'screen');
-  scenario.addEventListener('change', () => handlers.scenario(scenario.value));
-  version.addEventListener('change', () => handlers.version(version.value));
-  screen.addEventListener('change', () => handlers.screen?.(screen.value as Platform));
+  let scenario: DsSegmented;
+  let version: DsSegmented;
+  let screen: DsSegmented;
+  /** Scenario, version and screen controls in the menu's style. */
+  function controls(shadcn: boolean) {
+    scenario = segmented('Сценарий', 'scenario', shadcn);
+    version = segmented('Версия', 'version', shadcn);
+    screen = segmented('Экран', 'screen', shadcn);
+    scenario.addEventListener('change', () => handlers.scenario(scenario.value));
+    version.addEventListener('change', () => handlers.version(version.value));
+    screen.addEventListener('change', () => handlers.screen?.(screen.value as Platform));
+  }
+  controls(false);
   let layoutKey: string | null = null;
+  let style: 'ds' | 'shadcn' = 'ds';
   let axisControls = new Map<string, DsSegmented>();
 
   /** Rebuild the controls when the shown axes change (appear, disappear or become disabled). */
@@ -107,18 +127,45 @@ export function createMenu(handlers: MenuHandlers) {
     versions: boolean,
     scenarios: boolean,
     screens: boolean,
+    nextStyle: 'ds' | 'shadcn',
+    /** Version control allowed at all (menu.versions); without axes the classic menu shows it even for one version. */
+    versionsAllowed: boolean,
   ) {
-    const key = JSON.stringify({ axes, disabled, from, versions, scenarios, screens });
+    const key = JSON.stringify({
+      axes,
+      disabled,
+      from,
+      versions,
+      scenarios,
+      screens,
+      nextStyle,
+      versionsAllowed,
+    });
     if (key === layoutKey) return;
     layoutKey = key;
     axisControls = new Map();
+    const shadcn = nextStyle === 'shadcn';
+    if (nextStyle !== style) {
+      style = nextStyle;
+      controls(shadcn);
+      nav.classList.toggle('proto-menu--shadcn', shadcn);
+      if (shadcn) nav.setAttribute('role', 'menu');
+      else nav.removeAttribute('role');
+    }
     const screenGroup = screens ? [captioned('Экран', screen)] : [];
     if (!axes.length) {
-      nav.replaceChildren(scenario, version, ...screenGroup);
+      // The shadcn menu always captions its groups; the classic one shows bare scenario and version controls.
+      if (shadcn)
+        nav.replaceChildren(
+          captioned('Сценарий', scenario),
+          ...(versions ? [captioned('Версия', version)] : []),
+          ...screenGroup,
+        );
+      else nav.replaceChildren(scenario, ...(versionsAllowed ? [version] : []), ...screenGroup);
       return;
     }
     const groups = axes.map((a) => {
-      const control = segmented(a.title, `axis-${a.id}`);
+      const control = segmented(a.title, `axis-${a.id}`, shadcn);
       control.items = a.items.map((i) => ({ value: i.id, label: i.title }));
       control.disabled = disabled;
       control.addEventListener('change', () => handlers.axis(a.id, control.value));
@@ -146,7 +193,14 @@ export function createMenu(handlers: MenuHandlers) {
     update({ proto, version: v, scenario: s, axes, keptAxes = {}, screen: current }: MenuState) {
       const shown = menuAxes(proto, v);
       const screens = Boolean(handlers.screen) && hasScreenSwitch(proto);
-      build(shown, proto.versions.length > 1, v.scenarios.length > 1, screens);
+      build(
+        shown,
+        hasVersionSwitch(proto),
+        v.scenarios.length > 1,
+        screens,
+        isShadcnMenu(proto) ? 'shadcn' : 'ds',
+        proto.menu?.versions !== false,
+      );
       if (screens) {
         screen.items = proto.platforms.map((p) => ({ value: p, label: SCREEN_LABEL[p] }));
         screen.value = current ?? proto.platform;
@@ -181,10 +235,16 @@ export function menuToggle(menu: HTMLElement) {
   button.setAttribute('aria-label', 'Меню прототипа');
   menu.id ||= `proto-menu-${++menuCount}`;
   button.setAttribute('aria-controls', menu.id);
+  /** The shadcn menu (ADR-0027) behaves like a DropdownMenu: focus inside, Esc, outside click, close on pick. */
+  const shadcn = () => menu.classList.contains('proto-menu--shadcn');
   const setOpen = (open: boolean) => {
     menu.hidden = !open;
     button.setAttribute('aria-expanded', String(open));
-    button.innerHTML = open ? CLOSE_ICON : MENU_ICON;
+    if (shadcn()) button.setAttribute('aria-haspopup', 'menu');
+    else button.removeAttribute('aria-haspopup');
+    // The shadcn button keeps its sliders icon, like a DropdownMenu trigger; the classic one turns into a cross.
+    button.innerHTML = open && !shadcn() ? CLOSE_ICON : MENU_ICON;
+    if (open && shadcn()) firstMenuItem(menu)?.focus();
   };
   const isOpen = () => button.getAttribute('aria-expanded') === 'true';
   setOpen(false);
@@ -192,19 +252,59 @@ export function menuToggle(menu: HTMLElement) {
   const onKey = (e: KeyboardEvent) => {
     if (e.altKey && e.shiftKey && e.code === 'KeyH') setOpen(!isOpen());
   };
+  menu.addEventListener('keydown', (e) => {
+    if (!shadcn()) return;
+    if (e.key === 'Escape' || e.key === 'Tab') {
+      if (e.key === 'Escape') e.preventDefault();
+      setOpen(false);
+      button.focus();
+      return;
+    }
+    menuKeys(menu, e);
+  });
+  const close = () => {
+    if (shadcn() && isOpen()) setOpen(false);
+  };
+  menu.addEventListener('change', close);
+  menu.addEventListener('proto-menu-pick', close);
+  /** A press outside the menu and its button closes the shadcn menu (also inside the prototype's frame). */
+  const onOutside = (e: Event) => {
+    const path = e.composedPath();
+    if (path.includes(menu) || path.includes(button)) return;
+    close();
+  };
   return {
     button,
     setOpen,
     /** Listen for Alt+Shift+H in another window (the prototype's frame after each load). */
     listen(target: Window | null | undefined) {
       target?.addEventListener('keydown', onKey as EventListener);
+      target?.addEventListener('pointerdown', onOutside, true);
     },
   };
 }
 
 /**
+ * The shadcn menu follows the prototype's theme (ADR-0027): `.dark` on the prototype's root switches the menu and
+ * its button to the night tokens. Returns a function that stops following.
+ */
+export function followPrototypeTheme(doc: Document, targets: readonly HTMLElement[]) {
+  const sync = () => {
+    const dark = doc.documentElement.classList.contains('dark');
+    for (const t of targets) {
+      if (dark) t.dataset.dsTheme = 'night';
+      else delete t.dataset.dsTheme;
+    }
+  };
+  const observer = new MutationObserver(sync);
+  observer.observe(doc.documentElement, { attributes: true, attributeFilter: ['class'] });
+  sync();
+  return () => observer.disconnect();
+}
+
+/**
  * How far to raise the menu button so it sits above the prototype's own floating control in the bottom-right
- * corner (Tadum's «Demo» in English), stacked with a small gap (ADR-0026). Looks under the button's resting place
+ * corner (such as a prototype's own help or demo button), stacked with a small gap (ADR-0026). Looks under the button's resting place
  * in `doc`, which covers the same viewport (the prototype's frame on the whole window, or the page itself): a
  * fixed element there, smaller than half the screen, lifts the button above its top edge. 0 when the corner is free.
  */

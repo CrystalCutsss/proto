@@ -285,6 +285,7 @@ export function buildRegistry(repoRoot) {
       separatePassword: meta.separatePassword ?? false,
       platform,
       platforms: [platform, ...(meta.platforms ?? []).filter((/** @type {string} */ x) => x !== platform)],
+      menu: { versions: meta.menu?.versions ?? true, style: meta.menu?.style ?? 'ds' },
       updated:
         versions
           .map((v) => v.date)

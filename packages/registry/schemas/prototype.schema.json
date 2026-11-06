@@ -39,6 +39,15 @@
       "minItems": 1,
       "uniqueItems": true
     },
+    "menu": {
+      "description": "Viewer menu of this prototype (ADR-0027). versions: false hides the «Версия» control (versions still open from the changelog on main); style: \"shadcn\" draws the menu as a shadcn DropdownMenu (radio items under group labels) behind an outline button, light or dark after the prototype's own .dark class.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "versions": { "type": "boolean", "default": true },
+        "style": { "enum": ["ds", "shadcn"], "default": "ds" }
+      }
+    },
     "separatePassword": {
       "description": "Protect this prototype with its own password (Phase 5, ADR-0006).",
       "type": "boolean",

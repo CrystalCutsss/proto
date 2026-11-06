@@ -6,7 +6,8 @@
   "tags": ["tadum", "b2b", "rtl", "pwa"],
   "status": "active",
   "platform": "desktop",
-  "platforms": ["desktop", "mobile"],
+  "platforms": ["desktop"],
+  "menu": { "versions": false, "style": "shadcn" },
   "defaultVersion": "latest",
   "separatePassword": true
 }

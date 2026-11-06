@@ -30,6 +30,9 @@ work; it holds the current phase and the next step. ADRs live in Proto/Docs/ADR 
   through pnpm.
 - **main is changed only by the owner merging a PR** (ADR-0002). One phase = one branch = one PR; stop after the
   PR and wait for "go".
+  One exception (ADR-0028): the tadum repo's `release` workflow pushes frozen Tadum versions straight to main,
+  touching only `prototypes/tadum/**` and the new package's `pnpm-lock.yaml` entry. Do not open separate Proto PRs
+  for Tadum versions; anything else in Proto still goes through a PR.
 - **Third-party skills, agents and hooks** are vendored only after a full review, with license and SHA
   (ADR-0007, `.claude/skills/VENDORED.md`).
 - Every significant decision gets an ADR. Docs are Russian; code, comments, commits, skill and agent texts are

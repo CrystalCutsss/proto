@@ -16,6 +16,10 @@ work; it holds the current phase and the next step. ADRs live in Proto/Docs/ADR 
 - **Keep STATUS current without asking** (owner, 2026-10-25): after every task, PR or merge, update the cloud
   STATUS and, when the state changes, the `docs/STATUS.md` pointer on the task's branch. Never ask for confirmation
   first.
+  The Google Docs/Drive write tools for this (`update_doc`, `create_file`, `update_file`) are pre-allowed in
+  `.claude/settings.json` (owner, 2026-11-06); `drive-guard` still limits writes to Proto/Docs. Cloud sessions read
+  these rules only when Proto is the session's single repository: in a multi-repo session a write can still be
+  refused, then give the owner the exact text to paste and say where.
 - **Secrets** exist only in GitHub Secrets and the hosting dashboard: never in the repo, env files or cloud
   environment variables.
 - **Figma is read-only.** The owner enabled the Figma connector in Phase 6 (instead of Phase 8). The `figma-guard`
@@ -26,6 +30,9 @@ work; it holds the current phase and the next step. ADRs live in Proto/Docs/ADR 
   through pnpm.
 - **main is changed only by the owner merging a PR** (ADR-0002). One phase = one branch = one PR; stop after the
   PR and wait for "go".
+  One exception (ADR-0028): the tadum repo's `release` workflow pushes frozen Tadum versions straight to main,
+  touching only `prototypes/tadum/**` and the new package's `pnpm-lock.yaml` entry. Do not open separate Proto PRs
+  for Tadum versions; anything else in Proto still goes through a PR.
 - **Third-party skills, agents and hooks** are vendored only after a full review, with license and SHA
   (ADR-0007, `.claude/skills/VENDORED.md`).
 - Every significant decision gets an ADR. Docs are Russian; code, comments, commits, skill and agent texts are

@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/p/tadum/v6/sw.js', { scope: '/p/tadum/v6/' })})}

@@ -1,0 +1,1 @@
+import{O as o,o as n,j as c,b as i,k as l}from"./schemas-CMXZpXmc.js";const f="",h=[],p={terms:f,materials:h},O="",S=[],d={terms:O,materials:S},t=n({terms:c,materials:i(l)});function j(){const e=t.parse(p),a=t.parse(d),s=[...e.materials,...a.materials.filter(r=>!e.materials.some(m=>m.id===r.id))];return o.parse({terms:{ar:e.terms,en:a.terms},materials:s})}export{j as l};

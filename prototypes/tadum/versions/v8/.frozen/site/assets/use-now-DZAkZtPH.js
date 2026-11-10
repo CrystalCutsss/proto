@@ -1,0 +1,1 @@
+import{r as t}from"./index-CWn0CjZq.js";import{n as r}from"./clock-CXkajzCC.js";function c(e=1e3){const[o,u]=t.useState(r);return t.useEffect(()=>{if(e===null)return;const n=setInterval(()=>u(r()),e);return()=>clearInterval(n)},[e]),o}export{c as u};

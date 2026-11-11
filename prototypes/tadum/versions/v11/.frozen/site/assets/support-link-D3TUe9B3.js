@@ -1,0 +1,1 @@
+import{u as o,j as t,B as s,X as e}from"./index-Br8dsXhh.js";const p="https://wa.me/";function u({context:n,variant:r="ghost"}){const{t:a}=o();return t.jsx(s,{asChild:!0,variant:r,children:t.jsx("a",{href:p,target:"_blank",rel:"noopener noreferrer",onClick:()=>e("support_contact_clicked",{channel:"whatsapp",context:n}),children:a("auth.not_found.support")})})}export{u as S};

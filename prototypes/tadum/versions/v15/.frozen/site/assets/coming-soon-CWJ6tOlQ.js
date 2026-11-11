@@ -1,0 +1,1 @@
+import{u as o,j as s}from"./index-Bmh4Owwn.js";function n(){const{t}=o();return s.jsxs("section",{className:"flex flex-col gap-1.5 text-start",children:[s.jsx("h1",{className:"text-2xl font-semibold",children:t("stub.coming_soon.title")}),s.jsx("p",{className:"text-base text-muted-foreground",children:t("stub.coming_soon.body")})]})}export{n as C};

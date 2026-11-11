@@ -1,0 +1,1 @@
+import{j as o}from"./index-FnLBvI_V.js";import{C as r}from"./cabinet-layout-BimQB6yC.js";import"./load-error-yd4MQu5B.js";import"./icon-LuedQgII.js";import"./support-bar-CYcCSuFX.js";import"./theme-toggle-Dm2VpG-3.js";import"./use-switch-theme-Bxzew1ab.js";import"./logout-button-CVScGb6C.js";const x=()=>o.jsx(r,{family:"client"});export{x as errorComponent};

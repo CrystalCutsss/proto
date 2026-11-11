@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Плейсхолдер иконки PWA; полноценная установка — v5. Цвет — primary из пресета (oklch 0.488 0.243 264.376). -->
+  <rect width="512" height="512" rx="112" fill="#1447e6"/>
+  <text x="256" y="256" dy="0.35em" text-anchor="middle" font-family="system-ui, sans-serif" font-size="300" font-weight="700" fill="#ffffff">T</text>
+</svg>

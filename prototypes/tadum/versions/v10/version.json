@@ -1,0 +1,42 @@
+{
+  "$schema": "../../../../packages/registry/schemas/version.schema.json",
+  "version": "v10",
+  "title": "код страны внутри поля номера",
+  "date": "2026-11-11",
+  "author": "Claude",
+  "status": "frozen",
+  "changelog": [
+    "Код страны «+966» — внутри поля номера слева, поле номера во всю ширину, как кнопка «Get code» под ним",
+    "Номер по-прежнему вводится слева направо и в арабском, и в английском интерфейсе; клик по «+966» ставит курсор в поле"
+  ],
+  "routing": "history",
+  "routes": ["/login", "/c/home", "/c/documents", "/c/help", "/s/home", "/s/documents", "/s/help"],
+  "axes": [
+    {
+      "id": "persona",
+      "title": "Сценарии и роли",
+      "items": [
+        {
+          "id": "login",
+          "title": "Вход по номеру"
+        },
+        {
+          "id": "client-new",
+          "title": "Клиент: новая заявка"
+        },
+        {
+          "id": "client-rejected",
+          "title": "Клиент: нужен новый файл"
+        },
+        {
+          "id": "client-more-docs",
+          "title": "Клиент: дозапрос документов"
+        },
+        {
+          "id": "dual-active",
+          "title": "Клиент и поставщик"
+        }
+      ]
+    }
+  ]
+}

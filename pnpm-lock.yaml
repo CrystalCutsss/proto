@@ -458,6 +458,12 @@ importers:
         specifier: workspace:*
         version: link:../../../../packages/build-kit
 
+  prototypes/tadum/versions/v14:
+    devDependencies:
+      '@proto/build-kit':
+        specifier: workspace:*
+        version: link:../../../../packages/build-kit
+
   prototypes/tadum/versions/v2:
     devDependencies:
       '@proto/build-kit':

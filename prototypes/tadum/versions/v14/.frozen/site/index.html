@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#090b0c" />
+    <link rel="icon" type="image/svg+xml" href="/p/tadum/v14/icons/icon.svg" />
+    <title>Tadum</title>
+    <script>
+      // Тема до загрузки бандла, чтобы не было вспышки. Ключ — как в src/shared/lib/storage.ts.
+      (function () {
+        try {
+          var v = localStorage.getItem('tadum:/p/tadum/v14/:theme');
+          // Без сохранённого выбора — светлая тема (Кирилл 2026-11-11, A-062); сборка может задать другую (VITE_DEFAULT_THEME).
+          // Без переменной Vite оставляет плейсхолдер как есть — тогда светлая.
+          var d = 'light';
+          if (v === null) v = d === 'dark' || d === 'system' ? d : 'light';
+          var dark = v === 'dark' || ((v === null || v === 'system') && matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      /* Заставка до старта бандла (Кирилл 2026-11-10: белый экран при открытии). React заменяет её первым рендером.
+         Цвета — как theme-color выше; токены ещё не загружены. */
+      .boot-splash { position: fixed; inset: 0; display: grid; place-items: center; background: #ffffff; }
+      html.dark .boot-splash { background: #090b0c; }
+      /* Логотип экрана входа (tadum. — контуры Geist 700, точка primary) крупно; по нему слева направо
+         циклически проходит светлый блик (Кирилл 2026-11-11). Без анимации при reduced motion. */
+      .boot-logo { width: 176px; height: auto; overflow: visible; }
+      .boot-text { fill: oklch(0.148 0.004 228.8); }
+      .boot-dot { fill: oklch(0.488 0.243 264.376); }
+      /* Цвет блика задаётся на stop: currentColor у градиента берётся от svg, а не от закрашиваемого контура. */
+      .boot-glint { stop-color: #ffffff; }
+      html.dark .boot-text { fill: oklch(0.987 0.002 197.1); }
+      html.dark .boot-dot { fill: oklch(0.723 0.014 214.4); }
+      html.dark .boot-glint { stop-color: oklch(0.56 0.021 213.5); }
+      @media (prefers-reduced-motion: reduce) { .boot-sweep { display: none; } }
+    </style>
+    <script type="module" crossorigin src="/p/tadum/v14/assets/index-RyqQBmU_.js"></script>
+    <link rel="stylesheet" crossorigin href="/p/tadum/v14/assets/index-DCvYgOr9.css">
+  <link rel="manifest" href="/p/tadum/v14/manifest.webmanifest" crossorigin="use-credentials"><script id="vite-plugin-pwa:register-sw" src="/p/tadum/v14/registerSW.js"></script>    <meta name="robots" content="noindex, nofollow">
+    <meta name="proto:prototype" content="tadum">
+    <meta name="proto:version" content="v14">
+    <script type="module" src="/_shell/loader.js" data-proto-shell></script>
+  </head>
+  <body>
+    <div id="root">
+      <div class="boot-splash" aria-busy="true">
+        <svg class="boot-logo" viewBox="41 295 3214 722" role="img" aria-label="Tadum">
+          <defs>
+            <linearGradient id="boot-sweep" gradientUnits="userSpaceOnUse" x1="-1200" y1="0" x2="0" y2="0">
+              <stop offset="0" class="boot-glint" stop-opacity="0" />
+              <stop offset="0.5" class="boot-glint" stop-opacity="0.75" />
+              <stop offset="1" class="boot-glint" stop-opacity="0" />
+              <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to="4600 0" dur="1.6s" repeatCount="indefinite" />
+            </linearGradient>
+          </defs>
+          <path class="boot-text" d="M288 1005Q205 1005 166 966Q127 928 127 844V343H277V826Q277 865 293 879Q310 893 343 893H418V1005ZM41 581V469H418V581ZM645 1017Q562 1017 509 978Q457 940 457 871Q457 800 501 762Q546 723 633 705L806 671Q806 619 782 592Q759 566 715 566Q672 566 648 585Q624 605 617 643L466 636Q481 548 546 502Q610 457 715 457Q835 457 895 514Q956 571 956 681V864Q956 887 963 894Q971 902 986 902H1001V1005Q994 1007 979 1009Q963 1011 948 1011Q916 1011 888 1000Q861 989 844 962Q827 936 827 887L840 897Q830 933 805 960Q779 987 738 1002Q698 1017 645 1017ZM681 914Q718 914 746 899Q774 885 790 857Q806 829 806 791V765L684 791Q648 798 629 814Q611 831 611 857Q611 884 629 899Q647 914 681 914ZM1246 1017Q1178 1017 1129 983Q1079 948 1053 886Q1026 823 1026 737Q1026 651 1053 589Q1080 526 1129 491Q1179 457 1246 457Q1303 457 1344 480Q1386 504 1407 545V295H1557V1005H1414L1411 926Q1389 969 1345 993Q1302 1017 1246 1017ZM1295 902Q1331 902 1356 883Q1381 864 1394 828Q1407 791 1407 737Q1407 682 1394 646Q1381 609 1356 591Q1331 572 1295 572Q1242 572 1211 616Q1180 661 1180 737Q1180 812 1212 857Q1243 902 1295 902ZM1840 1017Q1757 1017 1711 964Q1664 910 1664 814V469H1814V779Q1814 841 1833 869Q1852 898 1893 898Q1939 898 1965 867Q1990 835 1990 772V469H2140V1005H2003L1999 851L2018 855Q2006 935 1961 976Q1916 1017 1840 1017ZM2246 1005V469H2381L2386 598L2372 592Q2383 549 2405 519Q2428 489 2460 473Q2492 457 2530 457Q2597 457 2639 496Q2680 535 2692 601L2673 602Q2682 555 2705 523Q2727 490 2760 474Q2793 457 2834 457Q2890 457 2930 480Q2970 503 2992 549Q3014 594 3014 660V1005H2864V702Q2864 639 2845 607Q2826 576 2783 576Q2756 576 2737 591Q2718 606 2707 635Q2697 663 2697 704V1005H2562V704Q2562 642 2544 609Q2526 576 2482 576Q2455 576 2435 591Q2416 606 2406 635Q2396 664 2396 704V1005Z" />
+          <path class="boot-dot" d="M3092 1005V852H3255V1005Z" />
+          <path class="boot-sweep" fill="url(#boot-sweep)" d="M288 1005Q205 1005 166 966Q127 928 127 844V343H277V826Q277 865 293 879Q310 893 343 893H418V1005ZM41 581V469H418V581ZM645 1017Q562 1017 509 978Q457 940 457 871Q457 800 501 762Q546 723 633 705L806 671Q806 619 782 592Q759 566 715 566Q672 566 648 585Q624 605 617 643L466 636Q481 548 546 502Q610 457 715 457Q835 457 895 514Q956 571 956 681V864Q956 887 963 894Q971 902 986 902H1001V1005Q994 1007 979 1009Q963 1011 948 1011Q916 1011 888 1000Q861 989 844 962Q827 936 827 887L840 897Q830 933 805 960Q779 987 738 1002Q698 1017 645 1017ZM681 914Q718 914 746 899Q774 885 790 857Q806 829 806 791V765L684 791Q648 798 629 814Q611 831 611 857Q611 884 629 899Q647 914 681 914ZM1246 1017Q1178 1017 1129 983Q1079 948 1053 886Q1026 823 1026 737Q1026 651 1053 589Q1080 526 1129 491Q1179 457 1246 457Q1303 457 1344 480Q1386 504 1407 545V295H1557V1005H1414L1411 926Q1389 969 1345 993Q1302 1017 1246 1017ZM1295 902Q1331 902 1356 883Q1381 864 1394 828Q1407 791 1407 737Q1407 682 1394 646Q1381 609 1356 591Q1331 572 1295 572Q1242 572 1211 616Q1180 661 1180 737Q1180 812 1212 857Q1243 902 1295 902ZM1840 1017Q1757 1017 1711 964Q1664 910 1664 814V469H1814V779Q1814 841 1833 869Q1852 898 1893 898Q1939 898 1965 867Q1990 835 1990 772V469H2140V1005H2003L1999 851L2018 855Q2006 935 1961 976Q1916 1017 1840 1017ZM2246 1005V469H2381L2386 598L2372 592Q2383 549 2405 519Q2428 489 2460 473Q2492 457 2530 457Q2597 457 2639 496Q2680 535 2692 601L2673 602Q2682 555 2705 523Q2727 490 2760 474Q2793 457 2834 457Q2890 457 2930 480Q2970 503 2992 549Q3014 594 3014 660V1005H2864V702Q2864 639 2845 607Q2826 576 2783 576Q2756 576 2737 591Q2718 606 2707 635Q2697 663 2697 704V1005H2562V704Q2562 642 2544 609Q2526 576 2482 576Q2455 576 2435 591Q2416 606 2406 635Q2396 664 2396 704V1005ZM3092 1005V852H3255V1005Z" />
+        </svg>
+      </div>
+    </div>
+  </body>
+</html>

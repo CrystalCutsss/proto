@@ -476,6 +476,12 @@ importers:
         specifier: workspace:*
         version: link:../../../../packages/build-kit
 
+  prototypes/tadum/versions/v9:
+    devDependencies:
+      '@proto/build-kit':
+        specifier: workspace:*
+        version: link:../../../../packages/build-kit
+
 packages:
 
   '@babel/code-frame@7.29.7':

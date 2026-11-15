@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../../packages/registry/schemas/version.schema.json",
+  "version": "v18",
+  "title": "новое подписание: SPA от руки и вексель в Nafith",
+  "date": "2026-11-15",
+  "author": "Claude",
+  "status": "frozen",
+  "changelog": [
+    "На этапе «Решение» блока «Documents to sign» нет: только карточка лимита и папка документов.",
+    "На этапе «Подписание» в карточке лимита одна кнопка «Sign documents». Она ведёт на отдельный экран подписания `/c/documents/sign` с крошками «Application › Sign documents».",
+    "Экран подписания — два шага в фиксированном порядке:",
+    "Если подтверждения нет больше суток или шаг не прошёл, под карточкой появляется ссылка в поддержку WhatsApp.",
+    "Когда оба шага подтверждены, экран показывает «Your limit is approved» и «Back to application».",
+    "В карточке лимита убраны прогресс «0 of 2 done» и текст «Sign the documents to activate your limit».",
+    "Экран подписания открывается только на этапах «Подписание» и «Лимит одобрен», с других этапов — переход на «Заявку»."
+  ],
+  "routing": "history",
+  "routes": ["/login", "/c/home", "/c/documents", "/c/help", "/s/home", "/s/documents", "/s/help"],
+  "axes": [
+    {
+      "id": "persona",
+      "title": "Сценарии и роли",
+      "items": [
+        {
+          "id": "login",
+          "title": "Вход по номеру"
+        },
+        {
+          "id": "client-new",
+          "title": "Клиент: новая заявка"
+        },
+        {
+          "id": "client-rejected",
+          "title": "Клиент: нужен новый файл"
+        },
+        {
+          "id": "client-more-docs",
+          "title": "Клиент: дозапрос документов"
+        },
+        {
+          "id": "client-offer-pending",
+          "title": "Клиент: решение, условия"
+        },
+        {
+          "id": "client-approved-unsigned",
+          "title": "Клиент: подписание"
+        },
+        {
+          "id": "client-signing-partial",
+          "title": "Клиент: подписание, частично"
+        },
+        {
+          "id": "client-limit-cancelled",
+          "title": "Клиент: лимит отменён"
+        },
+        {
+          "id": "client-active",
+          "title": "Клиент: лимит одобрен"
+        }
+      ]
+    }
+  ]
+}

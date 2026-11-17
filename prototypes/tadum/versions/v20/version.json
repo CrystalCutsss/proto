@@ -1,0 +1,59 @@
+{
+  "$schema": "../../../../packages/registry/schemas/version.schema.json",
+  "version": "v20",
+  "title": "панель отправки без оценки времени",
+  "date": "2026-11-17",
+  "author": "Claude",
+  "status": "frozen",
+  "changelog": [
+    "В панели с кнопкой «Send for review» больше нет строки «About N min left».",
+    "Панель стала ниже, отступы сверху и снизу одинаковые.",
+    "Состояние «Everything is ready» не менялось. На компьютере панель при переходе в это состояние подрастает, как на телефоне."
+  ],
+  "routing": "history",
+  "routes": ["/login", "/c/home", "/c/documents", "/c/help", "/s/home", "/s/documents", "/s/help"],
+  "axes": [
+    {
+      "id": "persona",
+      "title": "Сценарии и роли",
+      "items": [
+        {
+          "id": "login",
+          "title": "Вход по номеру"
+        },
+        {
+          "id": "client-new",
+          "title": "Клиент: новая заявка"
+        },
+        {
+          "id": "client-rejected",
+          "title": "Клиент: нужен новый файл"
+        },
+        {
+          "id": "client-more-docs",
+          "title": "Клиент: дозапрос документов"
+        },
+        {
+          "id": "client-offer-pending",
+          "title": "Клиент: решение, условия"
+        },
+        {
+          "id": "client-approved-unsigned",
+          "title": "Клиент: подписание"
+        },
+        {
+          "id": "client-signing-partial",
+          "title": "Клиент: подписание, частично"
+        },
+        {
+          "id": "client-limit-cancelled",
+          "title": "Клиент: лимит отменён"
+        },
+        {
+          "id": "client-active",
+          "title": "Клиент: лимит одобрен"
+        }
+      ]
+    }
+  ]
+}

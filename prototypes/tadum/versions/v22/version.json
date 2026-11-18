@@ -1,0 +1,63 @@
+{
+  "$schema": "../../../../packages/registry/schemas/version.schema.json",
+  "version": "v22",
+  "title": "подпись договора в Sadq",
+  "date": "2026-11-18",
+  "author": "Claude",
+  "status": "frozen",
+  "changelog": [
+    "У блока «Agreement (SPA)» два статуса бейджем без иконок: «Signature required» (серый) и «Signed» (зелёный).",
+    "«Signature required» — без кнопок. Под заголовком на всю ширину карточки: менеджер прислал SMS со ссылкой на подписание в Sadq. Ниже два шага с номерами в серых кругах: «Open the Sadq link in the SMS» и «Sign the agreement».",
+    "«Signed» — «The agreement is signed. You can download a copy» и нейтральная серая кнопка «Download».",
+    "Подзаголовок экрана после подписи договора — «Nothing else to sign — just approve the note in Nafith»; когда готовы оба шага — «Nothing else to sign».",
+    "В демо договор сам не подписывается: два состояния показывают разные персоны.",
+    "Сохранённое в браузере состояние мока сброшено, чтобы старая демо-подпись не мешала смотреть «Signature required».",
+    "Документы в Drive обновлены: журнал решений (D-085), SC-06, `01-statuses.md`, `04-metrics-and-events.md` (событие `spa_whatsapp_clicked` удалено)."
+  ],
+  "routing": "history",
+  "routes": ["/login", "/c/home", "/c/documents", "/c/help", "/s/home", "/s/documents", "/s/help"],
+  "axes": [
+    {
+      "id": "persona",
+      "title": "Сценарии и роли",
+      "items": [
+        {
+          "id": "login",
+          "title": "Вход по номеру"
+        },
+        {
+          "id": "client-new",
+          "title": "Клиент: новая заявка"
+        },
+        {
+          "id": "client-rejected",
+          "title": "Клиент: нужен новый файл"
+        },
+        {
+          "id": "client-more-docs",
+          "title": "Клиент: дозапрос документов"
+        },
+        {
+          "id": "client-offer-pending",
+          "title": "Клиент: решение, условия"
+        },
+        {
+          "id": "client-approved-unsigned",
+          "title": "Клиент: подписание"
+        },
+        {
+          "id": "client-signing-partial",
+          "title": "Клиент: подписание, частично"
+        },
+        {
+          "id": "client-limit-cancelled",
+          "title": "Клиент: лимит отменён"
+        },
+        {
+          "id": "client-active",
+          "title": "Клиент: лимит одобрен"
+        }
+      ]
+    }
+  ]
+}

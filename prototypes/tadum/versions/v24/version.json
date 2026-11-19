@@ -1,0 +1,67 @@
+{
+  "$schema": "../../../../packages/registry/schemas/version.schema.json",
+  "version": "v24",
+  "title": "вексель как договор, отменённый лимит",
+  "date": "2026-11-19",
+  "author": "Claude",
+  "status": "frozen",
+  "changelog": [
+    "Блок «Promissory note (Nafith)» устроен как «Agreement (SPA)»: вексель подписывается в Nafith по ссылке из SMS от менеджера.",
+    "Подзаголовок экрана подписания: ничего не подписано — «Sign two documents…», подписан один документ — «One document left to sign», оба — «Nothing else to sign».",
+    "Подсказка в карточке лимита на «Подписании» — «To activate your limit, sign the agreement and the promissory note».",
+    "Подсказка «давно ждём» через 24 часа снята: она держалась на нажатии кнопки, а кнопок больше нет.",
+    "Лимит отменён: кнопка «Contact us» с иконкой WhatsApp открывает чат поддержки (раньше — «Apply again» на лендинг). В блоке Steps шаги до «Signing» пройдены, последний шаг — «Limit not active» с серым крестиком; на телефоне — «шаг 5 из 5» и серый последний сегмент.",
+    "Новое событие `pn_downloaded` — скачивание копии векселя.",
+    "Документы в Drive обновлены: журнал решений (D-086), SC-06, `01-statuses.md`, `01-cabinet-structure.md` §5, `04-metrics-and-events.md`."
+  ],
+  "routing": "history",
+  "routes": ["/login", "/c/home", "/c/documents", "/c/help", "/s/home", "/s/documents", "/s/help"],
+  "axes": [
+    {
+      "id": "persona",
+      "title": "Сценарии и роли",
+      "items": [
+        {
+          "id": "login",
+          "title": "Вход по номеру"
+        },
+        {
+          "id": "login-business-name",
+          "title": "Вход: номер и Business name"
+        },
+        {
+          "id": "client-new",
+          "title": "Клиент: новая заявка"
+        },
+        {
+          "id": "client-rejected",
+          "title": "Клиент: нужен новый файл"
+        },
+        {
+          "id": "client-more-docs",
+          "title": "Клиент: дозапрос документов"
+        },
+        {
+          "id": "client-offer-pending",
+          "title": "Клиент: решение, условия"
+        },
+        {
+          "id": "client-approved-unsigned",
+          "title": "Клиент: подписание"
+        },
+        {
+          "id": "client-signing-partial",
+          "title": "Клиент: подписание, частично"
+        },
+        {
+          "id": "client-limit-cancelled",
+          "title": "Клиент: лимит отменён"
+        },
+        {
+          "id": "client-active",
+          "title": "Клиент: лимит одобрен"
+        }
+      ]
+    }
+  ]
+}

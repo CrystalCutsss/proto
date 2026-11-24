@@ -43,6 +43,34 @@ export const DEFAULT_SCENARIO = { id: 'main', title: 'Основной' };
 /** Numeric part of "vN". @param {string} v */
 export const versionNumber = (v) => Number(v.slice(1));
 
+/** Axis items per menu tab (ADR-0029): an ungrouped axis has at most 12 items, a grouped one at most 4 groups of 12. */
+const AXIS_ITEMS_MAX = 12;
+const AXIS_GROUPS_MAX = 4;
+
+/**
+ * Problems with the tabs of one axis (AxisItem.group, ADR-0029): every item names a group or none does, at most
+ * AXIS_GROUPS_MAX groups, at most AXIS_ITEMS_MAX items per group (or per axis without groups).
+ * @param {{ id: string, group?: string }[]} items
+ * @returns {string[]}
+ */
+export function axisGroupIssues(items) {
+  const grouped = items.filter((x) => x.group !== undefined).length;
+  if (grouped === 0)
+    return items.length > AXIS_ITEMS_MAX
+      ? [`an axis without groups has at most ${AXIS_ITEMS_MAX} items`]
+      : [];
+  if (grouped !== items.length) return ['either every item of an axis names a group or none does'];
+  /** @type {Map<string, number>} */
+  const sizes = new Map();
+  for (const x of items)
+    sizes.set(/** @type {string} */ (x.group), (sizes.get(/** @type {string} */ (x.group)) ?? 0) + 1);
+  const issues = [];
+  if (sizes.size > AXIS_GROUPS_MAX) issues.push(`an axis has at most ${AXIS_GROUPS_MAX} groups`);
+  for (const [group, size] of sizes)
+    if (size > AXIS_ITEMS_MAX) issues.push(`group "${group}" has more than ${AXIS_ITEMS_MAX} items`);
+  return issues;
+}
+
 /**
  * @param {string} file
  * @param {string} rel
@@ -223,17 +251,28 @@ export function buildRegistry(repoRoot) {
       const axisIds = axes.map((/** @type {{ id: string }} */ a) => a.id);
       if (new Set(axisIds).size !== axisIds.length)
         issues.push({ file: rel(vfile), pointer: '/axes', message: 'axis ids must be unique' });
-      axes.forEach((/** @type {{ id: string, items: { id: string }[] }} */ a, /** @type {number} */ i) => {
-        if (RESERVED_AXES.has(a.id))
-          issues.push({
-            file: rel(vfile),
-            pointer: `/axes/${i}/id`,
-            message: `"${a.id}" is a reserved query parameter`,
-          });
-        const itemIds = a.items.map((x) => x.id);
-        if (new Set(itemIds).size !== itemIds.length)
-          issues.push({ file: rel(vfile), pointer: `/axes/${i}/items`, message: 'item ids must be unique' });
-      });
+      axes.forEach(
+        (
+          /** @type {{ id: string, items: { id: string, group?: string }[] }} */ a,
+          /** @type {number} */ i,
+        ) => {
+          if (RESERVED_AXES.has(a.id))
+            issues.push({
+              file: rel(vfile),
+              pointer: `/axes/${i}/id`,
+              message: `"${a.id}" is a reserved query parameter`,
+            });
+          const itemIds = a.items.map((x) => x.id);
+          if (new Set(itemIds).size !== itemIds.length)
+            issues.push({
+              file: rel(vfile),
+              pointer: `/axes/${i}/items`,
+              message: 'item ids must be unique',
+            });
+          for (const message of axisGroupIssues(a.items))
+            issues.push({ file: rel(vfile), pointer: `/axes/${i}/items`, message });
+        },
+      );
       versions.push({
         version: name,
         title: v.title ?? '',

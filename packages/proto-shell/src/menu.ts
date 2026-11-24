@@ -6,6 +6,8 @@
 // menu is one row next to a floating button in the bottom-right corner and starts collapsed (ADR-0026).
 // prototype.json → menu (ADR-0027): `versions: false` drops the version control; `style: "shadcn"` draws the same
 // groups as a shadcn DropdownMenu — captions become group labels, each control a list of radio items.
+// An axis whose items name a group (AxisItem.group, ADR-0029) gets tabs above its list in the shadcn menu: one tab
+// per group, a tab lists only its own items; the tab of the chosen item is open. The classic menu ignores groups.
 import type { Axis, Platform, RegistryPrototype, RegistryVersion, Scenario } from '@proto/registry';
 import { defineElements, type DsSegmented } from '@proto/ui';
 import { defineMenuList, firstMenuItem, menuKeys } from './menu-list.ts';
@@ -71,10 +73,21 @@ export function menuAxes(
   return donor ? { axes: donor.axes, disabled: true, from: donor.version } : { axes: [], disabled: true };
 }
 
-/** Short label of the current choice: axis item titles and the version, or the scenario and the version. */
+/** Groups (tabs) of an axis in item order (ADR-0029); empty when its items name no group. */
+export function axisGroups(axis: Axis): string[] {
+  return [...new Set(axis.items.flatMap((i) => (i.group ? [i.group] : [])))];
+}
+
+/**
+ * Short label of the current choice: axis item titles (after their group, ADR-0029) and the version, or the
+ * scenario and the version.
+ */
 export function menuSummary({ proto, version, scenario, axes }: MenuState): string {
   if (!version.axes.length) return `${scenario.title} · ${version.version}`;
-  const titles = version.axes.map((a) => a.items.find((i) => i.id === axes[a.id])?.title ?? '');
+  const titles = version.axes.flatMap((a) => {
+    const item = a.items.find((i) => i.id === axes[a.id]);
+    return item?.group ? [item.group, item.title] : [item?.title ?? ''];
+  });
   return [...titles, ...(hasVersionSwitch(proto) ? [version.version] : [])].join(' · ');
 }
 
@@ -96,6 +109,44 @@ function captioned(title: string, control: DsSegmented) {
   caption.setAttribute('aria-hidden', 'true');
   group.append(caption, control);
   return group;
+}
+
+/**
+ * Tabs above the list of a grouped axis (ADR-0029), like shadcn Tabs: a tab shows only its group's items in
+ * `control` and keeps the menu open. `open(value)` opens the tab of the chosen item.
+ */
+function groupTabs(axis: Axis, control: DsSegmented, groups: string[]) {
+  const bar = document.createElement('div');
+  bar.className = 'proto-menu-tabs';
+  bar.setAttribute('role', 'tablist');
+  bar.setAttribute('aria-label', axis.title);
+  let active = '';
+  const tabs = groups.map((group) => {
+    const tab = document.createElement('button');
+    tab.type = 'button';
+    tab.className = 'proto-menu-tab';
+    tab.setAttribute('role', 'tab');
+    tab.tabIndex = -1;
+    tab.textContent = group;
+    tab.addEventListener('click', () => show(group));
+    return tab;
+  });
+  bar.append(...tabs);
+  function show(group: string) {
+    if (group === active) return;
+    active = group;
+    tabs.forEach((t, i) => t.setAttribute('aria-selected', String(groups[i] === group)));
+    const value = control.value;
+    control.items = axis.items.filter((i) => i.group === group).map((i) => ({ value: i.id, label: i.title }));
+    control.value = value;
+  }
+  show(groups[0]!);
+  return {
+    element: bar,
+    open(value: string) {
+      show(axis.items.find((i) => i.id === value)?.group ?? active);
+    },
+  };
 }
 
 export function createMenu(handlers: MenuHandlers) {
@@ -120,6 +171,8 @@ export function createMenu(handlers: MenuHandlers) {
   let layoutKey: string | null = null;
   let style: 'ds' | 'shadcn' = 'ds';
   let axisControls = new Map<string, DsSegmented>();
+  /** Tabs of the grouped axes (shadcn menu only, ADR-0029), by axis id. */
+  let axisTabs = new Map<string, ReturnType<typeof groupTabs>>();
 
   /** Rebuild the controls when the shown axes change (appear, disappear or become disabled). */
   function build(
@@ -144,6 +197,7 @@ export function createMenu(handlers: MenuHandlers) {
     if (key === layoutKey) return;
     layoutKey = key;
     axisControls = new Map();
+    axisTabs = new Map();
     const shadcn = nextStyle === 'shadcn';
     if (nextStyle !== style) {
       style = nextStyle;
@@ -170,7 +224,11 @@ export function createMenu(handlers: MenuHandlers) {
       control.disabled = disabled;
       control.addEventListener('change', () => handlers.axis(a.id, control.value));
       axisControls.set(a.id, control);
+      const groups = shadcn ? axisGroups(a) : [];
+      const tabs = groups.length ? groupTabs(a, control, groups) : null;
+      if (tabs) axisTabs.set(a.id, tabs);
       const group = captioned(a.title, control);
+      if (tabs) control.before(tabs.element);
       group.classList.toggle('proto-menu-axis--disabled', disabled);
       if (disabled && from) {
         group.title = `Работает только в ${from}`;
@@ -210,7 +268,10 @@ export function createMenu(handlers: MenuHandlers) {
       scenario.items = v.scenarios.map((x) => ({ value: x.id, label: x.title }));
       scenario.value = s.id;
       const values = shown.disabled ? keptAxes : axes;
-      for (const [id, control] of axisControls) control.value = values[id] ?? '';
+      for (const [id, control] of axisControls) {
+        axisTabs.get(id)?.open(values[id] ?? '');
+        control.value = values[id] ?? '';
+      }
     },
   };
 }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { RegistryPrototype, RegistryVersion } from '@proto/registry';
 import {
+  axisGroups,
   createMenu,
   followPrototypeTheme,
   hasScreenSwitch,
@@ -182,6 +183,92 @@ describe('menu settings of a prototype (ADR-0027)', () => {
     expect(menu.element.hidden).toBe(true);
     menu.element.remove();
     toggle.button.remove();
+  });
+});
+
+describe('tabs of a grouped axis (ADR-0029)', () => {
+  const roles = {
+    id: 'persona',
+    title: 'Сценарии и роли',
+    items: [
+      { id: 'login', title: 'Вход', group: 'Клиент' },
+      { id: 'client-new', title: 'Новая заявка', group: 'Клиент' },
+      { id: 'supplier-new', title: 'Документы', group: 'Поставщик' },
+      { id: 'supplier-partner', title: 'Партнёр', group: 'Поставщик' },
+    ],
+  };
+  const make = (style: 'ds' | 'shadcn') => {
+    const p = { ...proto(v('v1', [roles])), menu: { versions: false, style } } as RegistryPrototype;
+    const picked: string[] = [];
+    const menu = createMenu({
+      scenario() {},
+      version() {},
+      axis: (id, value) => picked.push(`${id}=${value}`),
+    });
+    const update = (value: string) =>
+      menu.update({
+        proto: p,
+        version: p.versions[0]!,
+        scenario: p.versions[0]!.scenarios[0]!,
+        axes: { persona: value },
+      });
+    return { p, menu, picked, update };
+  };
+  const labels = (nav: HTMLElement) =>
+    [...nav.querySelectorAll('[role="menuitemradio"]')].map((i) => [
+      i.textContent,
+      i.getAttribute('aria-checked'),
+    ]);
+  const tabs = (nav: HTMLElement) =>
+    [...nav.querySelectorAll<HTMLButtonElement>('[role="tab"]')].map((t) => [
+      t.textContent,
+      t.getAttribute('aria-selected'),
+    ]);
+
+  it('lists the groups in item order', () => expect(axisGroups(roles)).toEqual(['Клиент', 'Поставщик']));
+
+  it('opens the tab of the chosen item and lists only its items', () => {
+    const { menu, update } = make('shadcn');
+    update('supplier-partner');
+    const nav = menu.element;
+    expect(nav.querySelector('[role="tablist"]')?.getAttribute('aria-label')).toBe('Сценарии и роли');
+    expect(tabs(nav)).toEqual([
+      ['Клиент', 'false'],
+      ['Поставщик', 'true'],
+    ]);
+    expect(labels(nav)).toEqual([
+      ['Документы', 'false'],
+      ['Партнёр', 'true'],
+    ]);
+  });
+
+  it('switches the tab without a choice, then a pick in it changes the axis', () => {
+    const { menu, picked, update } = make('shadcn');
+    update('client-new');
+    const nav = menu.element;
+    let changed = 0;
+    nav.addEventListener('change', () => changed++);
+    nav.querySelectorAll<HTMLButtonElement>('[role="tab"]')[1]!.click();
+    expect(changed).toBe(0);
+    expect(labels(nav)).toEqual([
+      ['Документы', 'false'],
+      ['Партнёр', 'false'],
+    ]);
+    nav.querySelector<HTMLButtonElement>('[data-value="supplier-new"]')!.click();
+    expect(picked).toEqual(['persona=supplier-new']);
+  });
+
+  it('puts the group before the title in the summary', () => {
+    const { p } = make('shadcn');
+    const state = { proto: p, version: p.versions[0]!, scenario: {}, axes: { persona: 'supplier-partner' } };
+    expect(menuSummary(state as unknown as MenuState)).toBe('Поставщик · Партнёр');
+  });
+
+  it('keeps one flat control in the classic menu', () => {
+    const { menu, update } = make('ds');
+    update('login');
+    expect(menu.element.querySelector('[role="tablist"]')).toBeNull();
+    expect(menu.element.querySelectorAll('ds-segmented')).toHaveLength(1);
   });
 });
 

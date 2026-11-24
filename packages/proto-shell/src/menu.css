@@ -306,6 +306,42 @@
   flex-direction: column;
 }
 
+/* Tabs of a grouped axis (ADR-0029): shadcn TabsList — a muted track, the open tab raised on the menu's surface. */
+.proto-menu-tabs {
+  display: flex;
+  gap: var(--ds-space-1);
+  margin-block-end: var(--ds-space-1);
+  padding: var(--ds-space-1);
+  border-radius: var(--ds-radius-m);
+  background: var(--ds-background-neutral-1);
+}
+
+.proto-menu-tab {
+  flex: 1;
+  padding: var(--ds-space-1) var(--ds-space-2);
+  border: 0;
+  border-radius: var(--ds-radius-s);
+  font-family: var(--ds-typography-ui-s-font-family);
+  font-size: var(--ds-typography-ui-s-font-size);
+  font-weight: var(--ds-typography-ui-s-font-weight);
+  line-height: var(--ds-typography-ui-s-line-height);
+  color: var(--ds-text-secondary);
+  white-space: nowrap;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+.proto-menu-tab[aria-selected='true'] {
+  color: var(--ds-text-primary);
+  background: var(--ds-background-elevation-1);
+  box-shadow: 0 0 0 var(--ds-border-width-thin) var(--ds-border-normal);
+}
+
+.proto-menu-tab:focus-visible {
+  box-shadow: 0 0 0 var(--ds-border-width-focus) var(--ds-border-focus);
+}
+
 /* DropdownMenuRadioItem: the check mark sits at the start, the label after it. */
 .proto-menu-item {
   display: flex;

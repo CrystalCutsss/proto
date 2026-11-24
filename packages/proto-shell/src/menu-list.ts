@@ -87,9 +87,14 @@ export function defineMenuList() {
   if (!customElements.get('proto-menu-list')) customElements.define('proto-menu-list', ProtoMenuList);
 }
 
-/** Up/Down/Home/End move focus between the enabled items of the whole menu, as in a DropdownMenu. */
+/**
+ * Up/Down/Home/End move focus between the enabled items of the whole menu, as in a DropdownMenu; the tabs of a
+ * grouped axis (ADR-0029) are stops too, and Enter or Space on a tab opens it.
+ */
 export function menuKeys(menu: HTMLElement, event: KeyboardEvent) {
-  const items = [...menu.querySelectorAll<HTMLElement>('.proto-menu-item:not([aria-disabled="true"])')];
+  const items = [
+    ...menu.querySelectorAll<HTMLElement>('.proto-menu-tab, .proto-menu-item:not([aria-disabled="true"])'),
+  ];
   if (!items.length) return;
   const root = menu.getRootNode() as Document | ShadowRoot;
   const at = items.indexOf(root.activeElement as HTMLElement);

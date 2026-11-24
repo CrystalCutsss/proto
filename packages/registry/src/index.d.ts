@@ -21,6 +21,8 @@ export interface Scenario {
 export interface AxisItem {
   id: string;
   title: string;
+  /** Tab of the shadcn menu that lists this item (ADR-0029); items of one axis either all name a group or none. */
+  group?: string;
 }
 
 /** One independent choice of the viewer menu (opt-in); the chosen item id reaches the version as ?<id>=<item>. */
@@ -115,4 +117,6 @@ export declare function validateMetadata(
   data: unknown,
   file?: string,
 ): RegistryIssue[];
+/** Problems with the tabs of one menu axis (AxisItem.group, ADR-0029); empty when the items are fine. */
+export declare function axisGroupIssues(items: { id: string; group?: string }[]): string[];
 export declare function serializeRegistry(registry: unknown): string;

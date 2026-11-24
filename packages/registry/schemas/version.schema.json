@@ -70,11 +70,17 @@
               "required": ["id", "title"],
               "properties": {
                 "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 40 },
-                "title": { "type": "string", "minLength": 1, "maxLength": 40 }
+                "title": { "type": "string", "minLength": 1, "maxLength": 40 },
+                "group": {
+                  "description": "Tab of the shadcn menu that lists the item (ADR-0029). Items of one axis either all name a group or none; at most 4 groups of at most 12 items each.",
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20
+                }
               }
             },
             "minItems": 2,
-            "maxItems": 12
+            "maxItems": 24
           }
         }
       },

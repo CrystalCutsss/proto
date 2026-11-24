@@ -2,7 +2,13 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { buildRegistry, RegistryError, resolveDefaultVersion, validateMetadata } from '../src/index.js';
+import {
+  axisGroupIssues,
+  buildRegistry,
+  RegistryError,
+  resolveDefaultVersion,
+  validateMetadata,
+} from '../src/index.js';
 
 /** @type {string} */
 let root;
@@ -178,6 +184,26 @@ describe('buildRegistry', () => {
     expect(msgs).toContain('/axes/0/items item ids must be unique');
     const one = [{ id: 'x', title: 'X', items: [{ id: 'a', title: 'A' }] }];
     expect(validateMetadata('version', { ...version('v1'), axes: one })[0]?.pointer).toBe('/axes/0/items');
+  });
+
+  it('checks the tabs of a grouped axis (ADR-0029)', () => {
+    /** @param {number} n @param {string} [group] */
+    const items = (n, group) =>
+      Array.from({ length: n }, (_, i) => ({ id: `${group ?? 'x'}-${i}`, title: 'T', group }));
+    expect(axisGroupIssues([...items(10, 'client'), ...items(7, 'supplier')])).toEqual([]);
+    expect(axisGroupIssues(items(12))).toEqual([]);
+    expect(axisGroupIssues(items(13))).toEqual(['an axis without groups has at most 12 items']);
+    expect(axisGroupIssues([...items(2, 'a'), ...items(1)])).toEqual([
+      'either every item of an axis names a group or none does',
+    ]);
+    expect(axisGroupIssues(items(13, 'a'))).toEqual(['group "a" has more than 12 items']);
+    expect(axisGroupIssues(['a', 'b', 'c', 'd', 'e'].flatMap((g) => items(1, g)))).toEqual([
+      'an axis has at most 4 groups',
+    ]);
+    put('prototypes/demo/prototype.json', proto());
+    const axes = [{ id: 'persona', title: 'Роли', items: [...items(10, 'client'), ...items(7, 'supplier')] }];
+    addVersion('demo', 'v1', { axes });
+    expect(buildRegistry(root).prototypes[0]?.versions[0]?.axes).toEqual(axes);
   });
 
   it('skips folders that hold only drive-inbox design input', () => {

@@ -1,0 +1,117 @@
+{
+  "$schema": "../../../../packages/registry/schemas/version.schema.json",
+  "version": "v26",
+  "title": "вход нового клиента, Lost без «Contact us»",
+  "date": "2026-11-25",
+  "author": "Claude",
+  "status": "frozen",
+  "changelog": [
+    "Вариант входа «новый клиент»: экран номера (кнопка «Continue», код ещё не отправляется) → экран «Contact name» и «Business name» → код.",
+    "Проверка ввода на втором экране: оба поля обязательные, не короче 2 знаков; в Contact name — только буквы. Пока поле неверное, «Get code» неактивна; ошибка появляется после ухода из поля.",
+    "Под полями — чекбокс «Join as a supplier» с коротким пояснением роли; по умолчанию снят. Отмечен — после кода сразу кабинет поставщика (экран «Заявка», как у нового поставщика), не отмечен — кабинет клиента.",
+    "«Change number» на втором экране возвращает к номеру; введённое и чекбокс сохраняются.",
+    "У экрана свой `screen_id` `auth.details` (строка маршрута в `01-cabinet-structure.md` §1).",
+    "Поставщик, «Работа приостановлена» (Lost): кнопки «Contact us» нет, текст — «We are not prepared to continue the partnership at this time». У «Заявка отклонена» кнопка осталась.",
+    "Меню «Сценарии и роли»: во вкладке «Клиент» — «Вход: новый клиент», во вкладке «Поставщик» — «Вход: новый поставщик» (та же форма, «Join as a supplier» уже отмечен, после кода — кабинет поставщика)."
+  ],
+  "routing": "history",
+  "routes": ["/login", "/c/home", "/c/documents", "/c/help", "/s/home", "/s/documents", "/s/help"],
+  "axes": [
+    {
+      "id": "persona",
+      "title": "Сценарии и роли",
+      "items": [
+        {
+          "id": "login",
+          "title": "Вход по номеру",
+          "group": "Клиент"
+        },
+        {
+          "id": "login-business-name",
+          "title": "Вход: номер и Business name",
+          "group": "Клиент"
+        },
+        {
+          "id": "login-new-client",
+          "title": "Вход: новый клиент",
+          "group": "Клиент"
+        },
+        {
+          "id": "client-new",
+          "title": "Новая заявка",
+          "group": "Клиент"
+        },
+        {
+          "id": "client-rejected",
+          "title": "Нужен новый файл",
+          "group": "Клиент"
+        },
+        {
+          "id": "client-more-docs",
+          "title": "Дозапрос документов",
+          "group": "Клиент"
+        },
+        {
+          "id": "client-offer-pending",
+          "title": "Решение, условия",
+          "group": "Клиент"
+        },
+        {
+          "id": "client-approved-unsigned",
+          "title": "Подписание",
+          "group": "Клиент"
+        },
+        {
+          "id": "client-signing-partial",
+          "title": "Подписание, частично",
+          "group": "Клиент"
+        },
+        {
+          "id": "client-limit-cancelled",
+          "title": "Лимит отменён",
+          "group": "Клиент"
+        },
+        {
+          "id": "client-active",
+          "title": "Лимит одобрен",
+          "group": "Клиент"
+        },
+        {
+          "id": "login-new-supplier",
+          "title": "Вход: новый поставщик",
+          "group": "Поставщик"
+        },
+        {
+          "id": "supplier-new",
+          "title": "Подача документов",
+          "group": "Поставщик"
+        },
+        {
+          "id": "supplier-review",
+          "title": "Документы на проверке",
+          "group": "Поставщик"
+        },
+        {
+          "id": "supplier-contract",
+          "title": "Остался договор",
+          "group": "Поставщик"
+        },
+        {
+          "id": "supplier-partner",
+          "title": "Партнёр, реферальная ссылка",
+          "group": "Поставщик"
+        },
+        {
+          "id": "supplier-declined",
+          "title": "Заявка отклонена",
+          "group": "Поставщик"
+        },
+        {
+          "id": "supplier-lost",
+          "title": "Работа приостановлена",
+          "group": "Поставщик"
+        }
+      ]
+    }
+  ]
+}

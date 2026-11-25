@@ -1,0 +1,1 @@
+import{O as o,o as n,k as c,b as i,l}from"./schemas-BLYfB9ZZ.js";const f="",h=[],p={terms:f,materials:h},O="",S=[],d={terms:O,materials:S},t=n({terms:c,materials:i(l)});function u(){const e=t.parse(p),a=t.parse(d),s=[...e.materials,...a.materials.filter(r=>!e.materials.some(m=>m.id===r.id))];return o.parse({terms:{ar:e.terms,en:a.terms},materials:s})}export{u as l};
